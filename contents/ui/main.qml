@@ -15,6 +15,7 @@ Item {
     id: root
 
     property bool horizontal: Plasmoid.formFactor !== PlasmaCore.Types.Vertical
+    property int startY: 0
 
     Layout.fillWidth: Plasmoid.configuration.expanding
     Layout.fillHeight: Plasmoid.configuration.expanding
@@ -120,7 +121,7 @@ Item {
     function setMaximized(maximized) {
         if ((maximized && !activeTask().IsMaximized)
             || (!maximized && activeTask().IsMaximized)) {
-            print('toggle maximized')
+            //print('toggle maximized')
             toggleMaximized()
         }
     }
@@ -246,6 +247,17 @@ Item {
                     //executable.exec('notify-send -t 1000 "Mouse wheel down" "Maximize False"');
                     setMaximized(false)
                 //}
+            }
+        }
+
+        onPressed: {
+            startY = mouseY
+        }
+
+        onReleased: {
+            if (Math.abs(mouseY - startY) > root.height+10) {
+                //console.log("Mouse drag detected!", startY, mouseY, "starting window drag");
+                executable.exec('qdbus org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.invokeShortcut "Window Move"');
             }
         }
     }
