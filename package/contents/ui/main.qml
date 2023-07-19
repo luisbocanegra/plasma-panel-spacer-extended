@@ -161,7 +161,7 @@ Item {
             var child = panelLayout.children[i];
             if (!child.visible) continue;
 
-            if (child.applet && child.applet.pluginName === 'org.kde.plasma.panelspacer' && child.applet.configuration.expanding) {
+            if (child.applet && child.applet.pluginName === 'luisbocanegra.panelspacer.extended' && child.applet.configuration.expanding) {
                 if (child === Plasmoid.parent) {
                     thisSpacerIndex = expandingSpacers
                 }
