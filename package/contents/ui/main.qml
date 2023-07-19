@@ -193,6 +193,13 @@ Item {
                 easing.type: Plasmoid.nativeInterface.containment.editMode ? Easing.InCubic : Easing.OutCubic
             }
         }
+
+        Text {
+            anchors.fill: parent
+            text: Plasmoid.nativeInterface.containment === undefined ? "Missing qt plugin luisbocanegra.panelspacer.extended.so check repo for instructions to install it" : ""
+            font.pixelSize: PlasmaCore.Theme.defaultFont.pixelSize
+            elide: Text.ElideRight
+        }
     }
 
     MouseArea {
