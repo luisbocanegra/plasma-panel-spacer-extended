@@ -1,18 +1,17 @@
-# Use Extra CMake Modules (ECM) for common functionality.
-# See http://api.kde.org/ecm/manual/ecm.7.html
-# and http://api.kde.org/ecm/manual/ecm-kde-modules.7.html
-find_package(ECM REQUIRED NO_MODULE)
-# Needed by find_package(KF5Plasma) below.
+cmake_minimum_required(VERSION 3.16)
 
-set(QT_MIN_VERSION "5.15.2")
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_MODULE_PATH})
+
 set(KF5_MIN_VERSION "5.102.0")
 set(KDE_COMPILERSETTINGS_LEVEL "5.82")
 
-find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
-find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} CONFIG REQUIRED COMPONENTS Svg Widgets Quick QuickWidgets)
-find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS I18n PlasmaQuick OPTIONAL_COMPONENTS DocTools)
+# Use Extra CMake Modules (ECM) for common functionality.
+# See http://api.kde.org/ecm/manual/ecm.7.html
+# and http://api.kde.org/ecm/manual/ecm-kde-modules.7.html
 
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_MODULE_PATH})
+find_package(ECM ${KF5_MIN_VERSION} REQUIRED NO_MODULE)
+# Needed by find_package(KF5Plasma) below.
+find_package(KF5 ${KF5_MIN_VERSION} REQUIRED COMPONENTS I18n PlasmaQuick)
 
 # Locate plasma_install_package macro.
 find_package(KF5Plasma REQUIRED)
