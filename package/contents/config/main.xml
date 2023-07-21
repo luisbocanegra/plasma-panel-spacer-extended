@@ -15,8 +15,14 @@
         <default>-1</default>
     </entry>
 
+    <entry name="singleClickAction" type="String">
+      <default>Overview,kwin</default>
+    </entry>
     <entry name="doubleClickAction" type="String">
       <default>Window Maximize,kwin</default>
+    </entry>
+    <entry name="middleClickAction" type="String">
+      <default>Show Desktop,kwin</default>
     </entry>
     <entry name="mouseWheelActionUp" type="String">
       <default>Switch to Previous Desktop,kwin</default>
@@ -31,10 +37,10 @@
       <default>Window Move,kwin</default>
     </entry>
     <entry name="mouseDragActionLeft" type="String">
-      <default>ShowDesktopGrid,kwin</default>
+      <default>Window One Desktop to the Left,kwin</default>
     </entry>
     <entry name="mouseDragActionRight" type="String">
-      <default>Overview,kwin</default>
+      <default>Window One Desktop to the Right,kwin</default>
     </entry>
     <entry name="pressHoldAction" type="String">
       <default>ExposeAll,kwin</default>
