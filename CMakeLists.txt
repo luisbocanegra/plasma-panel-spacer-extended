@@ -20,10 +20,14 @@ if(INSTALL_PLASMOID)
     plasma_install_package(package luisbocanegra.panelspacer.extended)
 endif()
 
+# Get version from metadata.
+file(READ ${CMAKE_CURRENT_SOURCE_DIR}/package/metadata.json MY_JSON_STRING)
+string(JSON CUR_VERSION GET ${MY_JSON_STRING} KPlugin Version)
+message("Version: ${CUR_VERSION}")
 # Genreate plasmoid file
-set(PLASMOID_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.plasmoid")
-
+set(PLASMOID_FILE "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}-v${CUR_VERSION}.plasmoid")
 add_custom_target(plasmoid
+    COMMAND rm -rf "${PLASMOID_FILE}"
     COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_CURRENT_SOURCE_DIR}/package zip -r ${PLASMOID_FILE} ./
     COMMENT "Generating ${PLASMOID_FILE}"
 )
