@@ -148,15 +148,15 @@ Item {
     }
 
     function runAction(action) {
-        var actionId = action[0]
-        var actionNme = action[1]
-        var component = action[2]
-        if (actionId !== 0) {
-            if (actionId == 1){
+        console.log("RUNNING_ACTION:",action);
+        var actionNme = action[0]
+        var component = action[1]
+        if (actionNme != "Disabled") {
+            if (actionNme == "Window Maximize Only"){
                 setMaximized(true)
                 return
             }
-            if (actionId == 2){
+            if (actionNme == "Window Unmaximize Only"){
                 setMaximized(false)
                 return
             }
@@ -250,13 +250,16 @@ Item {
         // }
 
         onDoubleClicked: {
+            console.log("DOUBLE CLICK");
             runAction(doubleClickAction)
         }
 
         onWheel: {
             if (wheel.angleDelta.y > 0) {
+                console.log("WHEEL UP");
                 runAction(mouseWheelActionUp)
             } else {
+                console.log("WHEEL DOWN");
                 runAction(mouseWheelActionDown)
             }
         }
@@ -269,36 +272,46 @@ Item {
         onReleased: {
             //console.log("startY:",startY,"endY:",mouseY,"threshold:",root.height+10);
             //console.log("startX:",startX,"endX:",mouseX,"threshold:",root.height+10);
-            // if (Math.abs(mouseY - startY) > root.height+10) {
-            //     executable.exec('qdbus org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.invokeShortcut "Window Move"');
-            // }
             var movementY = mouseY - startY
             var movementX = mouseX - startX
-
+            var movementAbsX = Math.abs(movementX)
+            var movementAbsY = Math.abs(movementY)
+            console.log("Mov X:",movementX,"Mov Y:",movementY);
             var minMovement = horizontal ? root.height+10 : root.width+10
-            var movementDirection = ""
 
-            if (Math.abs(movementY) > Math.abs(movementX) * 2){
-                if (movementY < 0 && Math.abs(movementY) >= minMovement) {
-                    runAction(mouseDragActionUp)
-                }
-
-                if (movementY > 0 && movementY>= minMovement) {
+            if (movementAbsY > movementAbsX && movementAbsY >= minMovement) {
+                // UP DOWN
+                if (movementY > 0) {
+                    console.log("DOWN");
                     runAction(mouseDragActionDown)
+                    return
                 }
-            } else {
-                if (movementX < 0 && Math.abs(movementX)>= minMovement) {
-                    runAction(mouseDragActionLeft)
+                if (movementY < 0) {
+                    console.log("UP");
+                    runAction(mouseDragActionUp)
+                    return
                 }
+            }
 
-                if (movementX > 0 && movementX>= minMovement) {
+            if (movementAbsX > movementAbsY && movementAbsX >= minMovement) {
+                // LEFT RIGHT
+                if (movementX > 0) {
+                    console.log("RIGHT");
                     runAction(mouseDragActionRight)
+                    return
+                }
+                if (movementX < 0) {
+                    console.log("LEFT");
+                    runAction(mouseDragActionLeft)
+                    return
                 }
             }
         }
 
         onPressAndHold: {
+            console.log("HOLD");
             runAction(pressHoldAction)
+            return
         }
     }
 }
