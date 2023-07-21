@@ -10,7 +10,9 @@ import "components" as Components
 QQLayouts1.ColumnLayout {
     id: root
 
+    property alias cfg_singleClickAction: singleClick.configValue
     property alias cfg_doubleClickAction: doubleClick.configValue
+    property alias cfg_middleClickAction: middleClick.configValue
     property alias cfg_mouseWheelActionUp: wheelUp.configValue
     property alias cfg_mouseWheelActionDown: wheelDown.configValue
     property alias cfg_mouseDragActionUp: dragUp.configValue
@@ -272,11 +274,27 @@ QQLayouts1.ColumnLayout {
         }
 
         Components.MyComboBox {
+            id: singleClick
+            Kirigami.FormData.label: i18n("Single click:")
+            model: windowActionsComboModel
+            textRole: "label"
+            configName: "singleClickAction"
+        }
+
+        Components.MyComboBox {
             id: doubleClick
             Kirigami.FormData.label: i18n("Double click:")
             model: windowActionsComboModel
             textRole: "label"
             configName: "doubleClickAction"
+        }
+
+        Components.MyComboBox {
+            id: middleClick
+            Kirigami.FormData.label: i18n("Middle click:")
+            model: windowActionsComboModel
+            textRole: "label"
+            configName: "middleClickAction"
         }
 
         Components.MyComboBox {

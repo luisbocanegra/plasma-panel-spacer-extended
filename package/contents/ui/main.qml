@@ -21,8 +21,16 @@ Item {
     property bool isActiveWindowPinned: false
     property int startY: 0
     property int startX: 0
-    
+    property int movementX: 0
+    property int movementY: 0
+    property bool wasDoubleClicked: false
+    property int minMovement: horizontal ? root.height+10 : root.width+10
+    property var singleClickAction: plasmoid.configuration.singleClickAction.split(",")
+    property var mouseButton: undefined
+
     property var doubleClickAction: plasmoid.configuration.doubleClickAction.split(",")
+
+    property var middleClickAction: plasmoid.configuration.middleClickAction.split(",")
 
     property var mouseWheelActionUp: plasmoid.configuration.mouseWheelActionUp.split(",")
 
@@ -34,7 +42,7 @@ Item {
 
     property var mouseDragActionLeft: plasmoid.configuration.mouseDragActionLeft.split(",")
 
-    property var mouseDragActionRight: plasmoid.configuration.mouseDragActionUp.split(",")
+    property var mouseDragActionRight: plasmoid.configuration.mouseDragActionRight.split(",")
 
     property var pressHoldAction: plasmoid.configuration.pressHoldAction.split(",")
 
@@ -148,7 +156,7 @@ Item {
     }
 
     function runAction(action) {
-        console.log("RUNNING_ACTION:",action);
+        //console.log("RUNNING_ACTION:",action);
         var actionNme = action[0]
         var component = action[1]
         if (actionNme != "Disabled") {
@@ -249,17 +257,52 @@ Item {
         //     console.log("MOUSE_WHEEL_DOWN_ACTION:",mouseWheelActionDown)
         // }
 
+        onClicked: {
+            // ignore id moved
+            wasDoubleClicked = false
+            clickTimer.restart()
+            movementY = mouseY - startY
+            movementX = mouseX - startX
+            mouseButton = mouse.button
+        }
+
         onDoubleClicked: {
             console.log("DOUBLE CLICK");
+            wasDoubleClicked = true
             runAction(doubleClickAction)
+        }
+
+        Timer {
+            id: clickTimer
+            interval: 300
+            repeat: false
+            onTriggered: {
+                if (!wasDoubleClicked) {
+                    //console.log("SINGLE CLICK")
+                    var movementAbsX = Math.abs(movementX)
+                    var movementAbsY = Math.abs(movementY)
+                    if (movementAbsY < minMovement && movementAbsX < minMovement) {
+                        if (mouseButton === Qt.MiddleButton) {
+                            //console.log("Middle button pressed")
+                            runAction(middleClickAction)
+                        } else {
+                            //console.log("Left button pressed")
+                            runAction(singleClickAction)
+                        }
+                    } else {
+                        //console.log("MOVED WHILE CLICKING IGNORED")
+                        ;
+                    }
+                }
+            }
         }
 
         onWheel: {
             if (wheel.angleDelta.y > 0) {
-                console.log("WHEEL UP");
+                //console.log("WHEEL UP");
                 runAction(mouseWheelActionUp)
             } else {
-                console.log("WHEEL DOWN");
+                //console.log("WHEEL DOWN");
                 runAction(mouseWheelActionDown)
             }
         }
@@ -272,22 +315,20 @@ Item {
         onReleased: {
             //console.log("startY:",startY,"endY:",mouseY,"threshold:",root.height+10);
             //console.log("startX:",startX,"endX:",mouseX,"threshold:",root.height+10);
-            var movementY = mouseY - startY
-            var movementX = mouseX - startX
+            movementY = mouseY - startY
+            movementX = mouseX - startX
             var movementAbsX = Math.abs(movementX)
             var movementAbsY = Math.abs(movementY)
-            console.log("Mov X:",movementX,"Mov Y:",movementY);
-            var minMovement = horizontal ? root.height+10 : root.width+10
-
+            //console.log("Mov X:",movementX,"Mov Y:",movementY);
             if (movementAbsY > movementAbsX && movementAbsY >= minMovement) {
                 // UP DOWN
                 if (movementY > 0) {
-                    console.log("DOWN");
+                    //console.log("DRAG DOWN");
                     runAction(mouseDragActionDown)
                     return
                 }
                 if (movementY < 0) {
-                    console.log("UP");
+                    //console.log("DRAG UP");
                     runAction(mouseDragActionUp)
                     return
                 }
@@ -296,12 +337,12 @@ Item {
             if (movementAbsX > movementAbsY && movementAbsX >= minMovement) {
                 // LEFT RIGHT
                 if (movementX > 0) {
-                    console.log("RIGHT");
+                    //console.log("DRAG RIGHT");
                     runAction(mouseDragActionRight)
                     return
                 }
                 if (movementX < 0) {
-                    console.log("LEFT");
+                    //console.log("DRAG LEFT");
                     runAction(mouseDragActionLeft)
                     return
                 }
@@ -309,7 +350,7 @@ Item {
         }
 
         onPressAndHold: {
-            console.log("HOLD");
+            //console.log("HOLD");
             runAction(pressHoldAction)
             return
         }
