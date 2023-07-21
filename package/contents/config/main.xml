@@ -6,13 +6,38 @@
   <kcfgfile name=""/>
 
   <group name="General">
-    <entry name="expanding" type="bool">
+    <entry name="expanding" type="Bool">
         <label>If true, the spacer tries to take all the available space in the panel.</label>
         <default>true</default>
     </entry>
     <entry name="length" type="Int">
         <label>length in pixels of the spacer. Configuration effective only if expanding is set to false. A negative value means an invalid value that should be completely ignored.</label>
         <default>-1</default>
+    </entry>
+
+    <entry name="doubleClickAction" type="String">
+      <default>0,Window Maximize,kwin</default>
+    </entry>
+    <entry name="mouseWheelActionUp" type="String">
+      <default>0,Window Maximize,kwin</default>
+    </entry>
+    <entry name="mouseWheelActionDown" type="String">
+      <default>0,Window Maximize,kwin</default>
+    </entry>
+    <entry name="mouseDragActionUp" type="String">
+      <default>0,Window Maximize,kwin</default>
+    </entry>
+    <entry name="mouseDragActionDown" type="String">
+      <default>0,Window Maximize,kwin</default>
+    </entry>
+    <entry name="mouseDragActionLeft" type="String">
+      <default>0,Window Maximize,kwin</default>
+    </entry>
+    <entry name="mouseDragActionRight" type="String">
+      <default>0,Window Maximize,kwin</default>
+    </entry>
+    <entry name="pressHoldAction" type="String">
+      <default>0,Window Maximize,kwin</default>
     </entry>
   </group>
 
