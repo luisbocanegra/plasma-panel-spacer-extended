@@ -16,28 +16,28 @@
     </entry>
 
     <entry name="doubleClickAction" type="String">
-      <default>0,Window Maximize,kwin</default>
+      <default>Window Maximize,kwin</default>
     </entry>
     <entry name="mouseWheelActionUp" type="String">
-      <default>0,Window Maximize,kwin</default>
+      <default>Switch to Previous Desktop,kwin</default>
     </entry>
     <entry name="mouseWheelActionDown" type="String">
-      <default>0,Window Maximize,kwin</default>
+      <default>Switch to Next Desktop,kwin</default>
     </entry>
     <entry name="mouseDragActionUp" type="String">
-      <default>0,Window Maximize,kwin</default>
+      <default>Window Move,kwin</default>
     </entry>
     <entry name="mouseDragActionDown" type="String">
-      <default>0,Window Maximize,kwin</default>
+      <default>Window Move,kwin</default>
     </entry>
     <entry name="mouseDragActionLeft" type="String">
-      <default>0,Window Maximize,kwin</default>
+      <default>ShowDesktopGrid,kwin</default>
     </entry>
     <entry name="mouseDragActionRight" type="String">
-      <default>0,Window Maximize,kwin</default>
+      <default>Overview,kwin</default>
     </entry>
     <entry name="pressHoldAction" type="String">
-      <default>0,Window Maximize,kwin</default>
+      <default>ExposeAll,kwin</default>
     </entry>
   </group>
 
