@@ -9,20 +9,24 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 ## Some notes
 
 * Tested only with Wayland session
-* ⚠️ **Requires compiling (see [Installing](#installing))**
+* ⚠ **Requires compiling (see [Installing](#installing))**
 
 ## Current and *planned* features
 
-* [x] Maximize/unmaximize with:
-  * [x] Left button double click
-  * [x] Scroll wheel
-* [x] Drag the active window by dragging down with left button from the panel
-* Dragging requres releasing the the mouse, cursor should then attach itself to the active window
-* [ ] Behavior configuration per widget (or global if possible??)
+* [X] Mouse actions
+  * Double click
+  * Mouse wheel up/down
+  * Mouse drag in four axis
+  * Long press
+* [x] Lots of actions from kwin shortcuts (window control, overview, virtual desktops)
+* [x] Behavior configuration per widget
+  * [ ] global if possible??
+* [ ] Better default config
+* [ ] Automatically detect all avilable org.kde.kglobalaccel component shortcuts
 
 ## Installing
 
-* Install dependencies (please let me know if i missed something)
+* Install dependencies (please let me know if I missed something)
 
   ```txt
     cmake extra-cmake-modules ki18n plasma-framework
@@ -52,7 +56,7 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 1. Using code from [plasma-active-window-control](https://invent.kde.org/plasma/plasma-active-window-control) widget for:
    1. Getting current window
    2. Maximize/unmaximize active window
-2. Running `qdbus org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.invokeShortcut "Window Move"` on mouse drag down
+2. Running `qdbus org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.invokeShortcut "ACTION NAME"` on mouse drag down
 
 ## Credits & Resources
 
