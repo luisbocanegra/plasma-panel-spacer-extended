@@ -2,7 +2,7 @@
 
 Plasma panel spacer with mouse actions
 
-An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window actions to the default plasma panel
+An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window actions (and more!) to the default plasma panel
 
 [Demo](https://github.com/luisbocanegra/plasma-panel-spacer-extended/assets/15076387/13aad327-9b03-49a1-bb16-6b035dad8a9e)
 
