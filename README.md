@@ -14,15 +14,75 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 ## Current and *planned* features
 
 * [X] Mouse actions
-  * Double click
-  * Mouse wheel up/down
-  * Mouse drag in four axis
-  * Long press
-* [x] Lots of actions from kwin shortcuts (window control, overview, virtual desktops)
+  * [x] Double click
+  * [x] Mouse wheel up/down
+    * [ ] Min wheel steps
+  * [x] Mouse drag (four axis)
+    * [ ] Min track distance
+  * [x] Long press
+    * [ ] Hold hold duration
+* [x] Lots of actions from kwin shortcuts
+
+  <details>
+    <summary>Expand</summary>
+
+  * Disabled
+  * Maximize active window
+  * Unmaximize active window
+  * Maximize active window (toggle)
+  * Close active window
+  * Move active window
+  * Minimize active window
+  * Show Window Operations Menu
+  * Fullscreen active window
+  * Minimize all windows
+  * Show Desktop Grid
+  * Show Desktop
+  * Show Overview
+  * Present windows of active Application (all desktops)
+  * Present windows of active Application (current desktop)
+  * Present all windows (all desktops)
+  * Present all windows (current desktop)
+  * Walk Through Windows
+  * Walk Through Windows (Reverse)
+  * Walk Through Windows Alternative
+  * Walk Through Windows Alternative (Reverse)
+  * Walk Through Windows of Current Application
+  * Walk Through Windows of Current Application (Reverse)
+  * Walk Through Windows of Current Application Alternative
+  * Walk Through Windows of Current Application Alternative (Reverse)
+  * Switch One Desktop Up
+  * Switch One Desktop Down
+  * Switch One Desktop to the Left
+  * Switch One Desktop to the Right
+  * Switch to Previous Desktop
+  * Switch to Next Desktop
+  * Walk Through Desktops
+  * Window One Desktop Up
+  * Window One Desktop Down
+  * Window One Desktop to the Left
+  * Window One Desktop to the Right
+  * Window to Next Desktop
+  * Window to Previous Desktop
+  * Kill Window
+  </details>
+
 * [x] Behavior configuration per widget
   * [ ] global if possible??
-* [ ] Better default config
+* [ ] Better default config currently:
 * [ ] Automatically detect all avilable org.kde.kglobalaccel component shortcuts
+* [ ] Quick disable/reset defaults
+
+### Default actions
+
+* Double click `Window Maximize (toggle)`
+* Wheel Up `Switch to Previous Desktop`
+* Wheel Down `Switch to Next Desktop`
+* Drag Up `Window Move`
+* Drag Down `Window Move`
+* Drag Left `Show Desktop Grid`
+* Drag Right `Overview`
+* Long Press `Present windows`
 
 ## Installing
 
@@ -56,7 +116,7 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 1. Using code from [plasma-active-window-control](https://invent.kde.org/plasma/plasma-active-window-control) widget for:
    1. Getting current window
    2. Maximize/unmaximize active window
-2. Running `qdbus org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.invokeShortcut "ACTION NAME"` on mouse drag down
+2. Runs `qdbus org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.invokeShortcut "ACTION NAME"` for all other actions
 
 ## Credits & Resources
 
