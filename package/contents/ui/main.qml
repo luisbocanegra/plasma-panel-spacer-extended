@@ -20,6 +20,23 @@ Item {
     property bool currentWindowMaximized: false
     property bool isActiveWindowPinned: false
     property int startY: 0
+    property int startX: 0
+    
+    property var doubleClickAction: plasmoid.configuration.doubleClickAction.split(",")
+
+    property var mouseWheelActionUp: plasmoid.configuration.mouseWheelActionUp.split(",")
+
+    property var mouseWheelActionDown: plasmoid.configuration.mouseWheelActionDown.split(",")
+
+    property var mouseDragActionDown: plasmoid.configuration.mouseDragActionDown.split(",")
+
+    property var mouseDragActionUp: plasmoid.configuration.mouseDragActionUp.split(",")
+
+    property var mouseDragActionLeft: plasmoid.configuration.mouseDragActionLeft.split(",")
+
+    property var mouseDragActionRight: plasmoid.configuration.mouseDragActionUp.split(",")
+
+    property var pressHoldAction: plasmoid.configuration.pressHoldAction.split(",")
 
     Layout.fillWidth: Plasmoid.configuration.expanding
     Layout.fillHeight: Plasmoid.configuration.expanding
@@ -130,6 +147,23 @@ Item {
         }
     }
 
+    function runAction(action) {
+        var actionId = action[0]
+        var actionNme = action[1]
+        var component = action[2]
+        if (actionId !== 0) {
+            if (actionId == 1){
+                setMaximized(true)
+                return
+            }
+            if (actionId == 2){
+                setMaximized(false)
+                return
+            }
+            executable.exec('qdbus org.kde.kglobalaccel /component/'+component+' org.kde.kglobalaccel.Component.invokeShortcut '+'\"'+actionNme+'\"');
+        }
+    }
+
     // Search the actual gridLayout of the panel
     property GridLayout panelLayout: {
         var candidate = root.parent;
@@ -148,7 +182,7 @@ Item {
         action.checkable = true;
         action.checked = Qt.binding(function() {return Plasmoid.configuration.expanding});
 
-        Plasmoid.removeAction("configure");
+        //Plasmoid.removeAction("configure");
     }
 
     property real optimalSize: {
@@ -210,52 +244,61 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
 
         // onEntered: {
-        //     // mouseHover = true
-        //     // controlButtonsArea.mouseInWidget = showControlButtons && !noWindowActive
-        //     console.log("onEntered")
-        // }
-
-        // onExited: {
-        //     // mouseHover = false
-        //     // controlButtonsArea.mouseInWidget = false
-        //     console.log("onExited")
+        //     console.log("MOUSE_2CLICK_ACTION:",doubleClickAction)
+        //     console.log("MOUSE_WHEEL_UP_ACTION:",mouseWheelActionUp)
+        //     console.log("MOUSE_WHEEL_DOWN_ACTION:",mouseWheelActionDown)
         // }
 
         onDoubleClicked: {
-            //if (doubleClickMaximizes && mouse.button == Qt.LeftButton) {
-            toggleMaximized()
-            //executable.exec('notify-send -t 1000 "Mouse double click" "Toggle Maximize"');
-            //console.log("onDoubleClicked")
-            //}
+            runAction(doubleClickAction)
         }
 
         onWheel: {
             if (wheel.angleDelta.y > 0) {
-                //if (wheelUpMaximizes) {
-                    //console.log("Mouse wheel Up")
-                    //executable.exec('notify-send -t 1000 "Mouse wheel up" "Maximize true"');
-                    setMaximized(true)
-                //}
+                runAction(mouseWheelActionUp)
             } else {
-                //if (wheelDownMinimizes) {
-                //    setMinimized()
-                //}
-                //if (wheelDownUnmaximizes) {
-                    //console.log("Mouse wheel Down")
-                    //executable.exec('notify-send -t 1000 "Mouse wheel down" "Maximize False"');
-                    setMaximized(false)
-                //}
+                runAction(mouseWheelActionDown)
             }
         }
 
         onPressed: {
             startY = mouseY
+            startX = mouseX
         }
 
         onReleased: {
-            if (Math.abs(mouseY - startY) > root.height+10) {
-                executable.exec('qdbus org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.invokeShortcut "Window Move"');
+            //console.log("startY:",startY,"endY:",mouseY,"threshold:",root.height+10);
+            //console.log("startX:",startX,"endX:",mouseX,"threshold:",root.height+10);
+            // if (Math.abs(mouseY - startY) > root.height+10) {
+            //     executable.exec('qdbus org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.invokeShortcut "Window Move"');
+            // }
+            var movementY = mouseY - startY
+            var movementX = mouseX - startX
+
+            var minMovement = horizontal ? root.height+10 : root.width+10
+            var movementDirection = ""
+
+            if (Math.abs(movementY) > Math.abs(movementX) * 2){
+                if (movementY < 0 && Math.abs(movementY) >= minMovement) {
+                    runAction(mouseDragActionUp)
+                }
+
+                if (movementY > 0 && movementY>= minMovement) {
+                    runAction(mouseDragActionDown)
+                }
+            } else {
+                if (movementX < 0 && Math.abs(movementX)>= minMovement) {
+                    runAction(mouseDragActionLeft)
+                }
+
+                if (movementX > 0 && movementX>= minMovement) {
+                    runAction(mouseDragActionRight)
+                }
             }
+        }
+
+        onPressAndHold: {
+            runAction(pressHoldAction)
         }
     }
 }
