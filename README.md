@@ -6,6 +6,11 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 
 [Demo](https://github.com/luisbocanegra/plasma-panel-spacer-extended/assets/15076387/13aad327-9b03-49a1-bb16-6b035dad8a9e)
 
+<details>
+    <summary>Screenshots</summary>
+<img src="https://github.com/luisbocanegra/plasma-panel-spacer-extended/assets/15076387/99e684d5-4817-4a57-aa21-1d7c804e4ff8" alt="widget actions config">
+</details>
+
 ## Some notes
 
 * Tested only with Wayland session
@@ -14,7 +19,9 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 ## Current and *planned* features
 
 * [X] Mouse actions
+  * [x] Single click
   * [x] Double click
+  * [x] Middle click
   * [x] Mouse wheel up/down
     * [ ] Min wheel steps
   * [x] Mouse drag (four axis)
@@ -75,13 +82,15 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 
 ### Default actions
 
+* Single click `Overview`
 * Double click `Window Maximize (toggle)`
+* Middle click `Show desktop`
 * Wheel Up `Switch to Previous Desktop`
 * Wheel Down `Switch to Next Desktop`
 * Drag Up `Window Move`
 * Drag Down `Window Move`
-* Drag Left `Show Desktop Grid`
-* Drag Right `Overview`
+* Drag Left `Window One Desktop to the Left`
+* Drag Right `Window One Desktop to the Right`
 * Long Press `Present windows`
 
 ## Installing
