@@ -9,14 +9,14 @@ ComboBox {
 
     onCurrentIndexChanged: {
         // Update the configValue property
-        configValue = currentIndex + "," + model.get(currentIndex)["ActionName"] + "," + model.get(currentIndex)["component"];
+        configValue = model.get(currentIndex)["ActionName"] + "," + model.get(currentIndex)["component"];
     }
 
     Component.onCompleted: {
         // Initialize the currentIndex from the config
         var index = 0
         for (var i= 0; i < model.count; i++) {
-            if (model.get(i)["ActionName"]===plasmoid.configuration[configName].split(",")[1]){
+            if (model.get(i)["ActionName"]===plasmoid.configuration[configName].split(",")[0]){
                 index = i;
                 break;
             }
