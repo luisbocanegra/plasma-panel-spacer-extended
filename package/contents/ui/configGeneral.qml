@@ -209,13 +209,13 @@ QQLayouts1.ColumnLayout {
                 component: "kwin"
             }
         ListElement {
-                label: qsTr("Kill Window")
-                ActionName: "Kill Window"
+                label: qsTr("Window to Previous Desktop")
+                ActionName: "Window to Previous Desktop"
                 component: "kwin"
             }
         ListElement {
-                label: qsTr("Window to Previous Desktop")
-                ActionName: "Window to Previous Desktop"
+                label: qsTr("Kill Window")
+                ActionName: "Kill Window"
                 component: "kwin"
             }
     }
