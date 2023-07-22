@@ -49,8 +49,8 @@ Item {
     Layout.fillWidth: Plasmoid.configuration.expanding
     Layout.fillHeight: Plasmoid.configuration.expanding
 
-    Layout.minimumWidth: Plasmoid.nativeInterface.containment.editMode ? PlasmaCore.Units.gridUnit * 2 : 1
-    Layout.minimumHeight: Plasmoid.nativeInterface.containment.editMode ? PlasmaCore.Units.gridUnit * 2 : 1
+    Layout.minimumWidth: Plasmoid.editMode ? PlasmaCore.Units.gridUnit * 2 : 1
+    Layout.minimumHeight: Plasmoid.editMode ? PlasmaCore.Units.gridUnit * 2 : 1
     Layout.preferredWidth: horizontal
         ? (Plasmoid.configuration.expanding ? optimalSize : Plasmoid.configuration.length)
         : 0
@@ -203,7 +203,7 @@ Item {
             var child = panelLayout.children[i];
             if (!child.visible) continue;
 
-            if (child.applet && child.applet.pluginName === 'luisbocanegra.panelspacer.extended' && child.applet.configuration.expanding) {
+            if (child.applet && child.applet.pluginName === Plasmoid.pluginName && child.applet.configuration.expanding) {
                 if (child === Plasmoid.parent) {
                     thisSpacerIndex = expandingSpacers
                 }
@@ -216,7 +216,7 @@ Item {
             }
         }
         sizeHints[0] *= 2; sizeHints[sizeHints.length - 1] *= 2
-        let containment = Plasmoid.nativeInterface.containment
+        let containment = panelLayout
         let opt = (root.horizontal ? containment.width : containment.height) / expandingSpacers - sizeHints[thisSpacerIndex] / 2 - sizeHints[thisSpacerIndex + 1] / 2
         return Math.max(opt, 0)
     }
@@ -224,24 +224,18 @@ Item {
     Rectangle {
         anchors.fill: parent
         color: PlasmaCore.Theme.highlightColor
-        opacity: Plasmoid.nativeInterface.containment.editMode ? 1 : 0
-        visible: Plasmoid.nativeInterface.containment.editMode || animator.running
+        opacity: Plasmoid.editMode ? 1 : 0
+        visible: Plasmoid.editMode || animator.running
 
         Behavior on opacity {
             NumberAnimation {
                 id: animator
                 duration: PlasmaCore.Units.longDuration
                 // easing.type is updated after animation starts
-                easing.type: Plasmoid.nativeInterface.containment.editMode ? Easing.InCubic : Easing.OutCubic
+                easing.type: Plasmoid.editMode ? Easing.InCubic : Easing.OutCubic
             }
         }
 
-        Text {
-            anchors.fill: parent
-            text: Plasmoid.nativeInterface.containment === undefined ? "Missing qt plugin luisbocanegra.panelspacer.extended.so check repo for instructions to install it" : ""
-            font.pixelSize: PlasmaCore.Theme.defaultFont.pixelSize
-            elide: Text.ElideRight
-        }
     }
 
     MouseArea {
