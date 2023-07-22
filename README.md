@@ -14,7 +14,6 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 ## Some notes
 
 * Tested only with Wayland session
-* ⚠ **Requires compiling (see [Installing](#installing))**
 
 ## Current and *planned* features
 
@@ -76,9 +75,10 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 
 * [x] Behavior configuration per widget
   * [ ] global if possible??
-* [ ] Better default config currently:
+* [ ] Better default config
 * [ ] Automatically detect all avilable org.kde.kglobalaccel component shortcuts
 * [ ] Quick disable/reset defaults
+* [ ] Popup showing shortcut bein run
 
 ### Default actions
 
@@ -95,30 +95,21 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 
 ## Installing
 
+* Install widget from KDE Store:
+
+### Manual install
+
 * Install dependencies (please let me know if I missed something)
 
   ```txt
-    cmake extra-cmake-modules ki18n plasma-framework
+    cmake extra-cmake-modules plasma-framework
   ```
 
-* If installed widget from KDE Store:
-  
-  Build and install the required plugin only
-  
-  ```sh
-  ./install-plugin-only.sh
-  ```
-
-* Otherwise, build/install everything:
+* Install the plasmoid
 
   ```sh
   ./install.sh
   ```
-
-### Why building is needed and not just the plasmoid?
-
-* Installing Just the plasmoid with a differend `id` won't work as this widget access some special properties of the panel, which are only avilable to the default applet, having them in other panel requires building the qt plugin too
-* Just installing in `./local` without renaming would work but I then there is no way to remove the updated verision from UI and I don't think widgets that mask other widgets are a good idea, nothing stops you from doing it though :)
 
 ## How does it work?
 
@@ -131,3 +122,4 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 
 * Based on (but not forked from) [plasma-workspace/applets/panelspacer](https://invent.kde.org/plasma/plasma-workspace/-/tree/master/applets/panelspacer)
 * [plasma-active-window-control](https://invent.kde.org/plasma/plasma-active-window-control)
+* [plasmoid-spacer-as-pager](https://github.com/eatsu/plasmoid-spacer-as-pager) for the changes that eliminate the need of built code
