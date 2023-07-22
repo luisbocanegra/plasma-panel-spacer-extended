@@ -9,8 +9,8 @@ fi
 mkdir build
 cd build
 
-# install plasmoid only
-cmake cmake -DBUILD_PLUGIN=OFF -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
+# build/install everything
+cmake cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
 
 # Build the project
 make
