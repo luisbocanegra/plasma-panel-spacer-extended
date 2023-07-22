@@ -16,7 +16,7 @@
         "ServiceTypes": [
             "Plasma/Applet"
         ],
-        "Version": "1.2.0",
+        "Version": "1.2.1",
         "Website": "https://github.com/luisbocanegra/plasma-panel-spacer-extended"
     },
     "X-Plasma-API": "declarativeappletscript",
