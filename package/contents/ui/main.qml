@@ -46,6 +46,8 @@ Item {
 
     property var pressHoldAction: plasmoid.configuration.pressHoldAction.split(",")
 
+    property bool enableDebug: plasmoid.configuration.enableDebug
+
     Layout.fillWidth: Plasmoid.configuration.expanding
     Layout.fillHeight: Plasmoid.configuration.expanding
 
@@ -156,7 +158,7 @@ Item {
     }
 
     function runAction(action) {
-        //console.log("RUNNING_ACTION:",action);
+        printLog `RUNNING_ACTION: ${action}`
         var actionNme = action[0]
         var component = action[1]
         if (actionNme != "Disabled") {
@@ -169,6 +171,18 @@ Item {
                 return
             }
             executable.exec('qdbus org.kde.kglobalaccel /component/'+component+' org.kde.kglobalaccel.Component.invokeShortcut '+'\"'+actionNme+'\"');
+        }
+    }
+
+    function printLog(strings, ...values) {
+        if (enableDebug) {
+            let str = 'PPSE: ';
+            strings.forEach((string, i) => {
+                str += string + (values[i] || '');
+            });
+            if (enableDebug) {
+                console.log(str);
+            }
         }
     }
 
@@ -246,9 +260,10 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
 
         // onEntered: {
-        //     console.log("MOUSE_2CLICK_ACTION:",doubleClickAction)
-        //     console.log("MOUSE_WHEEL_UP_ACTION:",mouseWheelActionUp)
-        //     console.log("MOUSE_WHEEL_DOWN_ACTION:",mouseWheelActionDown)
+        //     // printLog `MOUSE_2CLICK_ACTION: ${doubleClickAction}`
+        //     // printLog `MOUSE_WHEEL_UP_ACTION: ${mouseWheelActionUp}`
+        //     // printLog `MOUSE_WHEEL_DOWN_ACTION: ${mouseWheelActionDown}`
+        //     // printLog `printLog test ${12341}`
         // }
 
         onClicked: {
@@ -261,7 +276,7 @@ Item {
         }
 
         onDoubleClicked: {
-            console.log("DOUBLE CLICK");
+            printLog `DOUBLE CLICK`
             wasDoubleClicked = true
             runAction(doubleClickAction)
         }
@@ -272,19 +287,19 @@ Item {
             repeat: false
             onTriggered: {
                 if (!wasDoubleClicked) {
-                    //console.log("SINGLE CLICK")
+                    printLog `SINGLE CLICK`
                     var movementAbsX = Math.abs(movementX)
                     var movementAbsY = Math.abs(movementY)
                     if (movementAbsY < minMovement && movementAbsX < minMovement) {
                         if (mouseButton === Qt.MiddleButton) {
-                            //console.log("Middle button pressed")
+                            printLog `Middle button pressed`
                             runAction(middleClickAction)
                         } else {
-                            //console.log("Left button pressed")
+                            printLog `Left button pressed`
                             runAction(singleClickAction)
                         }
                     } else {
-                        //console.log("MOVED WHILE CLICKING IGNORED")
+                        printLog `MOVED WHILE CLICKING, IGNORED`
                         ;
                     }
                 }
@@ -293,10 +308,10 @@ Item {
 
         onWheel: {
             if (wheel.angleDelta.y > 0) {
-                //console.log("WHEEL UP");
+                printLog `WHEEL UP`
                 runAction(mouseWheelActionUp)
             } else {
-                //console.log("WHEEL DOWN");
+                printLog `WHEEL DOWN`
                 runAction(mouseWheelActionDown)
             }
         }
@@ -307,22 +322,22 @@ Item {
         }
 
         onReleased: {
-            //console.log("startY:",startY,"endY:",mouseY,"threshold:",root.height+10);
-            //console.log("startX:",startX,"endX:",mouseX,"threshold:",root.height+10);
+            printLog `startY: ${startY}, endY ${mouseY} threshold: ${root.height+10}`;
+            printLog `startX: ${startX}, "endX: ${mouseX} threshold: ${root.height+10}`
             movementY = mouseY - startY
             movementX = mouseX - startX
             var movementAbsX = Math.abs(movementX)
             var movementAbsY = Math.abs(movementY)
-            //console.log("Mov X:",movementX,"Mov Y:",movementY);
+            printLog `Mov X: ${movementX} Mov Y: ${movementY}`
             if (movementAbsY > movementAbsX && movementAbsY >= minMovement) {
                 // UP DOWN
                 if (movementY > 0) {
-                    //console.log("DRAG DOWN");
+                    printLog `DRAG DOWN`
                     runAction(mouseDragActionDown)
                     return
                 }
                 if (movementY < 0) {
-                    //console.log("DRAG UP");
+                    printLog `DRAG UP`
                     runAction(mouseDragActionUp)
                     return
                 }
@@ -331,12 +346,12 @@ Item {
             if (movementAbsX > movementAbsY && movementAbsX >= minMovement) {
                 // LEFT RIGHT
                 if (movementX > 0) {
-                    //console.log("DRAG RIGHT");
+                    printLog `DRAG LEFT`
                     runAction(mouseDragActionRight)
                     return
                 }
                 if (movementX < 0) {
-                    //console.log("DRAG LEFT");
+                    printLog `DRAG RIGHT`
                     runAction(mouseDragActionLeft)
                     return
                 }
@@ -344,7 +359,7 @@ Item {
         }
 
         onPressAndHold: {
-            //console.log("HOLD");
+            printLog `HOLD`
             runAction(pressHoldAction)
             return
         }
