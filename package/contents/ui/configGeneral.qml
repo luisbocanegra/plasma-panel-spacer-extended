@@ -2,34 +2,60 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15 as QQControls2
 import QtQuick.Controls 1.4 as QQCcontrols1
 import QtQuick.Layouts 1.15 as QQLayouts1
-import org.kde.kirigami 2.4 as Kirigami
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
 import "components" as Components
 
 
 QQLayouts1.ColumnLayout {
     id: root
-
+    // QQLayouts1.Layout.fillWidth: true
+    width: parent.width
     property alias cfg_singleClickAction: singleClick.configValue
+    property alias cfg_singleClickCommand: singleClick.commandValue
+
     property alias cfg_doubleClickAction: doubleClick.configValue
+    property alias cfg_doubleClickCommand: doubleClick.commandValue
+    
     property alias cfg_middleClickAction: middleClick.configValue
-    property alias cfg_mouseWheelActionUp: wheelUp.configValue
-    property alias cfg_mouseWheelActionDown: wheelDown.configValue
-    property alias cfg_mouseDragActionUp: dragUp.configValue
-    property alias cfg_mouseDragActionDown: dragDown.configValue
-    property alias cfg_mouseDragActionLeft: dragLeft.configValue
-    property alias cfg_mouseDragActionRight: dragRight.configValue
+    property alias cfg_middleClickCommand: middleClick.commandValue
+    
+    property alias cfg_mouseWheelUpAction: wheelUp.configValue
+    property alias cfg_mouseWheelUpCommand: wheelUp.commandValue
+
+    property alias cfg_mouseWheelDownAction: wheelDown.configValue
+    property alias cfg_mouseWheelDownCommand: wheelDown.commandValue
+
+    property alias cfg_mouseDragUpAction: dragUp.configValue
+    property alias cfg_mouseDragUpCommand: dragUp.commandValue
+
+    property alias cfg_mouseDragDownAction: dragDown.configValue
+    property alias cfg_mouseDragDownCommand: dragDown.commandValue
+
+    property alias cfg_mouseDragLeftAction: dragLeft.configValue
+    property alias cfg_mouseDragLeftCommand: dragLeft.commandValue
+
+    property alias cfg_mouseDragRightAction: dragRight.configValue
+    property alias cfg_mouseDragRightCommand: dragRight.commandValue
+
     property alias cfg_pressHoldAction: pressHold.configValue
+    property alias cfg_pressHoldCommand: pressHold.commandValue
 
     // TODO: Automate this to fetch available shortcuts
     // TODO: Probably some filtering/tagging for dangerous shortcuts
     ListModel {
-        id: windowActionsComboModel
+        id: actionsComboModel
         ListElement {
                 label: qsTr("Disabled")
                 ActionName: "Disabled"
-                component: "none"
+                component: "Disabled"
                 actionId: 0
+            }
+        ListElement {
+                label: qsTr("Custom Command")
+                ActionName: "Custom Command"
+                component: "custom_command"
+                actionId: 39
             }
         ListElement {
                 label: qsTr("Maximize active window")
@@ -264,98 +290,110 @@ QQLayouts1.ColumnLayout {
     signal configurationChanged
 
     Kirigami.FormLayout {
-        id: generalPage
         QQLayouts1.Layout.alignment: Qt.AlignTop
-        // wideMode: false
+        width: parent.width
+        id: generalPage
+        wideMode: false
 
-        Kirigami.Separator {
-            Kirigami.FormData.label: i18n("Actions")
-            Kirigami.FormData.isSection: true
+        // Custom separator
+        QQLayouts1.ColumnLayout {
+            QQLayouts1.Layout.fillWidth: true
+            
+            QQLayouts1.RowLayout {
+                QQLayouts1.Layout.fillWidth: true
+                QQLayouts1.Layout.preferredHeight: 20
+
+                Item { QQLayouts1.Layout.fillWidth: true }
+
+                QQControls2.Label {
+                    text: "Actions"
+                    font.bold: true
+                    font.pixelSize: PlasmaCore.Units.devicePixelRatio * 18
+                }
+
+                Item { QQLayouts1.Layout.fillWidth: true }
+            }
+            
+            Rectangle {
+                QQLayouts1.Layout.fillWidth: true
+                height: 1
+                color: Kirigami.ColorUtils.linearInterpolation(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.07)
+            }
         }
 
-        Components.MyComboBox {
+        Components.GroupedActions {
             id: singleClick
-            Kirigami.FormData.label: i18n("Single click:")
-            model: windowActionsComboModel
-            textRole: "label"
-            configName: "singleClickAction"
+            modelData: actionsComboModel
+            confInternalName: "singleClickAction"
+            sectionLabel: "Single Click"
         }
 
-        Components.MyComboBox {
+        Components.GroupedActions {
             id: doubleClick
-            Kirigami.FormData.label: i18n("Double click:")
-            model: windowActionsComboModel
-            textRole: "label"
-            configName: "doubleClickAction"
+            modelData: actionsComboModel
+            confInternalName: "doubleClickAction"
+            sectionLabel: "Double Click"
         }
 
-        Components.MyComboBox {
+        Components.GroupedActions {
             id: middleClick
-            Kirigami.FormData.label: i18n("Middle click:")
-            model: windowActionsComboModel
-            textRole: "label"
-            configName: "middleClickAction"
+            modelData: actionsComboModel
+            confInternalName: "middleClickAction"
+            sectionLabel: "Middle Click"
         }
 
-        Components.MyComboBox {
+
+        Components.GroupedActions {
             id: wheelUp
-            Kirigami.FormData.label: i18n("Wheel Up:")
-            model: windowActionsComboModel
-            textRole: "label"
-            configName: "mouseWheelActionUp"
+            modelData: actionsComboModel
+            confInternalName: "mouseWheelUpAction"
+            sectionLabel: "Wheel Up"
         }
 
-        Components.MyComboBox {
+
+        Components.GroupedActions {
             id: wheelDown
-            Kirigami.FormData.label: i18n("Wheel Down:")
-            model: windowActionsComboModel
-            textRole: "label"
-            configName: "mouseWheelActionDown"
+            modelData: actionsComboModel
+            confInternalName: "mouseWheelDownAction"
+            sectionLabel: "Wheel Down"
         }
 
-        Components.MyComboBox {
+
+        Components.GroupedActions {
             id: dragUp
-            Kirigami.FormData.label: i18n("Mouse drag up:")
-            model: windowActionsComboModel
-            textRole: "label"
-            configName: "mouseDragActionUp"
+            modelData: actionsComboModel
+            confInternalName: "mouseDragUpAction"
+            sectionLabel: "Drag Up"
         }
 
-        Components.MyComboBox {
+
+        Components.GroupedActions {
             id: dragDown
-            Kirigami.FormData.label: i18n("Mouse drag down:")
-            model: windowActionsComboModel
-            textRole: "label"
-            configName: "mouseDragActionDown"
+            modelData: actionsComboModel
+            confInternalName: "mouseDragDownAction"
+            sectionLabel: "Drag Down"
         }
 
-        Components.MyComboBox {
+
+        Components.GroupedActions {
             id: dragLeft
-            Kirigami.FormData.label: i18n("Mouse drag left:")
-            model: windowActionsComboModel
-            textRole: "label"
-            configName: "mouseDragActionLeft"
+            modelData: actionsComboModel
+            confInternalName: "mouseDragLeftAction"
+            sectionLabel: "Drag Left"
         }
 
-        Components.MyComboBox {
+        Components.GroupedActions {
             id: dragRight
-            Kirigami.FormData.label: i18n("Mouse drag right:")
-            model: windowActionsComboModel
-            textRole: "label"
-            configName: "mouseDragActionRight"
+            modelData: actionsComboModel
+            confInternalName: "mouseDragRightAction"
+            sectionLabel: "Drag Right"
         }
 
-        Components.MyComboBox {
+        Components.GroupedActions {
             id: pressHold
-            Kirigami.FormData.label: i18n("Long press:")
-            model: windowActionsComboModel
-            textRole: "label"
-            configName: "pressHoldAction"
+            modelData: actionsComboModel
+            confInternalName: "pressHoldAction"
+            sectionLabel: "Long press"
         }
     }
-    // Component.onCompleted: {
-    //     for (var i= 0; i < windowActionsComboModel.count; i++) {
-    //         console.log(windowActionsComboModel.get(i)["label"]);
-    //     }
-    // }
 }

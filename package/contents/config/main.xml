@@ -18,33 +18,74 @@
     <entry name="singleClickAction" type="String">
       <default>Overview,kwin</default>
     </entry>
+    <entry name="singleClickCommand" type="String">
+      <default>date="$(date -u)"; notify-send "Single Click" "$date"</default>
+    </entry>
+
     <entry name="doubleClickAction" type="String">
       <default>Window Maximize,kwin</default>
     </entry>
+    <entry name="doubleClickCommand" type="String">
+      <default>date="$(date -u)"; notify-send "Double Click" "$date"</default>
+    </entry>
+
+
     <entry name="middleClickAction" type="String">
       <default>Show Desktop,kwin</default>
     </entry>
-    <entry name="mouseWheelActionUp" type="String">
+    <entry name="middleClickCommand" type="String">
+      <default>date="$(date -u)"; notify-send "Middle Click" "$date"</default>
+    </entry>
+
+    <entry name="mouseWheelUpAction" type="String">
       <default>Switch to Previous Desktop,kwin</default>
     </entry>
-    <entry name="mouseWheelActionDown" type="String">
+    <entry name="mouseWheelUpCommand" type="String">
+      <default>date="$(date -u)"; notify-send "Wheel Up" "$date"</default>
+    </entry>
+
+    <entry name="mouseWheelDownAction" type="String">
       <default>Switch to Next Desktop,kwin</default>
     </entry>
-    <entry name="mouseDragActionUp" type="String">
+    <entry name="mouseWheelDownCommand" type="String">
+      <default>date="$(date -u)"; notify-send "Wheel Down" "$date"</default>
+    </entry>
+
+    <entry name="mouseDragUpAction" type="String">
       <default>Window Move,kwin</default>
     </entry>
-    <entry name="mouseDragActionDown" type="String">
+    <entry name="mouseDragUpCommand" type="String">
+      <default>date="$(date -u)"; notify-send "Drag Up" "$date"</default>
+    </entry>
+
+    <entry name="mouseDragDownAction" type="String">
       <default>Window Move,kwin</default>
     </entry>
-    <entry name="mouseDragActionLeft" type="String">
+    <entry name="mouseDragDownCommand" type="String">
+      <default>date="$(date -u)"; notify-send "Drag Down" "$date"</default>
+    </entry>
+
+    <entry name="mouseDragLeftAction" type="String">
       <default>Window One Desktop to the Left,kwin</default>
     </entry>
-    <entry name="mouseDragActionRight" type="String">
+    <entry name="mouseDragLeftCommand" type="String">
+      <default>date="$(date -u)"; notify-send "Drag Left" "$date"</default>
+    </entry>
+
+    <entry name="mouseDragRightAction" type="String">
       <default>Window One Desktop to the Right,kwin</default>
     </entry>
+    <entry name="mouseDragRightCommand" type="String">
+      <default>date="$(date -u)"; notify-send "Drag Right" "$date"</default>
+    </entry>
+
     <entry name="pressHoldAction" type="String">
       <default>ExposeAll,kwin</default>
     </entry>
+    <entry name="pressHoldActionCommand" type="String">
+      <default>date="$(date -u)"; notify-send "Long Press" "$date"</default>
+    </entry>
+
     <entry name="enableDebug" type="Bool">
       <default>false</default>
   </entry>

@@ -25,26 +25,37 @@ Item {
     property int movementY: 0
     property bool wasDoubleClicked: false
     property int minMovement: horizontal ? root.height+10 : root.width+10
-    property var singleClickAction: plasmoid.configuration.singleClickAction.split(",")
     property var mouseButton: undefined
 
+    property var singleClickAction: plasmoid.configuration.singleClickAction.split(",")
+    property var singleClickCommand: plasmoid.configuration.singleClickCommand
+
     property var doubleClickAction: plasmoid.configuration.doubleClickAction.split(",")
+    property var doubleClickCommand: plasmoid.configuration.doubleClickCommand
 
     property var middleClickAction: plasmoid.configuration.middleClickAction.split(",")
+    property var middleClickCommand: plasmoid.configuration.middleClickCommand
 
-    property var mouseWheelActionUp: plasmoid.configuration.mouseWheelActionUp.split(",")
+    property var mouseWheelUpAction: plasmoid.configuration.mouseWheelUpAction.split(",")
+    property var mouseWheelUpCommand: plasmoid.configuration.mouseWheelUpCommand
 
-    property var mouseWheelActionDown: plasmoid.configuration.mouseWheelActionDown.split(",")
+    property var mouseWheelDownAction: plasmoid.configuration.mouseWheelDownAction.split(",")
+    property var mouseWheelDownCommand: plasmoid.configuration.mouseWheelDownCommand
 
-    property var mouseDragActionDown: plasmoid.configuration.mouseDragActionDown.split(",")
+    property var mouseDragDownAction: plasmoid.configuration.mouseDragDownAction.split(",")
+    property var mouseDragDownCommand: plasmoid.configuration.mouseDragDownCommand
 
-    property var mouseDragActionUp: plasmoid.configuration.mouseDragActionUp.split(",")
+    property var mouseDragUpAction: plasmoid.configuration.mouseDragUpAction.split(",")
+    property var mouseDragUpCommand: plasmoid.configuration.mouseDragUpCommand
 
-    property var mouseDragActionLeft: plasmoid.configuration.mouseDragActionLeft.split(",")
+    property var mouseDragLeftAction: plasmoid.configuration.mouseDragLeftAction.split(",")
+    property var mouseDragLeftCommand: plasmoid.configuration.mouseDragLeftCommand
 
-    property var mouseDragActionRight: plasmoid.configuration.mouseDragActionRight.split(",")
+    property var mouseDragRightAction: plasmoid.configuration.mouseDragRightAction.split(",")
+    property var mouseDragRightCommand: plasmoid.configuration.mouseDragRightCommand
 
     property var pressHoldAction: plasmoid.configuration.pressHoldAction.split(",")
+    property var pressHoldCommand: plasmoid.configuration.pressHoldCommand
 
     property bool enableDebug: plasmoid.configuration.enableDebug
 
@@ -157,11 +168,17 @@ Item {
         }
     }
 
-    function runAction(action) {
+    function runAction(action,command) {
         printLog `RUNNING_ACTION: ${action}`
         var actionNme = action[0]
         var component = action[1]
         if (actionNme != "Disabled") {
+            // custom command
+            if (component == "custom_command") {
+                executable.exec(command.split('\n').join(';'));
+                return
+            }
+
             if (actionNme == "Window Maximize Only"){
                 setMaximized(true)
                 return
@@ -278,7 +295,7 @@ Item {
         onDoubleClicked: {
             printLog `DOUBLE CLICK`
             wasDoubleClicked = true
-            runAction(doubleClickAction)
+            runAction(doubleClickAction,doubleClickCommand)
         }
 
         Timer {
@@ -293,10 +310,10 @@ Item {
                     if (movementAbsY < minMovement && movementAbsX < minMovement) {
                         if (mouseButton === Qt.MiddleButton) {
                             printLog `Middle button pressed`
-                            runAction(middleClickAction)
+                            runAction(middleClickAction,middleClickCommand)
                         } else {
                             printLog `Left button pressed`
-                            runAction(singleClickAction)
+                            runAction(singleClickAction,singleClickCommand)
                         }
                     } else {
                         printLog `MOVED WHILE CLICKING, IGNORED`
@@ -309,10 +326,10 @@ Item {
         onWheel: {
             if (wheel.angleDelta.y > 0) {
                 printLog `WHEEL UP`
-                runAction(mouseWheelActionUp)
+                runAction(mouseWheelUpAction,mouseWheelUpCommand)
             } else {
                 printLog `WHEEL DOWN`
-                runAction(mouseWheelActionDown)
+                runAction(mouseWheelDownAction,mouseWheelDownCommand)
             }
         }
 
@@ -333,12 +350,12 @@ Item {
                 // UP DOWN
                 if (movementY > 0) {
                     printLog `DRAG DOWN`
-                    runAction(mouseDragActionDown)
+                    runAction(mouseDragDownAction,mouseDragDownCommand)
                     return
                 }
                 if (movementY < 0) {
                     printLog `DRAG UP`
-                    runAction(mouseDragActionUp)
+                    runAction(mouseDragUpAction,mouseDragUpCommand)
                     return
                 }
             }
@@ -347,12 +364,12 @@ Item {
                 // LEFT RIGHT
                 if (movementX > 0) {
                     printLog `DRAG LEFT`
-                    runAction(mouseDragActionRight)
+                    runAction(mouseDragRightAction,mouseDragRightCommand)
                     return
                 }
                 if (movementX < 0) {
                     printLog `DRAG RIGHT`
-                    runAction(mouseDragActionLeft)
+                    runAction(mouseDragLeftAction,mouseDragLeftCommand)
                     return
                 }
             }
@@ -360,7 +377,7 @@ Item {
 
         onPressAndHold: {
             printLog `HOLD`
-            runAction(pressHoldAction)
+            runAction(pressHoldAction,pressHoldCommand)
             return
         }
     }

@@ -8,11 +8,11 @@ ComboBox {
     property string configName: ""
 
     onCurrentIndexChanged: {
-        // Update the configValue property
         configValue = model.get(currentIndex)["ActionName"] + "," + model.get(currentIndex)["component"];
     }
 
     Component.onCompleted: {
+        // console.log("MyCombobox got: model",model.get(0)["ActionName"],"configName:",configName, plasmoid.configuration[configName].split(",")[0])
         // Initialize the currentIndex from the config
         var index = 0
         for (var i= 0; i < model.count; i++) {
