@@ -175,7 +175,13 @@ Item {
         if (actionNme != "Disabled") {
             // custom command
             if (component == "custom_command") {
-                executable.exec(command.split('\n').join(';'));
+                var commandFormatted = ""
+                var commandLines = command.split('\n')
+                for (let i=0;i<commandLines.length;i++){
+                    commandFormatted += commandLines[i] + (commandLines[i].endsWith(";")?" ":"; ")
+                }
+                printLog `RUNNING_CUSTOM_COMMAND: ${command}`
+                executable.exec(commandFormatted);
                 return
             }
 
@@ -187,7 +193,9 @@ Item {
                 setMaximized(false)
                 return
             }
-            executable.exec('qdbus org.kde.kglobalaccel /component/'+component+' org.kde.kglobalaccel.Component.invokeShortcut '+'\"'+actionNme+'\"');
+            var shortcutCommand = 'qdbus org.kde.kglobalaccel /component/'+component+' org.kde.kglobalaccel.Component.invokeShortcut '+'\"'+actionNme+'\"'
+            printLog `RUNNING_SHORTCUT_COMMAND: ${shortcutCommand}`
+            executable.exec(shortcutCommand);
         }
     }
 

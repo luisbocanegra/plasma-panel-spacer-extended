@@ -21,7 +21,7 @@ QQLayouts1.ColumnLayout {
         // there is probably a simpler way or something I've missed...
         id: internalValue
         property string value:""
-        onValueChanged: console.log("internal value changed to:",value)
+        // onValueChanged: console.log("internal value changed to:",value)
         Component.onCompleted: {
             commandTextArea.text = value
         }
