@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15 as QQControls2
 import QtQuick.Layouts 1.15 as QQLayouts1
 import org.kde.kirigami 2.4 as Kirigami
 // import org.kde.kirigami 2.20 as Kirigami
+import QtQuick.Dialogs 1.3
 import "."
 
 QQLayouts1.ColumnLayout {
@@ -81,16 +82,33 @@ QQLayouts1.ColumnLayout {
 
         QQControls2.Button {
             id:btnCopy
+            icon.name: "edit-copy"
             onClicked: {
                 commandTextArea.selectAll()
                 commandTextArea.copy()
                 }
-            icon.name: "edit-copy"
         }
 
         QQControls2.Button {
-            onClicked: commandTextArea.text = ""
-            icon.name: "document-cleanup"
+            id: btnFile
+            icon.name: "filenew"
+            QQControls2.ToolTip.delay: 1000
+            QQControls2.ToolTip.visible: hovered
+            QQControls2.ToolTip.text: "Pick a executable file"
+            onClicked: {
+                fileDialog.open()
+            }
         }
+
+        QQControls2.Button {
+            id:btnClean
+            icon.name: "document-cleanup"
+            onClicked: commandTextArea.text = ""
+        }
+    }
+
+    FileDialog {
+        id: fileDialog
+        onAccepted: commandTextArea.text = fileDialog.fileUrl.toString().replace("file://","")
     }
 }
