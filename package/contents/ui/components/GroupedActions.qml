@@ -91,7 +91,7 @@ QQLayouts1.ColumnLayout {
 
         QQControls2.Button {
             id: btnFile
-            icon.name: "filenew"
+            icon.name: "document-open"
             QQControls2.ToolTip.delay: 1000
             QQControls2.ToolTip.visible: hovered
             QQControls2.ToolTip.text: "Pick a executable file"

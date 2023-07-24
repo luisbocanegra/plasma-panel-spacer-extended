@@ -9,7 +9,7 @@ ConfigModel {
     }
     ConfigCategory {
         name: i18n("Troubleshoot")
-        icon: "logview"
+        icon: "tools-report-bug"
         source: "configDebugging.qml"
     }
 }
