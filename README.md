@@ -26,7 +26,7 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
   * [x] Mouse drag (four axis)
     * [ ] Min track distance
   * [x] Long press
-    * [ ] Hold hold duration
+    * [ ] Hold duration
 * [x] Lots of actions from kwin shortcuts
 
   <details>
@@ -73,12 +73,14 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
   * Kill Window
   </details>
 
-* [x] Behavior configuration per widget
-  * [ ] global if possible??
+* [x] Run custom commands
+* [ ] Sync wconfiguration across widget instances (if possible??)
 * [ ] Better default config
-* [ ] Automatically detect all avilable org.kde.kglobalaccel component shortcuts
+* [ ] Advanced mode to detect all avilable org.kde.kglobalaccel component shortcuts
 * [ ] Quick disable/reset defaults
 * [ ] Popup showing shortcut bein run
+* [ ] Panel visual feedback
+* [ ] Launch Applications???
 
 ### Default actions
 
