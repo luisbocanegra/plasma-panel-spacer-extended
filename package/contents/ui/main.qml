@@ -10,6 +10,7 @@ import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.plasmoid 2.0
 import org.kde.kirigami 2.10 as Kirigami
 import org.kde.taskmanager 0.1 as TaskManager
+import org.kde.plasma.private.quicklaunch 1.0
 
 Item {
     id: root
@@ -29,33 +30,43 @@ Item {
 
     property var singleClickAction: plasmoid.configuration.singleClickAction.split(",")
     property var singleClickCommand: plasmoid.configuration.singleClickCommand
+    property var singleClickAppUrl: plasmoid.configuration.singleClickAppUrl
 
     property var doubleClickAction: plasmoid.configuration.doubleClickAction.split(",")
     property var doubleClickCommand: plasmoid.configuration.doubleClickCommand
+    property var doubleClickAppUrl: plasmoid.configuration.doubleClickAppUrl
 
     property var middleClickAction: plasmoid.configuration.middleClickAction.split(",")
     property var middleClickCommand: plasmoid.configuration.middleClickCommand
+    property var middleClickAppUrl: plasmoid.configuration.middleClickAppUrl
 
     property var mouseWheelUpAction: plasmoid.configuration.mouseWheelUpAction.split(",")
     property var mouseWheelUpCommand: plasmoid.configuration.mouseWheelUpCommand
+    property var mouseWheelUpAppUrl: plasmoid.configuration.mouseWheelUpAppUrl
 
     property var mouseWheelDownAction: plasmoid.configuration.mouseWheelDownAction.split(",")
     property var mouseWheelDownCommand: plasmoid.configuration.mouseWheelDownCommand
+    property var mouseWheelDownAppUrl: plasmoid.configuration.mouseWheelDownAppUrl
 
     property var mouseDragDownAction: plasmoid.configuration.mouseDragDownAction.split(",")
     property var mouseDragDownCommand: plasmoid.configuration.mouseDragDownCommand
+    property var mouseDragDownAppUrl: plasmoid.configuration.mouseDragDownAppUrl
 
     property var mouseDragUpAction: plasmoid.configuration.mouseDragUpAction.split(",")
     property var mouseDragUpCommand: plasmoid.configuration.mouseDragUpCommand
+    property var mouseDragUpAppUrl: plasmoid.configuration.mouseDragUpAppUrl
 
     property var mouseDragLeftAction: plasmoid.configuration.mouseDragLeftAction.split(",")
     property var mouseDragLeftCommand: plasmoid.configuration.mouseDragLeftCommand
+    property var mouseDragLeftAppUrl: plasmoid.configuration.mouseDragLeftAppUrl
 
     property var mouseDragRightAction: plasmoid.configuration.mouseDragRightAction.split(",")
     property var mouseDragRightCommand: plasmoid.configuration.mouseDragRightCommand
+    property var mouseDragRightAppUrl: plasmoid.configuration.mouseDragRightAppUrl
 
     property var pressHoldAction: plasmoid.configuration.pressHoldAction.split(",")
     property var pressHoldCommand: plasmoid.configuration.pressHoldCommand
+    property var pressHoldAppUrl: plasmoid.configuration.pressHoldAppUrl
 
     property bool enableDebug: plasmoid.configuration.enableDebug
 
@@ -168,7 +179,11 @@ Item {
         }
     }
 
-    function runAction(action,command) {
+    Logic {
+        id: logic
+    }
+
+    function runAction(action,command,application) {
         printLog `RUNNING_ACTION: ${action}`
         var actionNme = action[0]
         var component = action[1]
@@ -182,6 +197,14 @@ Item {
                 }
                 printLog `RUNNING_CUSTOM_COMMAND: ${command}`
                 executable.exec(commandFormatted);
+                return
+            }
+
+            if (component == "launch_application"){
+                if (application !== "") {
+                    printLog `LAUNCHING_APPLICATION_URL: ${application}`
+                    logic.openUrl(application);
+                }
                 return
             }
 
@@ -303,7 +326,7 @@ Item {
         onDoubleClicked: {
             printLog `DOUBLE CLICK`
             wasDoubleClicked = true
-            runAction(doubleClickAction,doubleClickCommand)
+            runAction(doubleClickAction,doubleClickCommand,doubleClickAppUrl)
         }
 
         Timer {
@@ -318,10 +341,10 @@ Item {
                     if (movementAbsY < minMovement && movementAbsX < minMovement) {
                         if (mouseButton === Qt.MiddleButton) {
                             printLog `Middle button pressed`
-                            runAction(middleClickAction,middleClickCommand)
+                            runAction(middleClickAction,middleClickCommand,middleClickAppUrl)
                         } else {
                             printLog `Left button pressed`
-                            runAction(singleClickAction,singleClickCommand)
+                            runAction(singleClickAction,singleClickCommand,singleClickAppUrl)
                         }
                     } else {
                         printLog `MOVED WHILE CLICKING, IGNORED`
@@ -334,10 +357,10 @@ Item {
         onWheel: {
             if (wheel.angleDelta.y > 0) {
                 printLog `WHEEL UP`
-                runAction(mouseWheelUpAction,mouseWheelUpCommand)
+                runAction(mouseWheelUpAction,mouseWheelUpCommand,mouseWheelUpAppUrl)
             } else {
                 printLog `WHEEL DOWN`
-                runAction(mouseWheelDownAction,mouseWheelDownCommand)
+                runAction(mouseWheelDownAction,mouseWheelDownCommand,mouseWheelDownAppUrl)
             }
         }
 
@@ -358,12 +381,12 @@ Item {
                 // UP DOWN
                 if (movementY > 0) {
                     printLog `DRAG DOWN`
-                    runAction(mouseDragDownAction,mouseDragDownCommand)
+                    runAction(mouseDragDownAction,mouseDragDownCommand,mouseDragDownAppUrl)
                     return
                 }
                 if (movementY < 0) {
                     printLog `DRAG UP`
-                    runAction(mouseDragUpAction,mouseDragUpCommand)
+                    runAction(mouseDragUpAction,mouseDragUpCommand,mouseDragUpAppUrl)
                     return
                 }
             }
@@ -372,12 +395,12 @@ Item {
                 // LEFT RIGHT
                 if (movementX > 0) {
                     printLog `DRAG LEFT`
-                    runAction(mouseDragRightAction,mouseDragRightCommand)
+                    runAction(mouseDragRightAction,mouseDragRightCommand,mouseDragRightAppUrl)
                     return
                 }
                 if (movementX < 0) {
                     printLog `DRAG RIGHT`
-                    runAction(mouseDragLeftAction,mouseDragLeftCommand)
+                    runAction(mouseDragLeftAction,mouseDragLeftCommand,mouseDragLeftAppUrl)
                     return
                 }
             }
@@ -385,7 +408,7 @@ Item {
 
         onPressAndHold: {
             printLog `HOLD`
-            runAction(pressHoldAction,pressHoldCommand)
+            runAction(pressHoldAction,pressHoldCommand,pressHoldAppUrl)
             return
         }
     }
