@@ -13,33 +13,43 @@ QQLayouts1.ColumnLayout {
     width: parent.width
     property alias cfg_singleClickAction: singleClick.configValue
     property alias cfg_singleClickCommand: singleClick.commandValue
+    property alias cfg_singleClickAppUrl: singleClick.applicationUrlValue
 
     property alias cfg_doubleClickAction: doubleClick.configValue
     property alias cfg_doubleClickCommand: doubleClick.commandValue
+    property alias cfg_doubleClickAppUrl: doubleClick.applicationUrlValue
     
     property alias cfg_middleClickAction: middleClick.configValue
     property alias cfg_middleClickCommand: middleClick.commandValue
+    property alias cfg_middleClickAppUrl: middleClick.applicationUrlValue
     
     property alias cfg_mouseWheelUpAction: wheelUp.configValue
     property alias cfg_mouseWheelUpCommand: wheelUp.commandValue
+    property alias cfg_mouseWheelUpAppUrl: wheelUp.applicationUrlValue
 
     property alias cfg_mouseWheelDownAction: wheelDown.configValue
     property alias cfg_mouseWheelDownCommand: wheelDown.commandValue
+    property alias cfg_mouseWheelDownAppUrl: wheelDown.applicationUrlValue
 
     property alias cfg_mouseDragUpAction: dragUp.configValue
     property alias cfg_mouseDragUpCommand: dragUp.commandValue
+    property alias cfg_mouseDragUpAppUrl: dragUp.applicationUrlValue
 
     property alias cfg_mouseDragDownAction: dragDown.configValue
     property alias cfg_mouseDragDownCommand: dragDown.commandValue
+    property alias cfg_mouseDragDownAppUrl: dragDown.applicationUrlValue
 
     property alias cfg_mouseDragLeftAction: dragLeft.configValue
     property alias cfg_mouseDragLeftCommand: dragLeft.commandValue
+    property alias cfg_mouseDragLeftAppUrl: dragLeft.applicationUrlValue
 
     property alias cfg_mouseDragRightAction: dragRight.configValue
     property alias cfg_mouseDragRightCommand: dragRight.commandValue
+    property alias cfg_mouseDragRightAppUrl: dragRight.applicationUrlValue
 
     property alias cfg_pressHoldAction: pressHold.configValue
     property alias cfg_pressHoldCommand: pressHold.commandValue
+    property alias cfg_pressHoldAppUrl: pressHold.applicationUrlValue
 
     // TODO: Automate this to fetch available shortcuts
     // TODO: Probably some filtering/tagging for dangerous shortcuts
@@ -55,6 +65,12 @@ QQLayouts1.ColumnLayout {
                 label: qsTr("Custom Command")
                 ActionName: "Custom Command"
                 component: "custom_command"
+                actionId: 39
+            }
+        ListElement {
+                label: qsTr("Launch Application/URL")
+                ActionName: "Launch Application"
+                component: "launch_application"
                 actionId: 39
             }
         ListElement {
@@ -291,7 +307,8 @@ QQLayouts1.ColumnLayout {
 
     Kirigami.FormLayout {
         QQLayouts1.Layout.alignment: Qt.AlignTop
-        width: parent.width
+        // width: parent.width
+        // height: parent.height
         id: generalPage
         wideMode: false
 
@@ -300,8 +317,8 @@ QQLayouts1.ColumnLayout {
             QQLayouts1.Layout.fillWidth: true
             
             QQLayouts1.RowLayout {
-                QQLayouts1.Layout.fillWidth: true
-                QQLayouts1.Layout.preferredHeight: 20
+                // QQLayouts1.Layout.fillWidth: true
+                // QQLayouts1.Layout.preferredHeight: 20
 
                 Item { QQLayouts1.Layout.fillWidth: true }
 
