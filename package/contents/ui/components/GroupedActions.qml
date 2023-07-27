@@ -5,7 +5,6 @@ import QtQuick.Layouts 1.15 as QQLayouts1
 import org.kde.kirigami 2.20 as Kirigami
 import QtQuick.Dialogs 1.3
 import org.kde.plasma.private.quicklaunch 1.0
-import org.kde.plasma.core 2.0 as PlasmaCore
 import "."
 
 QQLayouts1.ColumnLayout {
@@ -165,19 +164,9 @@ QQLayouts1.ColumnLayout {
             }
 
             Component.onCompleted: {
-                // if (applicationUrlValue !== ""){
-                //     var launcher = logic.launcherData(applicationUrlValue)
-                //     text = launcher.applicationName + " - Tap to change"
-                //     icon.name = launcher.iconName || "fork"
-                // } else {
-                //     text = "Choose an Application"
-                //     icon.name = "application-default-symbolic"
-                // }
                 updateAppButton(applicationUrlValue)
                 hiddenAppText.text = applicationUrlValue
             }
-
-
         }
 
         QQControls2.TextArea {
@@ -233,7 +222,7 @@ QQLayouts1.ColumnLayout {
                 btnAddLauncher.applicationUrl = ""
                 btnAddLauncher.text = "Choose an Application"
                 hiddenAppText.text=""
-                }
+            }
         }
     }
 
@@ -246,11 +235,13 @@ QQLayouts1.ColumnLayout {
         id: fileDialogUrl
         onAccepted: {
             // btnAddLauncher.applicationUrl = fileDialogExec.fileUrl.toString()
-                // updateAppButton(applicationUrlValue)
-                hiddenAppText.text = fileDialogUrl.fileUrl.toString()
+            // updateAppButton(applicationUrlValue)
+            hiddenAppText.text = fileDialogUrl.fileUrl.toString()
         }
     }
     Item { implicitHeight: 4}
+
+    // Separator
     Rectangle {
         QQLayouts1.Layout.fillWidth: true
         height: 1
