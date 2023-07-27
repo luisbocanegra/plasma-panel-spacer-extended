@@ -69,6 +69,7 @@ Item {
     property var pressHoldAppUrl: plasmoid.configuration.pressHoldAppUrl
 
     property bool enableDebug: plasmoid.configuration.enableDebug
+    property bool showTooltip: plasmoid.configuration.showTooltip
 
     Layout.fillWidth: Plasmoid.configuration.expanding
     Layout.fillHeight: Plasmoid.configuration.expanding
@@ -302,17 +303,12 @@ Item {
 
     MouseArea {
         anchors.fill: parent
-
         hoverEnabled: true
-
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
 
-        // onEntered: {
-        //     // printLog `MOUSE_2CLICK_ACTION: ${doubleClickAction}`
-        //     // printLog `MOUSE_WHEEL_UP_ACTION: ${mouseWheelActionUp}`
-        //     // printLog `MOUSE_WHEEL_DOWN_ACTION: ${mouseWheelActionDown}`
-        //     // printLog `printLog test ${12341}`
-        // }
+        onEntered: {
+            printLog `Entered MouseArea`
+        }
 
         onClicked: {
             // ignore id moved
@@ -407,9 +403,15 @@ Item {
         }
 
         onPressAndHold: {
-            printLog `HOLD`
+            printLog `LONG PRESS`
             runAction(pressHoldAction,pressHoldCommand,pressHoldAppUrl)
             return
         }
+    }
+
+    PlasmaCore.ToolTipArea {
+        anchors.fill: parent
+        mainItem: Tooltip {}
+        visible: showTooltip
     }
 }
