@@ -9,7 +9,6 @@ import "components" as Components
 
 QQLayouts1.ColumnLayout {
     id: root
-    // QQLayouts1.Layout.fillWidth: true
     width: parent.width
     property alias cfg_singleClickAction: singleClick.configValue
     property alias cfg_singleClickCommand: singleClick.commandValue
@@ -69,7 +68,7 @@ QQLayouts1.ColumnLayout {
             }
         ListElement {
                 label: qsTr("Launch Application/URL")
-                ActionName: "Launch Application"
+                ActionName: "Launch Application/URL"
                 component: "launch_application"
                 actionId: 39
             }
@@ -307,36 +306,8 @@ QQLayouts1.ColumnLayout {
 
     Kirigami.FormLayout {
         QQLayouts1.Layout.alignment: Qt.AlignTop
-        // width: parent.width
-        // height: parent.height
         id: generalPage
         wideMode: false
-
-        // Custom separator
-        QQLayouts1.ColumnLayout {
-            QQLayouts1.Layout.fillWidth: true
-            
-            QQLayouts1.RowLayout {
-                // QQLayouts1.Layout.fillWidth: true
-                // QQLayouts1.Layout.preferredHeight: 20
-
-                Item { QQLayouts1.Layout.fillWidth: true }
-
-                QQControls2.Label {
-                    text: "Actions"
-                    font.bold: true
-                    font.pixelSize: PlasmaCore.Units.devicePixelRatio * 18
-                }
-
-                Item { QQLayouts1.Layout.fillWidth: true }
-            }
-            
-            Rectangle {
-                QQLayouts1.Layout.fillWidth: true
-                height: 1
-                color: Kirigami.ColorUtils.linearInterpolation(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.07)
-            }
-        }
 
         Components.GroupedActions {
             id: singleClick

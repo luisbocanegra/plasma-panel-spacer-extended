@@ -119,7 +119,11 @@
 
     <entry name="enableDebug" type="Bool">
       <default>false</default>
-  </entry>
+    </entry>
+
+    <entry name="showTooltip" type="Bool">
+      <default>true</default>
+    </entry>
   </group>
 
 </kcfg>
