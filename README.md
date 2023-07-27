@@ -8,12 +8,8 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 
 <details>
     <summary>Screenshots</summary>
-<img src="https://github.com/luisbocanegra/plasma-panel-spacer-extended/assets/15076387/99e684d5-4817-4a57-aa21-1d7c804e4ff8" alt="widget actions config">
+<img src="https://github.com/luisbocanegra/plasma-panel-spacer-extended/assets/15076387/3767c2b8-cf27-4034-a08a-a994fb68f2c3" alt="widget actions config">
 </details>
-
-## Some notes
-
-* Tested only with Wayland session
 
 ## Current and *planned* features
 
@@ -74,13 +70,13 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
   </details>
 
 * [x] Run custom commands
+* [x] Launch Applications/Urls/Files
 * [ ] Sync wconfiguration across widget instances (if possible??)
 * [ ] Better default config
 * [ ] Advanced mode to detect all avilable org.kde.kglobalaccel component shortcuts
 * [ ] Quick disable/reset defaults
-* [ ] Popup showing shortcut bein run
+* [ ] Popup/Notification showing shortcut being run
 * [ ] Panel visual feedback
-* [ ] Launch Applications???
 
 ### Default actions
 
@@ -125,3 +121,4 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 * Based on (but not forked from) [plasma-workspace/applets/panelspacer](https://invent.kde.org/plasma/plasma-workspace/-/tree/master/applets/panelspacer)
 * [plasma-active-window-control](https://invent.kde.org/plasma/plasma-active-window-control)
 * [plasmoid-spacer-as-pager](https://github.com/eatsu/plasmoid-spacer-as-pager) for the changes that eliminate the need of built code
+* [kdeplasma-addons/applets/quicklaunch](https://invent.kde.org/plasma/kdeplasma-addons/-/tree/master/applets/quicklaunch) for the implementation of the Application Chooser and Launcher this project makes use of
