@@ -1,13 +1,11 @@
 import QtQuick 2.15
-import QtQuick.Controls 2.15 as QQControls2
-import QtQuick.Controls 1.4 as QQCcontrols1
-import QtQuick.Layouts 1.15 as QQLayouts1
+import QtQuick.Layouts 1.15
 import org.kde.kirigami 2.20 as Kirigami
 import org.kde.plasma.core 2.0 as PlasmaCore
 import "components" as Components
 
 
-QQLayouts1.ColumnLayout {
+ColumnLayout {
     id: root
     width: parent.width
     property alias cfg_singleClickAction: singleClick.configValue
@@ -305,7 +303,7 @@ QQLayouts1.ColumnLayout {
     signal configurationChanged
 
     Kirigami.FormLayout {
-        QQLayouts1.Layout.alignment: Qt.AlignTop
+        Layout.alignment: Qt.AlignTop
         id: generalPage
         wideMode: false
 

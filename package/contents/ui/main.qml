@@ -4,15 +4,16 @@
     SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
 
-import QtQuick 2.15
-import QtQuick.Layouts 1.1
-import org.kde.plasma.core 2.0 as PlasmaCore
+import QtQuick
+import QtQuick.Layouts
+import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid 2.0
-import org.kde.kirigami 2.10 as Kirigami
+import org.kde.kirigami 2.20 as Kirigami
 import org.kde.taskmanager 0.1 as TaskManager
 import org.kde.plasma.private.quicklaunch 1.0
+import org.kde.plasma.plasma5support 2.0 as P5Support
 
-Item {
+PlasmoidItem {
     id: root
 
     property bool horizontal: Plasmoid.formFactor !== PlasmaCore.Types.Vertical
@@ -83,11 +84,7 @@ Item {
         ? 0
         : (Plasmoid.configuration.expanding ? optimalSize : Plasmoid.configuration.length)
 
-    Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
-
-    function action_expanding() {
-        Plasmoid.configuration.expanding = Plasmoid.action("expanding").checked;
-    }
+    preferredRepresentation: fullRepresentation
 
     // Toggle maximize with mouse wheel/left click from https://invent.kde.org/plasma/plasma-active-window-control
     //
@@ -98,7 +95,7 @@ Item {
         sortMode: TaskManager.TasksModel.SortVirtualDesktop
         groupMode: TaskManager.TasksModel.GroupDisabled
 
-        screenGeometry: plasmoid.screenGeometry
+        // screenGeometry: plasmoid.screenGeometry
         filterByScreen: true //plasmoid.configuration.showForCurrentScreenOnly
 
         onActiveTaskChanged: {
@@ -169,7 +166,7 @@ Item {
         }
     }
 
-    PlasmaCore.DataSource {
+    P5Support.DataSource {
         id: executable
         engine: "executable"
         connectedSources: []
@@ -247,14 +244,16 @@ Item {
         return null;
     }
 
-    Component.onCompleted: {
-        Plasmoid.setAction("expanding", i18n("Set flexible size"));
-        var action = Plasmoid.action("expanding");
-        action.checkable = true;
-        action.checked = Qt.binding(function() {return Plasmoid.configuration.expanding});
-
-        //Plasmoid.removeAction("configure");
-    }
+    Plasmoid.contextualActions: [
+        PlasmaCore.Action {
+            text: i18n("Set flexible size")
+            checkable: true
+            checked: Plasmoid.configuration.expanding
+            onTriggered: checked => {
+                Plasmoid.configuration.expanding = checked;
+            }
+        }
+    ]
 
     property real optimalSize: {
         if (!panelLayout || !Plasmoid.configuration.expanding) return Plasmoid.configuration.length;
@@ -286,14 +285,14 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: PlasmaCore.Theme.highlightColor
+        color: Kirigami.Theme.highlightColor
         opacity: Plasmoid.editMode ? 1 : 0
         visible: Plasmoid.editMode || animator.running
 
         Behavior on opacity {
             NumberAnimation {
                 id: animator
-                duration: PlasmaCore.Units.longDuration
+                duration: Kirigami.Units.longDuration
                 // easing.type is updated after animation starts
                 easing.type: Plasmoid.editMode ? Easing.InCubic : Easing.OutCubic
             }
