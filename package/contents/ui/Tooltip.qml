@@ -1,10 +1,10 @@
-import QtQuick 2.0
-import QtQuick.Layouts 1.1
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.components 3.0 as PlasmaComponents3
-import org.kde.plasma.extras 2.0 as PlasmaExtras
-import org.kde.plasma.plasmoid 2.0
-import org.kde.kirigami 2.20 as Kirigami
+import QtQuick
+import QtQuick.Layouts
+import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.components as PlasmaComponents
+import org.kde.plasma.extras as PlasmaExtras
+import org.kde.plasma.plasmoid
+import org.kde.kirigami as Kirigami
 
 ColumnLayout {
 
@@ -66,14 +66,14 @@ ColumnLayout {
                 ]
             delegate: ColumnLayout {
 
-                PlasmaComponents3.Label {
+                PlasmaComponents.Label {
                     text: modelData[0]
                     opacity: 1
                 }
 
                 RowLayout {
                     Item { implicitWidth: Kirigami.Units.smallSpacing }
-                    PlasmaComponents3.Label {
+                    PlasmaComponents.Label {
                         text: getShownAction(modelData[1])
                         opacity: .7
                     }

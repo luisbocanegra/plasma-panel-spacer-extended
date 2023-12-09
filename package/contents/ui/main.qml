@@ -7,11 +7,11 @@
 import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.core as PlasmaCore
-import org.kde.plasma.plasmoid 2.0
-import org.kde.kirigami 2.20 as Kirigami
-import org.kde.taskmanager 0.1 as TaskManager
-import org.kde.plasma.private.quicklaunch 1.0
-import org.kde.plasma.plasma5support 2.0 as P5Support
+import org.kde.plasma.plasmoid
+import org.kde.kirigami as Kirigami
+import org.kde.taskmanager as TaskManager
+import org.kde.plasma.private.quicklaunch
+import org.kde.plasma.plasma5support as P5Support
 
 PlasmoidItem {
     id: root
