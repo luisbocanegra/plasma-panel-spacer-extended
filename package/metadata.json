@@ -1,4 +1,5 @@
 {
+    "KPackageStructure": "Plasma/Applet",
     "KPlugin": {
         "Authors": [
             {
@@ -9,19 +10,15 @@
         "BugReportUrl": "https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues",
         "Category": "System Information",
         "Description": "Plasma panel spacer with mouse actions",
-        "EnabledByDefault": true,
+        "EnabledByDefault": false,
         "Id": "luisbocanegra.panelspacer.extended",
         "License": "GPL-2.0+",
         "Name": "Panel Spacer Extended",
-        "ServiceTypes": [
-            "Plasma/Applet"
-        ],
-        "Version": "1.4.0",
+        "Version": "1.4.1",
         "Website": "https://github.com/luisbocanegra/plasma-panel-spacer-extended"
     },
-    "X-Plasma-API": "declarativeappletscript",
-    "X-Plasma-MainScript": "ui/main.qml",
     "X-Plasma-Provides": [
         "org.kde.plasma.panelspacer"
-    ]
+    ],
+    "X-Plasma-API-Minimum-Version": "6.0"
 }
