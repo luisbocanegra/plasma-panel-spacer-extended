@@ -124,6 +124,10 @@
     <entry name="showTooltip" type="Bool">
       <default>true</default>
     </entry>
+
+    <entry name="qdbusCommand" type="String">
+      <default>qdbus</default>
+    </entry>
   </group>
 
 </kcfg>
