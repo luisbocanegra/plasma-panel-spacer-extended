@@ -70,6 +70,7 @@ Item {
 
     property bool enableDebug: plasmoid.configuration.enableDebug
     property bool showTooltip: plasmoid.configuration.showTooltip
+    property string qdbusCommand: plasmoid.configuration.qdbusCommand
 
     Layout.fillWidth: Plasmoid.configuration.expanding
     Layout.fillHeight: Plasmoid.configuration.expanding
@@ -217,7 +218,7 @@ Item {
                 setMaximized(false)
                 return
             }
-            var shortcutCommand = 'qdbus org.kde.kglobalaccel /component/'+component+' org.kde.kglobalaccel.Component.invokeShortcut '+'\"'+actionNme+'\"'
+            var shortcutCommand = qdbusCommand+' org.kde.kglobalaccel /component/'+component+' org.kde.kglobalaccel.Component.invokeShortcut '+'\"'+actionNme+'\"'
             printLog `RUNNING_SHORTCUT_COMMAND: ${shortcutCommand}`
             executable.exec(shortcutCommand);
         }
