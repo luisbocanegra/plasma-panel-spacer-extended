@@ -76,8 +76,8 @@ PlasmoidItem {
     Layout.fillWidth: Plasmoid.configuration.expanding
     Layout.fillHeight: Plasmoid.configuration.expanding
 
-    Layout.minimumWidth: Plasmoid.editMode ? PlasmaCore.Units.gridUnit * 2 : 1
-    Layout.minimumHeight: Plasmoid.editMode ? PlasmaCore.Units.gridUnit * 2 : 1
+    Layout.minimumWidth: Plasmoid.containment.corona?.editMode ? Kirigami.Units.gridUnit * 2 : 1
+    Layout.minimumHeight: Plasmoid.containment.corona?.editMode ? Kirigami.Units.gridUnit * 2 : 1
     Layout.preferredWidth: horizontal
         ? (Plasmoid.configuration.expanding ? optimalSize : Plasmoid.configuration.length)
         : 0
@@ -235,7 +235,7 @@ PlasmoidItem {
 
     // Search the actual gridLayout of the panel
     property GridLayout panelLayout: {
-        var candidate = root.parent;
+        let candidate = root.parent;
         while (candidate) {
             if (candidate instanceof GridLayout) {
                 return candidate;
@@ -263,11 +263,12 @@ PlasmoidItem {
         let sizeHints = [0];
         // Children order is guaranteed to be the same as the visual order of items in the layout
         for (var i in panelLayout.children) {
-            var child = panelLayout.children[i];
+            const child = panelLayout.children[i];
             if (!child.visible) continue;
 
-            if (child.applet && child.applet.pluginName === Plasmoid.pluginName && child.applet.configuration.expanding) {
-                if (child === Plasmoid.parent) {
+            if (child.applet && child.applet.plasmoid.pluginName === 'luisbocanegra.panelspacer.extended' && child.applet.plasmoid.configuration.expanding) {
+                if (child.applet.plasmoid === Plasmoid) {
+
                     thisSpacerIndex = expandingSpacers
                 }
                 sizeHints.push(0)
@@ -279,7 +280,7 @@ PlasmoidItem {
             }
         }
         sizeHints[0] *= 2; sizeHints[sizeHints.length - 1] *= 2
-        let containment = panelLayout
+        let containment = Plasmoid.containment
         let opt = (root.horizontal ? containment.width : containment.height) / expandingSpacers - sizeHints[thisSpacerIndex] / 2 - sizeHints[thisSpacerIndex + 1] / 2
         return Math.max(opt, 0)
     }
@@ -287,15 +288,15 @@ PlasmoidItem {
     Rectangle {
         anchors.fill: parent
         color: Kirigami.Theme.highlightColor
-        opacity: Plasmoid.editMode ? 1 : 0
-        visible: Plasmoid.editMode || animator.running
+        opacity: Plasmoid.containment.corona?.editMode ? 1 : 0.2
+        visible: Plasmoid.containment.corona?.editMode || animator.running
 
         Behavior on opacity {
             NumberAnimation {
                 id: animator
                 duration: Kirigami.Units.longDuration
                 // easing.type is updated after animation starts
-                easing.type: Plasmoid.editMode ? Easing.InCubic : Easing.OutCubic
+                easing.type: Plasmoid.containment.corona?.editMode ? Easing.InCubic : Easing.OutCubic
             }
         }
 
