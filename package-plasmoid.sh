@@ -5,12 +5,8 @@ if [ -d "build" ]; then
     rm -rf build
 fi
 
-# Create a new build directory
-mkdir build
-cd build
-
 # skip building/installing
-cmake cmake -DBUILD_PLUGIN=OFF -DINSTALL_PLASMOID=OFF -DCMAKE_BUILD_TYPE=Release ..
+cmake -B build -S . -DINSTALL_PLASMOID=OFF -DPACKAGE_PLASMOID=ON
 
-# package the plasmoid file
-make plasmoid
+# package plasmoid
+cmake --build build

@@ -5,15 +5,12 @@ if [ -d "build" ]; then
     rm -rf build
 fi
 
-# Create a new build directory
-mkdir build
-cd build
 
 # install plasmoid only
-cmake cmake -DBUILD_PLUGIN=OFF -DCMAKE_INSTALL_PREFIX=~/.local -DCMAKE_BUILD_TYPE=Release ..
+cmake -B build -S . -DBUILD_PLUGIN=OFF -DCMAKE_INSTALL_PREFIX=~/.local
 
 # Build the project
-make
+cmake --build build
 
 # Install the built project
-make install
+cmake --install build
