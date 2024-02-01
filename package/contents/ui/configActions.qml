@@ -2,10 +2,11 @@ import QtQuick
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
+import org.kde.kcmutils as KCM
 import "components" as Components
 
 
-ColumnLayout {
+KCM.SimpleKCM {
     id: root
     width: parent.width
     property alias cfg_singleClickAction: singleClick.configValue

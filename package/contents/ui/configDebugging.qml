@@ -2,8 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
+import org.kde.kcmutils as KCM
 
-ColumnLayout {
+KCM.SimpleKCM {
     id: root
     property alias cfg_enableDebug: enableDebug.checked
 
