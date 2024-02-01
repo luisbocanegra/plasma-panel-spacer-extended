@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.core as PlasmaCore
@@ -8,7 +9,6 @@ import "components" as Components
 
 KCM.SimpleKCM {
     id: root
-    width: parent.width
     property alias cfg_singleClickAction: singleClick.configValue
     property alias cfg_singleClickCommand: singleClick.commandValue
     property alias cfg_singleClickAppUrl: singleClick.applicationUrlValue
@@ -48,6 +48,9 @@ KCM.SimpleKCM {
     property alias cfg_pressHoldAction: pressHold.configValue
     property alias cfg_pressHoldCommand: pressHold.commandValue
     property alias cfg_pressHoldAppUrl: pressHold.applicationUrlValue
+
+    property alias cfg_showTooltip: showTooltip.checked
+    property alias cfg_qdbusCommand: qdbusCommand.text
 
     // TODO: Automate this to fetch available shortcuts
     // TODO: Probably some filtering/tagging for dangerous shortcuts
@@ -306,13 +309,49 @@ KCM.SimpleKCM {
     Kirigami.FormLayout {
         Layout.alignment: Qt.AlignTop
         id: generalPage
-        wideMode: false
+        wideMode: true
+
+        Kirigami.Separator {
+            Kirigami.FormData.label: i18n("General")
+            Kirigami.FormData.isSection: true
+        }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Show tooltip:")
+
+            CheckBox {
+                id: showTooltip
+                checked: cfg_showTooltip
+                onCheckedChanged: {
+                    cfg_showTooltip = checked
+                }
+            }
+
+            Label {
+                text: i18n("show list of actions when hovering the spacer")
+                wrapMode: Text.WordWrap
+                opacity: 0.7
+            }
+        }
+
+        TextField {
+            Kirigami.FormData.label: i18n("Qdbus command:")
+            id: qdbusCommand
+            placeholderText: qsTr("Custom qdbus command e.g. qdbus-qt5")
+        }
+
+        Kirigami.Separator {
+            Kirigami.FormData.label: i18n("Actions")
+            Kirigami.FormData.isSection: true
+        }
+
 
         Components.GroupedActions {
             id: singleClick
             modelData: actionsComboModel
             confInternalName: "singleClickAction"
             sectionLabel: "Single Click"
+            Kirigami.FormData.label: sectionLabel+":"
         }
 
         Components.GroupedActions {
@@ -320,6 +359,7 @@ KCM.SimpleKCM {
             modelData: actionsComboModel
             confInternalName: "doubleClickAction"
             sectionLabel: "Double Click"
+            Kirigami.FormData.label: sectionLabel+":"
         }
 
         Components.GroupedActions {
@@ -327,6 +367,7 @@ KCM.SimpleKCM {
             modelData: actionsComboModel
             confInternalName: "middleClickAction"
             sectionLabel: "Middle Click"
+            Kirigami.FormData.label: sectionLabel+":"
         }
 
 
@@ -335,6 +376,7 @@ KCM.SimpleKCM {
             modelData: actionsComboModel
             confInternalName: "mouseWheelUpAction"
             sectionLabel: "Wheel Up"
+            Kirigami.FormData.label: sectionLabel+":"
         }
 
 
@@ -343,6 +385,7 @@ KCM.SimpleKCM {
             modelData: actionsComboModel
             confInternalName: "mouseWheelDownAction"
             sectionLabel: "Wheel Down"
+            Kirigami.FormData.label: sectionLabel+":"
         }
 
 
@@ -351,6 +394,7 @@ KCM.SimpleKCM {
             modelData: actionsComboModel
             confInternalName: "mouseDragUpAction"
             sectionLabel: "Drag Up"
+            Kirigami.FormData.label: sectionLabel+":"
         }
 
 
@@ -359,6 +403,7 @@ KCM.SimpleKCM {
             modelData: actionsComboModel
             confInternalName: "mouseDragDownAction"
             sectionLabel: "Drag Down"
+            Kirigami.FormData.label: sectionLabel+":"
         }
 
 
@@ -367,6 +412,7 @@ KCM.SimpleKCM {
             modelData: actionsComboModel
             confInternalName: "mouseDragLeftAction"
             sectionLabel: "Drag Left"
+            Kirigami.FormData.label: sectionLabel+":"
         }
 
         Components.GroupedActions {
@@ -374,6 +420,7 @@ KCM.SimpleKCM {
             modelData: actionsComboModel
             confInternalName: "mouseDragRightAction"
             sectionLabel: "Drag Right"
+            Kirigami.FormData.label: sectionLabel+":"
         }
 
         Components.GroupedActions {
@@ -381,6 +428,8 @@ KCM.SimpleKCM {
             modelData: actionsComboModel
             confInternalName: "pressHoldAction"
             sectionLabel: "Long press"
+            Kirigami.FormData.label: sectionLabel+":"
+            showSeparator: false
         }
     }
 }

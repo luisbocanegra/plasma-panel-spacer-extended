@@ -17,6 +17,7 @@ ColumnLayout {
     property alias configValue: actionCombo.configValue
     property alias commandValue: internalValue.value
     property alias applicationUrlValue: btnAddLauncher.applicationUrl
+    property bool showSeparator: true
     
     Item { implicitHeight: 4}
 
@@ -33,20 +34,12 @@ ColumnLayout {
         }
     }
 
-    RowLayout {
-        Label {
-            id:label1
-            text: sectionLabel+":"
-            Layout.preferredWidth: 95
-        }
-
-        MyComboBox {
-            id: actionCombo
-            Layout.fillWidth: true
-            model: modelData
-            textRole: "label"
-            configName: confInternalName
-        }
+    MyComboBox {
+        id: actionCombo
+        Layout.fillWidth: true
+        model: modelData
+        textRole: "label"
+        configName: confInternalName
     }
 
     // Command area
@@ -246,5 +239,6 @@ ColumnLayout {
         Layout.fillWidth: true
         height: 1
         color: Kirigami.ColorUtils.linearInterpolation(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.15)
+        visible: showSeparator
     }
 }

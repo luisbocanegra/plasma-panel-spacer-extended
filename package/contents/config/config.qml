@@ -3,15 +3,11 @@ import org.kde.plasma.configuration 2.0
 
 ConfigModel {
     ConfigCategory {
-        name: i18n("Mouse Actions")
+        name: i18n("Behavior")
         icon: "preferences-desktop-mouse"
         source: "configActions.qml"
     }
-    ConfigCategory {
-        name: i18n("Behavior")
-        icon: "preferences-desktop"
-        source: "configBehavior.qml"
-    }
+
     ConfigCategory {
         name: i18n("Troubleshoot")
         icon: "tools-report-bug"
