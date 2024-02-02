@@ -12,12 +12,13 @@ ColumnLayout {
     Layout.fillHeight: true
     id: groupedActions
     property var confInternalName: ""
-    property var modelData: []
+    property ListModel modelData
     property var sectionLabel: ""
     property alias configValue: actionCombo.configValue
     property alias commandValue: internalValue.value
     property alias applicationUrlValue: btnAddLauncher.applicationUrl
     property bool showSeparator: true
+    property bool isLoading: true
     
     Item { implicitHeight: 4}
 
@@ -40,11 +41,11 @@ ColumnLayout {
         model: modelData
         textRole: "label"
         configName: confInternalName
+        isLoading: groupedActions.isLoading
     }
 
     // Command area
     RowLayout {
-        Item { implicitWidth: 95}
         visible: modelData.get(actionCombo.currentIndex)["component"] == "custom_command"
 
         TextArea {
@@ -145,7 +146,6 @@ ColumnLayout {
 
     
     RowLayout {
-        Item { implicitWidth: 95 }
         visible: modelData.get(actionCombo.currentIndex)["component"] == "launch_application"
 
         Button {

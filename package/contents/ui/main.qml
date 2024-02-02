@@ -171,7 +171,9 @@ PlasmoidItem {
         id: executable
         engine: "executable"
         connectedSources: []
-        onNewData: disconnectSource(sourceName)
+        onNewData: function(source) {
+            disconnectSource(source) // cmd finished
+        }
 
         function exec(cmd) {
             executable.connectSource(cmd)
@@ -184,8 +186,8 @@ PlasmoidItem {
 
     function runAction(action,command,application) {
         printLog `RUNNING_ACTION: ${action}`
-        var actionNme = action[0]
-        var component = action[1]
+        var component = action[0]
+        var actionNme = action[1]
         if (actionNme != "Disabled") {
             // custom command
             if (component == "custom_command") {
@@ -311,7 +313,7 @@ PlasmoidItem {
             printLog `Entered MouseArea`
         }
 
-        onClicked: {
+        onClicked: mouse => {
             // ignore id moved
             wasDoubleClicked = false
             clickTimer.restart()
@@ -351,7 +353,7 @@ PlasmoidItem {
             }
         }
 
-        onWheel: {
+        onWheel: wheel => {
             if (wheel.angleDelta.y > 0) {
                 printLog `WHEEL UP`
                 runAction(mouseWheelUpAction,mouseWheelUpCommand,mouseWheelUpAppUrl)

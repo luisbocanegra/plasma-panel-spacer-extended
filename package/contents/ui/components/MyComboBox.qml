@@ -7,23 +7,31 @@ ComboBox {
     property string configValue: ""
     property string configName: ""
 
-    // Limit expanded combobox height
-    popup.height: 300
+    property bool isLoading: true
 
     onCurrentIndexChanged: {
-        configValue = model.get(currentIndex)["ActionName"] + "," + model.get(currentIndex)["component"];
+        configValue = model.get(currentIndex)["component"] + "," + model.get(currentIndex)["shortcutName"];
     }
 
-    // Select active action by saved name
-    Component.onCompleted: {
+    function updateCombo()
+    {
         var index = 0
         for (var i= 0; i < model.count; i++) {
-            if (model.get(i)["ActionName"]===plasmoid.configuration[configName].split(",")[0]){
+            const shortcut = model.get(i)["component"] + "," + model.get(i)["shortcutName"]
+            if (shortcut === plasmoid.configuration[configName]){
                 index = i;
                 break;
             }
         }
         currentIndex = index;
+    }
+
+    // Component.onCompleted: {
+    //     updateCombo()
+    // }
+
+    onIsLoadingChanged: {
+        updateCombo()
     }
 
     // HACK: Prevent starting scrolling on collapsed combobox

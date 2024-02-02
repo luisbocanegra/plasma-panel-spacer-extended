@@ -20,20 +20,23 @@ ColumnLayout {
         var configValue = plasmoid.configuration[configKey+"Action"]
         if (configValue != "") {
             var parts = configValue.toString().split(",")
-            if (parts[1] == "custom_command") {
+            if (parts[0] == "custom_command") {
                 var command = plasmoid.configuration[configKey+"Command"]
                 var commandShort = "Nothing is set"
                 if (command!==undefined && command!==""){
                     var command = truncateString(command,20)
                     commandShort = command
                 }
-                return parts[0]+" - "+commandShort///.length>0?commandShort:"nothing set"
+                return parts[1]+" - "+commandShort
             }
-            if (parts[1] == "launch_application"){
+            if (parts[0] == "launch_application"){
                 var appName = logic.launcherData(plasmoid.configuration[configKey+"AppUrl"]).applicationName
-                return parts[0]+" - "+ (appName.length>0?appName:"Nothing is set")
+                return parts[1]+" - "+ (appName.length>0?appName:"Nothing is set")
             }
-            return parts[0]
+            if (parts[0] == "Disabled") {
+                return parts[0]
+            }
+            return parts[0]+" - "+parts[1]
         }
         return "unknown"
     }
