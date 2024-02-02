@@ -23,73 +23,15 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
     * [ ] Min track distance
   * [x] Long press
     * [ ] Hold duration
-* [x] Lots of actions from kwin shortcuts
-
-  <details>
-    <summary>Expand</summary>
-
-  * Disabled
-  * Maximize active window
-  * Unmaximize active window
-  * Maximize active window (toggle)
-  * Close active window
-  * Move active window
-  * Minimize active window
-  * Show Window Operations Menu
-  * Fullscreen active window
-  * Minimize all windows
-  * Show Desktop Grid
-  * Show Desktop
-  * Show Overview
-  * Present windows of active Application (all desktops)
-  * Present windows of active Application (current desktop)
-  * Present all windows (all desktops)
-  * Present all windows (current desktop)
-  * Walk Through Windows
-  * Walk Through Windows (Reverse)
-  * Walk Through Windows Alternative
-  * Walk Through Windows Alternative (Reverse)
-  * Walk Through Windows of Current Application
-  * Walk Through Windows of Current Application (Reverse)
-  * Walk Through Windows of Current Application Alternative
-  * Walk Through Windows of Current Application Alternative (Reverse)
-  * Switch One Desktop Up
-  * Switch One Desktop Down
-  * Switch One Desktop to the Left
-  * Switch One Desktop to the Right
-  * Switch to Previous Desktop
-  * Switch to Next Desktop
-  * Walk Through Desktops
-  * Window One Desktop Up
-  * Window One Desktop Down
-  * Window One Desktop to the Left
-  * Window One Desktop to the Right
-  * Window to Next Desktop
-  * Window to Previous Desktop
-  * Kill Window
-  </details>
-
-* [x] Run custom commands
-* [x] Launch Applications/Urls/Files
-* [ ] Sync wconfiguration across widget instances (if possible??)
-* [ ] Better default config
-* [ ] Advanced mode to detect all avilable org.kde.kglobalaccel component shortcuts
+* [x] Actions
+  * [x] Run any keyboard shortcut from system
+  * [x] Run custom commands
+  * [x] Launch Applications/Urls/Files
+* [ ] Sync configuration across widget instances
+* [x] Detect all available org.kde.kglobalaccel shortcuts
 * [ ] Quick disable/reset defaults
 * [ ] Popup/Notification showing shortcut being run
 * [ ] Panel visual feedback
-
-### Default actions
-
-* Single click `Overview`
-* Double click `Window Maximize (toggle)`
-* Middle click `Show desktop`
-* Wheel Up `Switch to Previous Desktop`
-* Wheel Down `Switch to Next Desktop`
-* Drag Up `Window Move`
-* Drag Down `Window Move`
-* Drag Left `Window One Desktop to the Left`
-* Drag Right `Window One Desktop to the Right`
-* Long Press `Present windows`
 
 ## Installing
 
@@ -100,7 +42,7 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 * Install dependencies (please let me know if I missed something)
 
   ```txt
-    cmake extra-cmake-modules plasma-framework
+    cmake extra-cmake-modules plasma-framework kdeplasma-addons
   ```
 
 * Install the plasmoid
@@ -111,10 +53,8 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 
 ## How does it work?
 
-1. Using code from [plasma-active-window-control](https://invent.kde.org/plasma/plasma-active-window-control) widget for:
-   1. Getting current window
-   2. Maximize/unmaximize active window
-2. Runs `qdbus org.kde.kglobalaccel /component/kwin org.kde.kglobalaccel.Component.invokeShortcut "ACTION NAME"` for all other actions
+1. Runs `qdbus org.kde.kglobalaccel /component/$COMPONENT org.kde.kglobalaccel.Component.invokeShortcut "ACTION NAME"` for shortcut
+2. App/URL/File actions depend on `kdeplasma-addons`
 
 ## Credits & Resources
 
