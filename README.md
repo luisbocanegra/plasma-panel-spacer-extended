@@ -24,11 +24,10 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
   * [x] Long press
     * [ ] Hold duration
 * [x] Actions
-  * [x] Run any keyboard shortcut from system
+  * [x] Run any keyboard shortcut (detects all available org.kde.kglobalaccel shortcuts from system)
   * [x] Run custom commands
   * [x] Launch Applications/Urls/Files
 * [ ] Sync configuration across widget instances
-* [x] Detect all available org.kde.kglobalaccel shortcuts
 * [ ] Quick disable/reset defaults
 * [ ] Popup/Notification showing shortcut being run
 * [ ] Panel visual feedback
