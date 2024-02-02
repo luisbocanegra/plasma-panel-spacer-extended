@@ -57,8 +57,6 @@ KCM.SimpleKCM {
 
     property string getShortcutsCommand: "for comp in $("+qdbusCommand.text+" org.kde.kglobalaccel | grep '/component/'); do IFS=$'\\n';for shortcut in $("+qdbusCommand.text+" org.kde.kglobalaccel $comp org.kde.kglobalaccel.Component.shortcutNames); do echo $comp,$shortcut;done; done | sort"
 
-    //property string getShortcutsCommand: "echo a,b"
-
     ListModel {
         id: shortcutsList
         ListElement {
@@ -127,7 +125,6 @@ KCM.SimpleKCM {
 
     Component.onCompleted: {
         getShortcuts.exec()
-        console.log(getShortcuts);
 
         exited.connect(function (cmd, exitCode, exitStatus, stdout, stderr) {
             var lines = stdout.trim().split("\n")
@@ -161,9 +158,6 @@ KCM.SimpleKCM {
                 const line = lines[i].toString().split(",")
                 var component = line[0].split("/")
                 component = component[component.length - 1]
-                // if (component === "plasmashell") {
-                //     continue
-                // }
                 const shortcutName = line[1]
                 shortcutsList.append({
                     "label": component + " - " + shortcutName,
