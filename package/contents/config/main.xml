@@ -110,7 +110,7 @@
     <entry name="pressHoldAction" type="String">
       <default>kwin,ExposeAll</default>
     </entry>
-    <entry name="pressHoldActionCommand" type="String">
+    <entry name="pressHoldCommand" type="String">
       <default>date="$(date -u)"; notify-send "Long Press" "$date"</default>
     </entry>
     <entry name="pressHoldAppUrl" type="String">
