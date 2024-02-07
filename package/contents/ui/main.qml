@@ -16,7 +16,6 @@ import org.kde.plasma.components as PC3
 
 PlasmoidItem {
     id: root
-    Plasmoid.constraintHints: Plasmoid.CanFillArea
 
     property bool horizontal: Plasmoid.formFactor !== PlasmaCore.Types.Vertical
     property var activeTaskLocal: null
@@ -74,7 +73,13 @@ PlasmoidItem {
     property bool enableDebug: plasmoid.configuration.enableDebug
     property bool showTooltip: plasmoid.configuration.showTooltip
     property string qdbusCommand: plasmoid.configuration.qdbusCommand
+    property bool showHoverBg: plasmoid.configuration.showHoverBg
+    property int hoverBgRadius: plasmoid.configuration.hoverBgRadius
 
+    property bool bgFillPanel: plasmoid.configuration.bgFillPanel
+    Plasmoid.constraintHints: bgFillPanel ? Plasmoid.CanFillArea : Plasmoid.NoHint
+
+    
     Layout.fillWidth: Plasmoid.configuration.expanding
     Layout.fillHeight: Plasmoid.configuration.expanding
 
@@ -293,11 +298,14 @@ PlasmoidItem {
         property string info: ""
         property string btn: ""
         property string dragInfo: ""
+        property bool showHoverBg: root.showHoverBg
+        property int hoverBgRadius: root.hoverBgRadius
         Rectangle {
             anchors.fill: parent
             color: Kirigami.Theme.highlightColor
-            opacity: Plasmoid.containment.corona?.editMode ? 1 : 0.2
-            visible: Plasmoid.containment.corona?.editMode || animator.running
+            opacity: Plasmoid.containment.corona?.editMode || (mouseArea.pressed && showHoverBg) ? 0.6 : 0.2
+            visible: Plasmoid.containment.corona?.editMode || animator.running || (mouseArea.containsMouse && showHoverBg)
+            radius: hoverBgRadius
 
             Behavior on opacity {
                 NumberAnimation {

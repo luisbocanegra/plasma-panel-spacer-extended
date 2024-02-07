@@ -9,6 +9,12 @@ ConfigModel {
     }
 
     ConfigCategory {
+        name: i18n("Appearance")
+        icon: "preferences-desktop-color"
+        source: "configAppearance.qml"
+    }
+
+    ConfigCategory {
         name: i18n("Troubleshoot")
         icon: "tools-report-bug"
         source: "configDebugging.qml"
