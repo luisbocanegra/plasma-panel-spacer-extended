@@ -465,12 +465,12 @@ PlasmoidItem {
                 btn = "Hold"
                 runAction(pressHoldAction,pressHoldCommand,pressHoldAppUrl)
             }
-        }
-    }
 
-    PlasmaCore.ToolTipArea {
-        anchors.fill: parent
-        mainItem: Tooltip {}
-        visible: showTooltip
+            PlasmaCore.ToolTipArea {
+                anchors.fill: parent
+                mainItem: Tooltip {}
+                enabled: showTooltip && mouseArea.containsMouse
+            }
+        }
     }
 }
