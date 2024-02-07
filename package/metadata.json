@@ -9,12 +9,12 @@
         ],
         "BugReportUrl": "https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues",
         "Category": "System Information",
-        "Description": "Plasma panel spacer with mouse actions",
+        "Description": "Plasma panel spacer with advanced mouse actions/gestures",
         "EnabledByDefault": false,
         "Id": "luisbocanegra.panelspacer.extended",
         "License": "GPL-2.0+",
         "Name": "Panel Spacer Extended",
-        "Version": "1.4.1",
+        "Version": "1.5.0",
         "Website": "https://github.com/luisbocanegra/plasma-panel-spacer-extended"
     },
     "X-Plasma-Provides": [
