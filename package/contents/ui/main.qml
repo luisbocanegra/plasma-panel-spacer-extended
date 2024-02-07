@@ -16,6 +16,7 @@ import org.kde.plasma.components as PC3
 
 PlasmoidItem {
     id: root
+    Plasmoid.constraintHints: Plasmoid.CanFillArea
 
     property bool horizontal: Plasmoid.formFactor !== PlasmaCore.Types.Vertical
     property var activeTaskLocal: null
@@ -27,7 +28,6 @@ PlasmoidItem {
     property int movementX: 0
     property int movementY: 0
     property bool wasDoubleClicked: false
-    property bool wasHeld: false
     property int minMovement: horizontal ? root.height+10 : root.width+10
     property var mouseButton: undefined
 
@@ -290,6 +290,9 @@ PlasmoidItem {
     }
 
     fullRepresentation: Item {
+        property string info: ""
+        property string btn: ""
+        property string dragInfo: ""
         Rectangle {
             anchors.fill: parent
             color: Kirigami.Theme.highlightColor
@@ -310,38 +313,30 @@ PlasmoidItem {
             anchors.centerIn: parent
             visible: enableDebug && !(Plasmoid.containment.corona?.editMode || animator.running)
             PC3.Label {
-                id: info
-                text: "Info"
-            }
-
-            PC3.Label {
-                id: btn
-                text: "Btn"
-            }
-
-            PC3.Label {
-                id: drag
-                text: "Drag"
+                text: info + " " + btn + " " + dragInfo
+                rotation : horizontal ? 0 : 270
             }
         }
 
         MouseArea {
+            id: mouseArea
             anchors.fill: parent
             hoverEnabled: true
             acceptedButtons: Qt.LeftButton | Qt.MiddleButton
+            cursorShape: Qt.ArrowCursor
 
             onEntered: {
                 printLog `Entered MouseArea`
-                info.text = "Entered"
+                info = "Entered"
             }
 
             onExited: {
-                info.text = qsTr('Exited (pressed=') + pressed + ')'
+                info = qsTr('Exited (pressed=') + pressed + ')'
             }
 
             onClicked: (mouse) => {
                 // ignore id moved
-                btn.text = qsTr('Clicked (wasHeld=') + mouse.wasHeld + ')'
+                btn = qsTr('Clicked (wasHeld=') + mouse.wasHeld + ')'
                 wasDoubleClicked = false
                 clickTimer.restart()
                 movementY = mouseY - startY
@@ -350,7 +345,7 @@ PlasmoidItem {
             }
 
             onDoubleClicked: {
-                btn.text = qsTr('Double clicked')
+                btn = qsTr('Double clicked')
                 printLog `DOUBLE CLICK`
                 wasDoubleClicked = true
                 runAction(doubleClickAction,doubleClickCommand,doubleClickAppUrl)
@@ -385,11 +380,11 @@ PlasmoidItem {
             onWheel: wheel => {
                 if (wheel.angleDelta.y > 0) {
                     printLog `WHEEL UP`
-                    btn.text = qsTr('Wheel up')
+                    btn = qsTr('Wheel up')
                     runAction(mouseWheelUpAction,mouseWheelUpCommand,mouseWheelUpAppUrl)
                 } else {
                     printLog `WHEEL DOWN`
-                    btn.text = qsTr('Wheel down')
+                    btn = qsTr('Wheel down')
                     runAction(mouseWheelDownAction,mouseWheelDownCommand,mouseWheelDownAppUrl)
                 }
             }
@@ -397,10 +392,11 @@ PlasmoidItem {
             onPressed: {
                 startY = mouseY
                 startX = mouseX
+                mouseArea.cursorShape = Qt.ClosedHandCursor
             }
 
             onReleased: (mouse) => {
-                btn.text = "Released (Click=" + mouse.isClick + " Held=" + mouse.wasHeld + ")"
+                btn = "Released (Click=" + mouse.isClick + " Held=" + mouse.wasHeld + ")"
                 printLog `startY: ${startY}, endY ${mouseY} threshold: ${root.height+10}`;
                 printLog `startX: ${startX}, "endX: ${mouseX} threshold: ${root.height+10}`
                 movementY = mouseY - startY
@@ -408,6 +404,7 @@ PlasmoidItem {
                 var movementAbsX = Math.abs(movementX)
                 var movementAbsY = Math.abs(movementY)
                 printLog `Mov X: ${movementX} Mov Y: ${movementY}`
+                mouseArea.cursorShape = Qt.ArrowCursor
                 if (movementAbsY > movementAbsX && movementAbsY >= minMovement) {
                     if (wasDoubleClicked || mouse.wasHeld) {
                         printLog `WAS DOUBLE CLICKING||HELD, ABORTING`
@@ -416,13 +413,13 @@ PlasmoidItem {
                     // UP DOWN
                     if (movementY > 0) {
                         printLog `DRAG DOWN`
-                        drag.text = qsTr('Drag down')
+                        dragInfo = qsTr('Drag down')
                         runAction(mouseDragDownAction,mouseDragDownCommand,mouseDragDownAppUrl)
                         return
                     }
                     if (movementY < 0) {
                         printLog `DRAG UP`
-                        drag.text = qsTr('Drag up')
+                        dragInfo = qsTr('Drag up')
                         runAction(mouseDragUpAction,mouseDragUpCommand,mouseDragUpAppUrl)
                         return
                     }
@@ -436,19 +433,19 @@ PlasmoidItem {
                     // LEFT RIGHT
                     if (movementX > 0) {
                         printLog `DRAG LEFT`
-                        drag.text = qsTr('Drag left')
+                        dragInfo = qsTr('Drag left')
                         runAction(mouseDragRightAction,mouseDragRightCommand,mouseDragRightAppUrl)
                         return
                     }
                     if (movementX < 0) {
                         printLog `DRAG RIGHT`
-                        drag.text = qsTr('Drag right')
+                        dragInfo = qsTr('Drag right')
                         runAction(mouseDragLeftAction,mouseDragLeftCommand,mouseDragLeftAppUrl)
                         return
                     }
                 }
 
-                drag.text = ''
+                dragInfo = ''
             }
 
             onPressAndHold: {
@@ -457,7 +454,7 @@ PlasmoidItem {
                     printLog `WAS DOUBLE CLICKING, ABORTING`
                     return
                 }
-                btn.text = "Hold"
+                btn = "Hold"
                 runAction(pressHoldAction,pressHoldCommand,pressHoldAppUrl)
             }
         }
