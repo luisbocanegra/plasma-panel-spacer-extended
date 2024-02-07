@@ -304,7 +304,7 @@ PlasmoidItem {
             anchors.fill: parent
             color: Kirigami.Theme.highlightColor
             opacity: Plasmoid.containment.corona?.editMode || (mouseArea.pressed && showHoverBg) ? 0.6 : 0.2
-            visible: Plasmoid.containment.corona?.editMode || animator.running || (mouseArea.containsMouse && showHoverBg)
+            visible: Plasmoid.containment.corona?.editMode || animator.running || (mouseArea.containsMouse && showHoverBg) || Plasmoid.userConfiguring
             radius: hoverBgRadius
 
             Behavior on opacity {
@@ -319,10 +319,25 @@ PlasmoidItem {
 
         RowLayout {
             anchors.centerIn: parent
-            visible: enableDebug && !(Plasmoid.containment.corona?.editMode || animator.running)
+            Kirigami.Icon {
+                width: horizontal ? parent.height : parent.width
+                height: width
+                visible: Plasmoid.userConfiguring
+                source: "configure"
+                smooth: true
+                NumberAnimation on rotation {
+                    from: 0
+                    to: 360
+                    running: Plasmoid.userConfiguring
+                    loops: Animation.Infinite
+                    duration: 3000
+                }
+            }
+
             PC3.Label {
                 text: info + " " + btn + " " + dragInfo
                 rotation : horizontal ? 0 : 270
+                visible: enableDebug && !(Plasmoid.containment.corona?.editMode || animator.running)
             }
         }
 
