@@ -20,7 +20,7 @@ message("Version: ${CUR_VERSION}")
 
 if(INSTALL_PLASMOID)
     # Locate plasma_install_package macro.
-    find_package(KF5Plasma REQUIRED)
+    find_package(Plasma REQUIRED)
     plasma_install_package(package luisbocanegra.panelspacer.extended)
 endif()
 
