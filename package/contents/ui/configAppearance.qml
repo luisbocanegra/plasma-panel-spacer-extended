@@ -66,6 +66,7 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Length:")
             value: fixedLength
             from: 0
+            to: 999
             stepSize: 1
             onValueChanged: {
                 cfg_length = value
