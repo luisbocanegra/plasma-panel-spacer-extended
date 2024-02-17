@@ -30,7 +30,7 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 * [ ] Sync configuration across widget instances
 * [ ] Quick disable/reset defaults
 * [ ] Popup/Notification showing shortcut being run
-* [ ] Panel visual feedback
+* [x] Panel visual feedback
 
 ## Installing
 
