@@ -9,6 +9,7 @@ KCM.SimpleKCM {
     property alias cfg_showHoverBg: showHoverBg.checked
     property alias cfg_hoverBgRadius: hoverBgRadius.value
     property alias cfg_bgFillPanel: bgFillPanel.checked
+    property alias cfg_length: lengthLength.value
 
     signal configurationChanged
 
@@ -47,6 +48,17 @@ KCM.SimpleKCM {
             enabled: showHoverBg.checked
             onCheckedChanged: {
                 cfg_bgFillPanel = checked
+            }
+        }
+
+        SpinBox {
+            id: lengthLength
+            Kirigami.FormData.label: i18n("Fixed size")
+            value: fixedLength
+            from: 0
+            stepSize: 1
+            onValueChanged: {
+                cfg_length = value
             }
         }
     }
