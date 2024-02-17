@@ -16,10 +16,15 @@ KCM.SimpleKCM {
     Kirigami.FormLayout {
         id: generalPage
         Layout.alignment: Qt.AlignTop
+
+        Kirigami.Separator {
+            Kirigami.FormData.isSection: true
+            Kirigami.FormData.label: "Hover effet"
+        }
         
         CheckBox {
             id: showHoverBg
-            Kirigami.FormData.label: i18n("Highlight spacer background when hovering it:")
+            Kirigami.FormData.label: i18n("Highlight spacer background:")
             // text: "Highlight spacer background when hovering it"
             checked: cfg_showHoverBg
 
@@ -30,7 +35,7 @@ KCM.SimpleKCM {
 
         SpinBox {
             id: hoverBgRadius
-            Kirigami.FormData.label: i18n("Highlight radius")
+            Kirigami.FormData.label: i18n("Highlight radius:")
             value: cfg_hoverBgRadius
             from: 0
             to: 99
@@ -43,7 +48,7 @@ KCM.SimpleKCM {
 
         CheckBox {
             id: bgFillPanel
-            Kirigami.FormData.label: i18n("Highlight fills panel")
+            Kirigami.FormData.label: i18n("Highlight fills panel:")
             checked: cfg_bgFillPanel
             enabled: showHoverBg.checked
             onCheckedChanged: {
@@ -51,9 +56,14 @@ KCM.SimpleKCM {
             }
         }
 
+        Kirigami.Separator {
+            Kirigami.FormData.isSection: true
+            Kirigami.FormData.label: "Fixed size mode"
+        }
+
         SpinBox {
             id: lengthLength
-            Kirigami.FormData.label: i18n("Fixed size")
+            Kirigami.FormData.label: i18n("Length:")
             value: fixedLength
             from: 0
             stepSize: 1

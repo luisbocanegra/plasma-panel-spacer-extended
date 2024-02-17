@@ -23,7 +23,7 @@ KCM.SimpleKCM {
         ColumnLayout {
             CheckBox {
                 id: enableDebug
-                text: "Show console debug messages"
+                text: "Show and log debug messages"
                 checked: cfg_enableDebug
 
                 onCheckedChanged: {
