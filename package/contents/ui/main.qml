@@ -289,8 +289,7 @@ PlasmoidItem {
             }
         }
         sizeHints[0] *= 2; sizeHints[sizeHints.length - 1] *= 2
-        let containment = Plasmoid.containment
-        let opt = (root.horizontal ? containment.width : containment.height) / expandingSpacers - sizeHints[thisSpacerIndex] / 2 - sizeHints[thisSpacerIndex + 1] / 2
+        let opt = (horizontal ? panelLayout.width : panelLayout.height) / expandingSpacers - sizeHints[thisSpacerIndex] / 2 - sizeHints[thisSpacerIndex + 1] / 2
         return Math.max(opt, 0)
     }
 
