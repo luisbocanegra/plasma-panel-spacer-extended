@@ -34,7 +34,14 @@ An attempt to bring [Latte Dock](https://github.com/KDE/latte-dock)'s window act
 
 ## Installing
 
-* Install widget from KDE Store:
+> [!IMPORTANT]
+> Development has switched to Plasma 6, PRs to backport changes to Plasma 5 version are welcomed
+
+Install from KDE Store or use `Get new widgets..`
+
+* [Plasma 5](https://store.kde.org/p/2064339) version v1.4.0
+
+* [Plasma 6](https://store.kde.org/p/2128047)
 
 ### Manual install
 
