@@ -488,4 +488,12 @@ PlasmoidItem {
             }
         }
     }
+
+    Component.onCompleted: {
+        plasmoid.configuration.screenWidth = horizontal ? screenGeometry.width : screenGeometry.height
+    }
+
+    onHorizontalChanged: {
+        plasmoid.configuration.screenWidth = horizontal ? screenGeometry.width : screenGeometry.height
+    }
 }

@@ -10,6 +10,7 @@ KCM.SimpleKCM {
     property alias cfg_hoverBgRadius: hoverBgRadius.value
     property alias cfg_bgFillPanel: bgFillPanel.checked
     property alias cfg_length: lengthLength.value
+    property int cfg_screenWidth
 
     signal configurationChanged
 
@@ -66,7 +67,7 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Length:")
             value: fixedLength
             from: 0
-            to: 999
+            to: cfg_screenWidth
             stepSize: 1
             onValueChanged: {
                 cfg_length = value

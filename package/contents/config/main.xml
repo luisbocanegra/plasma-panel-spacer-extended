@@ -139,6 +139,9 @@
     <entry name="bgFillPanel" type="Bool">
       <default>false</default>
     </entry>
+    <entry name="screenWidth" type="Int">
+      <default>15360</default>
+    </entry>
   </group>
 
 </kcfg>
