@@ -480,7 +480,8 @@ PlasmoidItem {
         PlasmaCore.ToolTipArea {
             anchors.fill: parent
             mainItem: Tooltip {}
-            enabled: showTooltip && mouseArea.containsMouse
+            enabled: mouseArea.containsMouse
+            visible: showTooltip
         }
     }
 

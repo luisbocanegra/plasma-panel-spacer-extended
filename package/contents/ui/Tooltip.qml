@@ -6,7 +6,12 @@ import org.kde.plasma.extras as PlasmaExtras
 import org.kde.plasma.plasmoid
 import org.kde.kirigami as Kirigami
 
-ColumnLayout {
+Item {
+
+    property int preferredTextWidth: Kirigami.Units.gridUnit * 20
+
+    implicitWidth: mainLayout.implicitWidth + Kirigami.Units.gridUnit
+    implicitHeight: mainLayout.implicitHeight + Kirigami.Units.gridUnit
 
     function truncateString(str, n) {
         if (str.length > n) {
@@ -42,13 +47,18 @@ ColumnLayout {
     }
 
     ColumnLayout {
-        Layout.topMargin: Kirigami.Units.gridUnit / 2
-        Layout.leftMargin: Kirigami.Units.gridUnit / 2
-        Layout.bottomMargin: Kirigami.Units.gridUnit / 2
-        Layout.rightMargin: Kirigami.Units.gridUnit / 2
+        id: mainLayout
 
-        PlasmaExtras.Heading {
+        anchors {
+            left: parent.left
+            top: parent.top
+            margins: Kirigami.Units.largeSpacing
+        }
+
+        Kirigami.Heading {
             id: tooltipMaintext
+            Layout.minimumWidth: Math.min(implicitWidth, preferredTextWidth)
+            Layout.maximumWidth: preferredTextWidth
             level: 3
             elide: Text.ElideRight
             text: Plasmoid.metaData.name
@@ -72,6 +82,9 @@ ColumnLayout {
                 PlasmaComponents.Label {
                     text: modelData[0]
                     opacity: 1
+                    Layout.minimumWidth: Math.min(implicitWidth, preferredTextWidth)
+                    Layout.maximumWidth: preferredTextWidth
+                    elide: Text.ElideRight
                 }
 
                 RowLayout {
@@ -79,6 +92,9 @@ ColumnLayout {
                     PlasmaComponents.Label {
                         text: getShownAction(modelData[1])
                         opacity: .7
+                        Layout.minimumWidth: Math.min(implicitWidth, preferredTextWidth)
+                        Layout.maximumWidth: preferredTextWidth
+                        elide: Text.ElideRight
                     }
                 }
             }
