@@ -22,10 +22,10 @@ PlasmoidItem {
     property bool noWindowActive: true
     property bool currentWindowMaximized: false
     property bool isActiveWindowPinned: false
-    property int startY: 0
-    property int startX: 0
-    property int movementX: 0
-    property int movementY: 0
+    property var startPos
+    property var endPos
+    property bool pressed: dragHandler.active || tapHandler.pressed
+    property bool dragging: false
     property bool wasDoubleClicked: false
     property int minMovement: horizontal ? root.height+10 : root.width+10
     property var mouseButton: undefined
@@ -72,6 +72,7 @@ PlasmoidItem {
 
     property bool enableDebug: plasmoid.configuration.enableDebug
     property bool showTooltip: plasmoid.configuration.showTooltip
+    property bool hideTooltip: false // hide tooltip after action
     property string qdbusCommand: plasmoid.configuration.qdbusCommand
     property bool showHoverBg: plasmoid.configuration.showHoverBg
     property int hoverBgRadius: plasmoid.configuration.hoverBgRadius
@@ -234,7 +235,7 @@ PlasmoidItem {
         if (enableDebug) {
             let str = 'PPSE: ';
             strings.forEach((string, i) => {
-                str += string + (values[i] || '');
+                str += string + (values[i] !== undefined ? values[i] : '');
             });
             if (enableDebug) {
                 console.log(str);
@@ -299,8 +300,8 @@ PlasmoidItem {
     Rectangle {
         anchors.fill: parent
         color: Kirigami.Theme.highlightColor
-        opacity: Plasmoid.containment.corona?.editMode || (mouseArea.pressed && showHoverBg) ? 0.6 : 0.2
-        visible: Plasmoid.containment.corona?.editMode || animator.running || (mouseArea.containsMouse && showHoverBg) || Plasmoid.userConfiguring
+        opacity: Plasmoid.containment.corona?.editMode || (pressed && showHoverBg) ? 0.6 : 0.2
+        visible: Plasmoid.containment.corona?.editMode || animator.running || (mouse.hovered && showHoverBg) || Plasmoid.userConfiguring
         radius: hoverBgRadius
 
         Behavior on opacity {
@@ -337,67 +338,148 @@ PlasmoidItem {
         }
     }
 
-    MouseArea {
-        id: mouseArea
+    function getDragDirection(startPoint, endPoint) {
+        var dx = endPoint.x - startPoint.x;
+        var dy = endPoint.y - startPoint.y;
+        if (Math.abs(dx) > Math.abs(dy)) {
+            return dx > 0 ? 'right' : 'left';
+        } else {
+            return dy > 0 ? 'down' : 'up';
+        }
+    }
+
+    PlasmaCore.ToolTipArea {
         anchors.fill: parent
-        hoverEnabled: true
-        acceptedButtons: Qt.LeftButton | Qt.MiddleButton
-        cursorShape: Qt.ArrowCursor
+        mainItem: Tooltip {}
+        enabled: mouse.hovered && !hideTooltip
+        visible: showTooltip
+    }
 
-        onEntered: {
-            printLog `Entered MouseArea`
-            info = "Entered" + Plasmoid.configuration.length +"|"+ optimalSize
-        }
-
-        onExited: {
-            info = qsTr('Exited (pressed=') + pressed + ')' + Plasmoid.configuration.length +"|"+ optimalSize
-        }
-
-        onClicked: (mouse) => {
-            // ignore id moved
-            btn = qsTr('Clicked (wasHeld=') + mouse.wasHeld + ')'
-            wasDoubleClicked = false
-            clickTimer.restart()
-            movementY = mouseY - startY
-            movementX = mouseX - startX
-            mouseButton = mouse.button
-        }
-
-        onDoubleClicked: {
-            btn = qsTr('Double clicked')
-            printLog `DOUBLE CLICK`
-            wasDoubleClicked = true
-            runAction(doubleClickAction,doubleClickCommand,doubleClickAppUrl)
-        }
-
-        Timer {
-            id: clickTimer
-            interval: 300
-            repeat: false
-            onTriggered: {
-                if (!wasDoubleClicked) {
-                    printLog `SINGLE CLICK`
-                    var movementAbsX = Math.abs(movementX)
-                    var movementAbsY = Math.abs(movementY)
-                    if (movementAbsY < minMovement && movementAbsX < minMovement) {
-                        if (mouseButton === Qt.MiddleButton) {
-                            printLog `Middle button pressed`
-                            runAction(middleClickAction,middleClickCommand,middleClickAppUrl)
-                        } else {
-                            printLog `Left button pressed`
-                            runAction(singleClickAction,singleClickCommand,singleClickAppUrl)
-                        }
-                    } else {
-                        printLog `MOVED WHILE CLICKING, IGNORED`
-                        ;
+    Rectangle {
+        id: dragArea
+        height: minMovement
+        width: height
+        opacity: 0.5
+        color: (enableDebug && dragging) ? "red" : "transparent"
+        HoverHandler {
+            id: dragAreaHandler
+            onHoveredChanged: {
+                if (!hovered && dragging && !tapHandler.pressed) {
+                    btn = ''
+                    dragging = false
+                    printLog `Drag end: ${endPos}`
+                    const dragDirection = getDragDirection(startPos, endPos)
+                    printLog `Drag direction ${dragDirection}`
+                    switch (dragDirection) {
+                        case "up":
+                            printLog `Drag up detected`
+                            dragInfo = qsTr('Drag up')
+                            runAction(mouseDragUpAction,mouseDragUpCommand,mouseDragUpAppUrl)
+                            break
+                        case "down":
+                            printLog `Drag down detected`
+                            dragInfo = qsTr('Drag down')
+                            runAction(mouseDragDownAction,mouseDragDownCommand,mouseDragDownAppUrl)
+                            break
+                        case "left":
+                            printLog `Drag left detected`
+                            dragInfo = qsTr('Drag left')
+                            runAction(mouseDragRightAction,mouseDragRightCommand,mouseDragRightAppUrl)
+                            break
+                        case "right":
+                            printLog `Drag right detected`
+                            dragInfo = qsTr('Drag right')
+                            runAction(mouseDragLeftAction,mouseDragLeftCommand,mouseDragLeftAppUrl)
+                            break
+                        default:
+                            dragInfo = ''
                     }
                 }
-                wasDoubleClicked = false
+            }
+        }
+    }
+
+    HoverHandler {
+        id: mouse
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+        cursorShape: Qt.PointingHandCursor
+        onHoveredChanged: {
+            if (hovered) {
+                hideTooltip = false
+                info = "In " + Plasmoid.configuration.length +"|"+ optimalSize
+            } else {
+                info = qsTr('Out (pressed=') + pressed + ') ' + Plasmoid.configuration.length +"|"+ optimalSize
+            }
+        }
+    }
+
+    PointHandler {
+        id: dragHandler
+        target: null
+        
+        onActiveChanged: {
+            dragging = active
+            if (active) {
+                startPos = Qt.point(point.pressPosition.x, point.pressPosition.y)
+                dragArea.x = startPos.x - (dragArea.width / 2)
+                printLog `Drag start: ${startPos}`
             }
         }
 
-        onWheel: wheel => {
-            if (wheel.angleDelta.y > 0) {
+        onPointChanged: {
+            if (active && dragging) {
+                endPos = Qt.point(point.position.x, point.position.y);
+            }
+        }
+    }
+
+    Timer {
+        id: singleTapTimer
+        interval: 300
+        onTriggered: {
+            btn = qsTr('Single clicked')
+            if (mouseButton === Qt.MiddleButton) {
+                printLog `Middle button pressed`
+                runAction(middleClickAction,middleClickCommand,middleClickAppUrl)
+            } else {
+                printLog `Left button pressed`
+                runAction(singleClickAction,singleClickCommand,singleClickAppUrl)
+            }
+        }
+    }
+
+    TapHandler {
+        id: tapHandler
+
+        onTapped: (eventPoint, button) => {
+            dragInfo = ''
+            hideTooltip = true
+            if (!singleTapTimer.running) {
+                mouseButton = button
+                singleTapTimer.start();
+            }
+        }
+
+        onDoubleTapped: {
+            singleTapTimer.stop()
+            printLog `Double tap detected!`
+            btn = qsTr('Double clicked')
+            runAction(doubleClickAction,doubleClickCommand,doubleClickAppUrl)
+        }
+
+        onLongPressed: {
+            printLog `Long press detected!`
+            btn = "Hold"
+            runAction(pressHoldAction,pressHoldCommand,pressHoldAppUrl)
+            target = null
+            enabled = root
+        }
+    }
+
+    WheelHandler {
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+        onWheel: (event) => {
+            if (event.angleDelta.y > 0) {
                 printLog `WHEEL UP`
                 btn = qsTr('Wheel up')
                 runAction(mouseWheelUpAction,mouseWheelUpCommand,mouseWheelUpAppUrl)
@@ -406,82 +488,6 @@ PlasmoidItem {
                 btn = qsTr('Wheel down')
                 runAction(mouseWheelDownAction,mouseWheelDownCommand,mouseWheelDownAppUrl)
             }
-        }
-
-        onPressed: {
-            startY = mouseY
-            startX = mouseX
-            mouseArea.cursorShape = Qt.ClosedHandCursor
-        }
-
-        onReleased: (mouse) => {
-            btn = "Released (Click=" + mouse.isClick + " Held=" + mouse.wasHeld + ")"
-            printLog `startY: ${startY}, endY ${mouseY} threshold: ${root.height+10}`;
-            printLog `startX: ${startX}, "endX: ${mouseX} threshold: ${root.height+10}`
-            movementY = mouseY - startY
-            movementX = mouseX - startX
-            var movementAbsX = Math.abs(movementX)
-            var movementAbsY = Math.abs(movementY)
-            printLog `Mov X: ${movementX} Mov Y: ${movementY}`
-            mouseArea.cursorShape = Qt.ArrowCursor
-            if (movementAbsY > movementAbsX && movementAbsY >= minMovement) {
-                if (wasDoubleClicked || mouse.wasHeld) {
-                    printLog `WAS DOUBLE CLICKING||HELD, ABORTING`
-                    return
-                }
-                // UP DOWN
-                if (movementY > 0) {
-                    printLog `DRAG DOWN`
-                    dragInfo = qsTr('Drag down')
-                    runAction(mouseDragDownAction,mouseDragDownCommand,mouseDragDownAppUrl)
-                    return
-                }
-                if (movementY < 0) {
-                    printLog `DRAG UP`
-                    dragInfo = qsTr('Drag up')
-                    runAction(mouseDragUpAction,mouseDragUpCommand,mouseDragUpAppUrl)
-                    return
-                }
-            }
-
-            if (movementAbsX > movementAbsY && movementAbsX >= minMovement) {
-                if (wasDoubleClicked || mouse.wasHeld) {
-                    printLog `WAS DOUBLE CLICKING||HELD, ABORTING`
-                    return
-                }
-                // LEFT RIGHT
-                if (movementX > 0) {
-                    printLog `DRAG LEFT`
-                    dragInfo = qsTr('Drag left')
-                    runAction(mouseDragRightAction,mouseDragRightCommand,mouseDragRightAppUrl)
-                    return
-                }
-                if (movementX < 0) {
-                    printLog `DRAG RIGHT`
-                    dragInfo = qsTr('Drag right')
-                    runAction(mouseDragLeftAction,mouseDragLeftCommand,mouseDragLeftAppUrl)
-                    return
-                }
-            }
-
-            dragInfo = ''
-        }
-
-        onPressAndHold: {
-            printLog `LONG PRESS`
-            if (wasDoubleClicked) {
-                printLog `WAS DOUBLE CLICKING, ABORTING`
-                return
-            }
-            btn = "Hold"
-            runAction(pressHoldAction,pressHoldCommand,pressHoldAppUrl)
-        }
-
-        PlasmaCore.ToolTipArea {
-            anchors.fill: parent
-            mainItem: Tooltip {}
-            enabled: mouseArea.containsMouse
-            visible: showTooltip
         }
     }
 
