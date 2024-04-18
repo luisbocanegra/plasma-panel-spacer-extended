@@ -31,6 +31,52 @@ PlasmoidItem {
     property int minDragDistance: horizontal ? root.height : root.width
     property var mouseButton: undefined
 
+    property string toolsDir: Qt.resolvedUrl("./tools").toString().substring(7) + "/"
+    property string scriptUtil: toolsDir+"run_kwin_script.sh"
+    // property string kwinScriptUtil: "sh "+toolsDir + scriptUtil + " '"+focusTopScriptName+"' '"+focusTopScriptFile+"'"
+
+    function getKwinScriptCommand(scriptName) {
+        const scriptFile = toolsDir + scriptName + ".js"
+        const kwinCommand = "sh '" + scriptUtil + "' '"+ scriptName + "' " + "'" + scriptFile + "'"
+        return kwinCommand
+    }
+
+    property var requiresFocus: [
+        "kwin,ExposeClass",
+        "kwin,Decrease Opacity",
+        "kwin,Increase Opacity",
+        "kwin,InvertWindow",
+        "kwin,Kill Window",
+        "kwin,Setup Window Shortcut",
+        "kwin,Switch Window Down",
+        "kwin,Switch Window Left",
+        "kwin,Switch Window Right",
+        "kwin,Switch Window Up",
+        "kwin,Toggle Window Raise/Lower",
+        "kwin,Walk Through Windows of Current Application",
+        "kwin,Window Above Other Windows",
+        "kwin,Window Below Other Windows",
+        "kwin,Window Close",
+        "kwin,Window Fullscreen",
+        "kwin,Window Grow",
+        "kwin,Window Lower",
+        "kwin,Window Maximize",
+        "kwin,Window Minimize",
+        "kwin,Window Move",
+        "kwin,Window No Border",
+        "kwin,Window On All Desktops",
+        "kwin,Window One Desktop",
+        "kwin,Window One Screen",
+        "kwin,Window Operations Menu",
+        "kwin,Window Pack",
+        "kwin,Window Quick Tile",
+        "kwin,Window Raise",
+        "kwin,Window Resize",
+        "kwin,Window Shade",
+        "kwin,Window Shrink",
+        "kwin,Window to"
+    ]
+
     property var singleClickAction: plasmoid.configuration.singleClickAction.split(",")
     property var singleClickCommand: plasmoid.configuration.singleClickCommand
     property var singleClickAppUrl: plasmoid.configuration.singleClickAppUrl
@@ -226,8 +272,12 @@ PlasmoidItem {
                 return
             }
             var shortcutCommand = qdbusCommand+' org.kde.kglobalaccel /component/'+component+' org.kde.kglobalaccel.Component.invokeShortcut '+'\"'+actionNme+'\"'
-            printLog `RUNNING_SHORTCUT_COMMAND: ${shortcutCommand}`
-            executable.exec(shortcutCommand);
+            var kwinCommand = "true"
+            if (requiresFocus.includes(component + "," + actionNme)) {
+                kwinCommand = getKwinScriptCommand("focusTopWindow", shortcutCommand)
+            }
+            printLog `RUNNING_SHORTCUT: ${kwinCommand+";"+shortcutCommand}`
+            executable.exec(kwinCommand+";"+shortcutCommand);
         }
     }
 
@@ -237,9 +287,7 @@ PlasmoidItem {
             strings.forEach((string, i) => {
                 str += string + (values[i] !== undefined ? values[i] : '');
             });
-            if (enableDebug) {
-                console.log(str);
-            }
+            console.log(str);
         }
     }
 
