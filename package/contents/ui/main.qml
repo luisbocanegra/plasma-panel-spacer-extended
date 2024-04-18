@@ -27,7 +27,8 @@ PlasmoidItem {
     property bool pressed: dragHandler.active || tapHandler.pressed
     property bool dragging: false
     property bool wasDoubleClicked: false
-    property int minMovement: horizontal ? root.height+10 : root.width+10
+    // TODO make distance configurable instead??
+    property int minDragDistance: horizontal ? root.height : root.width
     property var mouseButton: undefined
 
     property var singleClickAction: plasmoid.configuration.singleClickAction.split(",")
@@ -80,7 +81,6 @@ PlasmoidItem {
     property bool bgFillPanel: plasmoid.configuration.bgFillPanel
     Plasmoid.constraintHints: bgFillPanel ? Plasmoid.CanFillArea : Plasmoid.NoHint
 
-    
     Layout.fillWidth: Plasmoid.configuration.expanding
     Layout.fillHeight: Plasmoid.configuration.expanding
 
@@ -301,7 +301,7 @@ PlasmoidItem {
         anchors.fill: parent
         color: Kirigami.Theme.highlightColor
         opacity: Plasmoid.containment.corona?.editMode || (pressed && showHoverBg) ? 0.6 : 0.2
-        visible: Plasmoid.containment.corona?.editMode || animator.running || (mouse.hovered && showHoverBg) || Plasmoid.userConfiguring
+        visible: Plasmoid.containment.corona?.editMode || animator.running || (hoverHandler.hovered && showHoverBg) || Plasmoid.userConfiguring
         radius: hoverBgRadius
 
         Behavior on opacity {
@@ -348,59 +348,29 @@ PlasmoidItem {
         }
     }
 
+    function getDistance(startPoint, endPoint) {
+        var dx = endPoint.x - startPoint.x;
+        var dy = endPoint.y - startPoint.y;
+        return Math.sqrt(dx * dx + dy * dy)
+    }
+
     PlasmaCore.ToolTipArea {
         anchors.fill: parent
         mainItem: Tooltip {}
-        enabled: mouse.hovered && !hideTooltip
+        enabled: hoverHandler.hovered && !hideTooltip
         visible: showTooltip
     }
 
     Rectangle {
         id: dragArea
-        height: minMovement
+        height: minDragDistance * 2
         width: height
         opacity: 0.5
         color: (enableDebug && dragging) ? "red" : "transparent"
-        HoverHandler {
-            id: dragAreaHandler
-            onHoveredChanged: {
-                if (!hovered && dragging && !tapHandler.pressed) {
-                    btn = ''
-                    dragging = false
-                    printLog `Drag end: ${endPos}`
-                    const dragDirection = getDragDirection(startPos, endPos)
-                    printLog `Drag direction ${dragDirection}`
-                    switch (dragDirection) {
-                        case "up":
-                            printLog `Drag up detected`
-                            dragInfo = qsTr('Drag up')
-                            runAction(mouseDragUpAction,mouseDragUpCommand,mouseDragUpAppUrl)
-                            break
-                        case "down":
-                            printLog `Drag down detected`
-                            dragInfo = qsTr('Drag down')
-                            runAction(mouseDragDownAction,mouseDragDownCommand,mouseDragDownAppUrl)
-                            break
-                        case "left":
-                            printLog `Drag left detected`
-                            dragInfo = qsTr('Drag left')
-                            runAction(mouseDragRightAction,mouseDragRightCommand,mouseDragRightAppUrl)
-                            break
-                        case "right":
-                            printLog `Drag right detected`
-                            dragInfo = qsTr('Drag right')
-                            runAction(mouseDragLeftAction,mouseDragLeftCommand,mouseDragLeftAppUrl)
-                            break
-                        default:
-                            dragInfo = ''
-                    }
-                }
-            }
-        }
     }
 
     HoverHandler {
-        id: mouse
+        id: hoverHandler
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         cursorShape: Qt.PointingHandCursor
         onHoveredChanged: {
@@ -416,12 +386,12 @@ PlasmoidItem {
     PointHandler {
         id: dragHandler
         target: null
-        
         onActiveChanged: {
-            dragging = active
             if (active) {
+                dragging = true
                 startPos = Qt.point(point.pressPosition.x, point.pressPosition.y)
                 dragArea.x = startPos.x - (dragArea.width / 2)
+                dragArea.y = startPos.y - (dragArea.height / 2)
                 printLog `Drag start: ${startPos}`
             }
         }
@@ -429,6 +399,38 @@ PlasmoidItem {
         onPointChanged: {
             if (active && dragging) {
                 endPos = Qt.point(point.position.x, point.position.y);
+                const distance = getDistance(startPos, endPos)
+                if (!tapHandler.pressed && distance >= minDragDistance) {
+                    btn = ''
+                    dragging = false
+                    printLog `Drag end: ${endPos}`
+                    const dragDirection = getDragDirection(startPos, endPos)
+                    printLog `Drag direction ${dragDirection}`
+                    switch (dragDirection) {
+                        case "up":
+                            printLog `Drag up detected`
+                            dragInfo = qsTr('Drag up')
+                            runAction(mouseDragUpAction, mouseDragUpCommand, mouseDragUpAppUrl)
+                            break
+                        case "down":
+                            printLog `Drag down detected`
+                            dragInfo = qsTr('Drag down')
+                            runAction(mouseDragDownAction, mouseDragDownCommand, mouseDragDownAppUrl)
+                            break
+                        case "left":
+                            printLog `Drag left detected`
+                            dragInfo = qsTr('Drag left')
+                            runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl)
+                            break
+                        case "right":
+                            printLog `Drag right detected`
+                            dragInfo = qsTr('Drag right')
+                            runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
+                            break
+                        default:
+                            dragInfo = ''
+                    }
+                }
             }
         }
     }
@@ -450,7 +452,6 @@ PlasmoidItem {
 
     TapHandler {
         id: tapHandler
-
         onTapped: (eventPoint, button) => {
             dragInfo = ''
             hideTooltip = true
