@@ -420,7 +420,6 @@ PlasmoidItem {
     HoverHandler {
         id: hoverHandler
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-        cursorShape: Qt.PointingHandCursor
         onHoveredChanged: {
             if (hovered) {
                 hideTooltip = false
@@ -434,6 +433,7 @@ PlasmoidItem {
     PointHandler {
         id: dragHandler
         target: null
+        cursorShape: (active && dragging) ? Qt.ClosedHandCursor : Qt.ArrowCursor
         onActiveChanged: {
             if (active) {
                 dragging = true
