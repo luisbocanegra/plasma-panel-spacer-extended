@@ -22,8 +22,9 @@ PlasmoidItem {
     property bool noWindowActive: true
     property bool currentWindowMaximized: false
     property bool isActiveWindowPinned: false
-    property var startPos
-    property var endPos
+    property var startPos: { "x": 0, "y": 0 }
+    property var endPos: { "x": 0, "y": 0 }
+    property var localStartPos: dragHandler.parent.mapFromGlobal(startPos.x, startPos.y)
     property bool pressed: dragHandler.active || tapHandler.pressed
     property bool dragging: false
     property bool wasDoubleClicked: false
@@ -414,7 +415,7 @@ PlasmoidItem {
         height: minDragDistance * 2
         width: height
         opacity: 0.5
-        color: (enableDebug && dragging) ? "red" : "transparent"
+        color: (enableDebug && pressed && hoverHandler.hovered) ? "red" : "transparent"
     }
 
     HoverHandler {
@@ -430,6 +431,19 @@ PlasmoidItem {
         }
     }
 
+    onWidthChanged: {
+        localStartPos = dragHandler.parent.mapFromGlobal(startPos.x, startPos.y)
+    }
+
+    onHeightChanged: {
+        localStartPos = dragHandler.parent.mapFromGlobal(startPos.x, startPos.y)
+    }
+
+    onLocalStartPosChanged: {
+        dragArea.x = localStartPos.x - (dragArea.width / 2)
+        dragArea.y = localStartPos.y - (dragArea.height / 2)
+    }
+
     PointHandler {
         id: dragHandler
         target: null
@@ -437,16 +451,15 @@ PlasmoidItem {
         onActiveChanged: {
             if (active) {
                 dragging = true
-                startPos = Qt.point(point.pressPosition.x, point.pressPosition.y)
-                dragArea.x = startPos.x - (dragArea.width / 2)
-                dragArea.y = startPos.y - (dragArea.height / 2)
+                startPos = dragHandler.parent.mapToGlobal(point.pressPosition.x, point.pressPosition.y)
+                localStartPos = dragHandler.parent.mapFromGlobal(startPos.x, startPos.y)
                 printLog `Drag start: ${startPos}`
             }
         }
 
         onPointChanged: {
             if (active && dragging) {
-                endPos = Qt.point(point.position.x, point.position.y);
+                endPos = dragHandler.parent.mapToGlobal(point.position.x, point.position.y)
                 const distance = getDistance(startPos, endPos)
                 if (!tapHandler.pressed && distance >= minDragDistance) {
                     btn = ''
