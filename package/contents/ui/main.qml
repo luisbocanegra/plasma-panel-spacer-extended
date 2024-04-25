@@ -500,6 +500,7 @@ PlasmoidItem {
 
     TapHandler {
         id: tapHandler
+        acceptedButtons: Qt.LeftButton | Qt.MiddleButton
         onTapped: (eventPoint, button) => {
             dragInfo = ''
             hideTooltip = true
