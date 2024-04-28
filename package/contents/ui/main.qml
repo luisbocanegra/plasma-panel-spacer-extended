@@ -18,7 +18,15 @@ PlasmoidItem {
     id: root
 
     property bool horizontal: Plasmoid.formFactor !== PlasmaCore.Types.Vertical
-    property var activeTaskLocal: null
+    property var activeTask: null
+    property var activeProps: {"name":"", "title":"", "id":""}
+    property var abstractTasksModel: TaskManager.AbstractTasksModel
+    property var isMaximized: abstractTasksModel.IsMaximized
+    property var isActive: abstractTasksModel.IsActive
+    property var isWindow: abstractTasksModel.IsWindow
+
+    property var isFullScreen: abstractTasksModel.IsFullScreen
+    property var isMinimized: abstractTasksModel.IsMinimized
     property bool noWindowActive: true
     property bool currentWindowMaximized: false
     property bool isActiveWindowPinned: false
@@ -142,82 +150,83 @@ PlasmoidItem {
 
     preferredRepresentation: fullRepresentation
 
-    // Toggle maximize with mouse wheel/left click from https://invent.kde.org/plasma/plasma-active-window-control
-    //
-    // MODEL
-    //
+    TaskManager.VirtualDesktopInfo {
+        id: virtualDesktopInfo
+    }
+
+    TaskManager.ActivityInfo {
+        id: activityInfo
+        readonly property string nullUuid: "00000000-0000-0000-0000-000000000000"
+    }
+
     TaskManager.TasksModel {
         id: tasksModel
         sortMode: TaskManager.TasksModel.SortVirtualDesktop
         groupMode: TaskManager.TasksModel.GroupDisabled
-
-        // screenGeometry: plasmoid.screenGeometry
-        filterByScreen: true //plasmoid.configuration.showForCurrentScreenOnly
+        virtualDesktop: virtualDesktopInfo.currentDesktop
+        activity: activityInfo.currentActivity
+        screenGeometry: Plasmoid.containment.screenGeometry
+        filterByVirtualDesktop: true
+        filterByScreen: true
+        filterByActivity: true
+        filterMinimized: true
 
         onActiveTaskChanged: {
-            updateActiveWindowInfo()
+            updateWindowsinfo()
         }
-        onDataChanged: {
-            updateActiveWindowInfo()
-        }
-        onCountChanged: {
-            updateActiveWindowInfo()
-        }
+        // onDataChanged: {
+        //     updateWindowsinfo()
+        // }
+        // onCountChanged: {
+        //     updateWindowsinfo()
+        // }
     }
 
-    function updateActiveWindowInfo() {
-
-        var activeTaskIndex = tasksModel.activeTask
-
-        // fallback for Plasma 5.8
-        var abstractTasksModel = TaskManager.AbstractTasksModel || {}
-        var isActive = abstractTasksModel.IsActive || 271
-        var appName = abstractTasksModel.AppName || 258
-        var isMaximized = abstractTasksModel.IsMaximized || 276
-        var virtualDesktop = abstractTasksModel.VirtualDesktop || 286
-
-        if (!tasksModel.data(activeTaskIndex, isActive)) {
-            activeTaskLocal = {}
-        } else {
-            activeTaskLocal = {
-                display: tasksModel.data(activeTaskIndex, Qt.DisplayRole),
-                decoration: tasksModel.data(activeTaskIndex, Qt.DecorationRole),
-                AppName: tasksModel.data(activeTaskIndex, appName),
-                IsMaximized: tasksModel.data(activeTaskIndex, isMaximized),
-                VirtualDesktop: tasksModel.data(activeTaskIndex, virtualDesktop)
+    function updateWindowsinfo() {
+        for (var i = 0; i < tasksModel.count; i++) {
+            const currentTask = tasksModel.index(i, 0)
+            if (currentTask === undefined) continue
+            if (tasksModel.data(currentTask, isWindow)) {
+                if (tasksModel.data(currentTask, isActive)) activeTask = currentTask
             }
         }
-
-        var actTask = activeTask()
-        noWindowActive = !activeTaskExists()
-        currentWindowMaximized = !noWindowActive && actTask.IsMaximized === true
-        isActiveWindowPinned = actTask.VirtualDesktop === -1;
-        // if (noWindowActive) {
-        //     windowTitleText.text = composeNoWindowText()
-        //     iconItem.source = plasmoid.configuration.noWindowIcon
-        // } else {
-        //     windowTitleText.text = (textType === 1 ? actTask.AppName : null) || replaceTitle(actTask.display)
-        //     iconItem.source = actTask.decoration
-        // }
-        //updateTooltip()
+        if (activeTask) {
+            activeProps.name = tasksModel.data(activeTask, abstractTasksModel.AppName)
+            activeProps.id = tasksModel.data(activeTask, abstractTasksModel.WinIdList)
+            activeProps.title = tasksModel.data(activeTask, abstractTasksModel.display)
+            printLog`Active task: Name: ${activeProps.name} Title: ${activeProps.title} Id: ${activeProps.id}`
+        }
     }
 
-    function activeTask() {
-        return activeTaskLocal
+    function dumpProps(obj) {
+        console.error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        for (var k of Object.keys(obj)) {
+            const val = obj[k]
+            // if (typeof val === 'function') continue
+            if (k === 'metaData') continue
+            print(k + "=" + val + "\n")
+        }
     }
 
     function activeTaskExists() {
-        return activeTaskLocal.display !== undefined
+        return activeTask.display !== undefined
     }
 
+    function activateLastWindow() {
+        printLog`Trying to activate last window...`
+        if (activeTask) {
+            if (activeTask !== tasksModel.activeTask) {
+                tasksModel.requestActivate(activeTask);
+            }
+        }
+    }
 
     function toggleMaximized() {
         tasksModel.requestToggleMaximized(tasksModel.activeTask);
     }
 
     function setMaximized(maximized) {
-        if ((maximized && !activeTask().IsMaximized)
-            || (!maximized && activeTask().IsMaximized)) {
+        if (maximized !== activeTask.IsMaximized) {
             toggleMaximized()
         }
     }
@@ -275,6 +284,7 @@ PlasmoidItem {
             var shortcutCommand = qdbusCommand+' org.kde.kglobalaccel /component/'+component+' org.kde.kglobalaccel.Component.invokeShortcut '+'\"'+actionNme+'\"'
             var kwinCommand = "true"
             if (requiresFocus.includes(component + "," + actionNme)) {
+                activateLastWindow()
                 kwinCommand = getKwinScriptCommand("focusTopWindow", shortcutCommand)
             }
             printLog `RUNNING_SHORTCUT: ${kwinCommand+";"+shortcutCommand}`
@@ -284,7 +294,7 @@ PlasmoidItem {
 
     function printLog(strings, ...values) {
         if (enableDebug) {
-            let str = 'PPSE: ';
+            let str = "PPSE S:" + root.screen + " ID:" + Plasmoid.id + " ";
             strings.forEach((string, i) => {
                 str += string + (values[i] !== undefined ? values[i] : '');
             });
@@ -469,22 +479,18 @@ PlasmoidItem {
                     printLog `Drag direction ${dragDirection}`
                     switch (dragDirection) {
                         case "up":
-                            printLog `Drag up detected`
                             dragInfo = qsTr('Drag up')
                             runAction(mouseDragUpAction, mouseDragUpCommand, mouseDragUpAppUrl)
                             break
                         case "down":
-                            printLog `Drag down detected`
                             dragInfo = qsTr('Drag down')
                             runAction(mouseDragDownAction, mouseDragDownCommand, mouseDragDownAppUrl)
                             break
                         case "left":
-                            printLog `Drag left detected`
                             dragInfo = qsTr('Drag left')
                             runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl)
                             break
                         case "right":
-                            printLog `Drag right detected`
                             dragInfo = qsTr('Drag right')
                             runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
                             break

@@ -10,15 +10,16 @@ function printLog(strings, ...values) {
 }
 const windows = workspace.windowList();
 printLog`Focusing top window...\n`
-var topWindow
+var topWindow = {}
 let stackPosition = -1
-// TODO is this needed at all if workspace.activeScreen should always have the screen with cursor?
-var currentScreen = workspace.screenAt(workspace.cursorPos)
+let cursorPos = workspace.cursorPos
+var currentScreen = workspace.screenAt(cursorPos)
 var currentDesktop = workspace.currentDesktop
+printLog`cursor: x:${cursorPos.x} y:${cursorPos.x} screen:${currentScreen.name}`
 printLog`active screen: ${workspace.activeScreen.name} current: ${currentScreen.name}`
 for (var i = 0; i < windows.length; i++) {
   let window = windows[i]
-  if (window.output === workspace.activeScreen
+  if (window.output === currentScreen
     && (window.onAllDesktops || window.desktops.includes(currentDesktop))
     && !window.desktopWindow
     && window.normalWindow
@@ -35,6 +36,12 @@ for (var i = 0; i < windows.length; i++) {
     stackPosition = window.stackingOrder
   }
 }
-workspace.activeWindow = topWindow
-const resut = ("Top: " + topWindow.caption + "|" + topWindow.resourceName + "|" + topWindow.resourceClass + "|" + topWindow.stackingOrder + "|" + topWindow.output.name)
-printLog`${resut}`
+if (Object.keys(topWindow).length !== 0) {
+  workspace.activeWindow = topWindow
+  const resut = ("Top: " + topWindow.caption + "|" + topWindow.resourceName + "|" + topWindow.resourceClass + "|" + topWindow.stackingOrder + "|" + topWindow.output.name)
+  printLog`${resut}`
+} else {
+  printLog`No window to activate was found`
+}
+// printLog`${JSON.stringify(topWindow, null, 2)}`
+
