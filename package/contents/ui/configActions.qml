@@ -203,7 +203,7 @@ KCM.SimpleKCM {
             TextField {
                 Kirigami.FormData.label: i18n("Qdbus executable:")
                 id: qdbusCommand
-                placeholderText: qsTr("Custom qdbus command e.g. qdbus-qt5")
+                placeholderText: qsTr("Custom qdbus command e.g. qdbus, qdbus6, qdbus-qt6, /usr/lib/qt6/bin/qml")
             }
 
             Kirigami.Separator {

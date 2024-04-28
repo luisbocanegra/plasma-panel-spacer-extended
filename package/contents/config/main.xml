@@ -126,7 +126,7 @@
     </entry>
 
     <entry name="qdbusCommand" type="String">
-      <default>qdbus</default>
+      <default>qdbus6</default>
     </entry>
 
     <!-- appearance -->
@@ -134,7 +134,7 @@
       <default>true</default>
     </entry>
     <entry name="hoverBgRadius" type="Int">
-      <default>8</default>
+      <default>5</default>
     </entry>
     <entry name="bgFillPanel" type="Bool">
       <default>false</default>
