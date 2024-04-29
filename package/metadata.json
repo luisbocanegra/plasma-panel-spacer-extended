@@ -14,7 +14,7 @@
         "Id": "luisbocanegra.panelspacer.extended",
         "License": "GPL-2.0+",
         "Name": "Panel Spacer Extended",
-        "Version": "1.6.0",
+        "Version": "1.6.1",
         "Website": "https://github.com/luisbocanegra/plasma-panel-spacer-extended"
     },
     "X-Plasma-Provides": [
