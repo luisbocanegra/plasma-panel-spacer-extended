@@ -1,6 +1,6 @@
 # Changelog
 
-## v1.6.0 (28-04-2024) - Bugfix Release
+## v1.6.1 (28-04-2024) - Bugfix Release
 
 ### Bug fixes
 
