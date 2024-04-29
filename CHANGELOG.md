@@ -1,5 +1,21 @@
 # Changelog
 
+## v1.6.0 (28-04-2024) - Bugfix Release
+
+### Bug fixes
+
+- Fixed wrong cursor shape when hovering the panel
+- Fixed middle click not being recognized
+- Fixed dragging axis detection while spacer length changes
+- If present, select the active window in the current screen
+- Activate last active window on each screen for window actions
+
+### Other
+
+- Tooltip is now shorter
+- Changed default hover radius to 5px and qdbus excecutable name (qdbus6)
+- Toggle debug in KWin script
+
 ## v1.6.0 (18-04-2024) - Preset management & auto-loading
 
 ### Improvements
