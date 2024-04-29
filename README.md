@@ -42,11 +42,13 @@ Spacer with Mouse gestures for the KDE Plasma Panel featuring Latte Dock/Gnome/U
 > [!IMPORTANT]
 > Development has switched to Plasma 6, PRs to backport changes to Plasma 5 version are welcomed
 
-Install from KDE Store or use `Get new widgets..`
-
 * [Plasma 5](https://store.kde.org/p/2064339) version v1.4.0
 
 * [Plasma 6](https://store.kde.org/p/2128047)
+
+1. **Right click on the Panel** > **Add Widgets** > **Get New Widgets** > **Download New Plasma Widgets**
+2. **Search** for "**Panel Spacer Extended**", install and add to your panel(s).
+3. Click on **Add new videos** pick your video(s) and apply.
 
 ### Manual install
 
