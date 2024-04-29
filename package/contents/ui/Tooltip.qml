@@ -29,22 +29,38 @@ Item {
                 var command = plasmoid.configuration[configKey+"Command"]
                 var commandShort = "Nothing is set"
                 if (command!==undefined && command!==""){
-                    var command = truncateString(command,20)
+                    var command = truncateString(command,30)
                     commandShort = command
                 }
-                return parts[1]+" - "+commandShort
+                return "Run " + commandShort
             }
             if (parts[0] == "launch_application"){
                 var appName = logic.launcherData(plasmoid.configuration[configKey+"AppUrl"]).applicationName
-                return parts[1]+" - "+ (appName.length>0?appName:"Nothing is set")
+                if (appName.length>0) {
+                    return "Open" + appName
+                }
+                return "Nothing is set"
             }
             if (parts[0] == "Disabled") {
                 return parts[0]
             }
-            return parts[0]+" - "+parts[1]
+            return parts[1]
         }
         return "unknown"
     }
+
+    property var repeaterModel: [
+        ["Single click","singleClick"],
+        ["Double click","doubleClick"],
+        ["Middle click","middleClick"],
+        ["Wheel up","mouseWheelUp"],
+        ["Wheel down","mouseWheelDown"],
+        ["Drag up","mouseDragUp"],
+        ["Drag down","mouseDragDown"],
+        ["Drag left","mouseDragLeft"],
+        ["Drag right","mouseDragRight"],
+        ["Long press","pressHold"],
+    ]
 
     ColumnLayout {
         id: mainLayout
@@ -55,47 +71,42 @@ Item {
             margins: Kirigami.Units.largeSpacing
         }
 
-        Kirigami.Heading {
-            id: tooltipMaintext
+        // Kirigami.Heading {
+        //     id: tooltipMaintext
+        //     Layout.minimumWidth: Math.min(implicitWidth, preferredTextWidth)
+        //     Layout.maximumWidth: preferredTextWidth
+        //     level: 3
+        //     elide: Text.ElideRight
+        //     text: Plasmoid.metaData.name
+        // }
+        
+        GridLayout {
+            columns: 2
+            rowSpacing: Kirigami.Units.smallSpacing
+            columnSpacing: Kirigami.Units.gridUnit / 2.5
             Layout.minimumWidth: Math.min(implicitWidth, preferredTextWidth)
             Layout.maximumWidth: preferredTextWidth
-            level: 3
-            elide: Text.ElideRight
-            text: Plasmoid.metaData.name
-        }
-
-        Repeater {
-            model: [
-                ["Single click","singleClick"],
-                ["Double click","doubleClick"],
-                ["Middle click","middleClick"],
-                ["Wheel up","mouseWheelUp"],
-                ["Wheel down","mouseWheelDown"],
-                ["Drag up","mouseDragUp"],
-                ["Drag down","mouseDragDown"],
-                ["Drag left","mouseDragLeft"],
-                ["Drag right","mouseDragRight"],
-                ["Long press","pressHold"],
-                ]
-            delegate: ColumnLayout {
-
+            Repeater {
+                model: repeaterModel
                 PlasmaComponents.Label {
                     text: modelData[0]
-                    opacity: 1
-                    Layout.minimumWidth: Math.min(implicitWidth, preferredTextWidth)
-                    Layout.maximumWidth: preferredTextWidth
-                    elide: Text.ElideRight
+                    Layout.row: index
+                    Layout.column: 0
+                    Layout.fillWidth: true
+                    opacity: 0.8
+                    font.weight: Font.DemiBold
+                    horizontalAlignment: Text.AlignRight
                 }
-
-                RowLayout {
-                    Item { implicitWidth: Kirigami.Units.smallSpacing }
-                    PlasmaComponents.Label {
-                        text: getShownAction(modelData[1])
-                        opacity: .7
-                        Layout.minimumWidth: Math.min(implicitWidth, preferredTextWidth)
-                        Layout.maximumWidth: preferredTextWidth
-                        elide: Text.ElideRight
-                    }
+            }
+            Repeater {
+                model: repeaterModel
+                PlasmaComponents.Label {
+                    text: getShownAction(modelData[1])
+                    Layout.row: index
+                    Layout.column: 1
+                    Layout.fillWidth: true
+                    opacity: 0.65
+                    elide: Text.ElideRight
                 }
             }
         }
