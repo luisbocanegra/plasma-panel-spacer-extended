@@ -21,92 +21,111 @@ Item {
         }
     }
 
+    ListModel {
+        id: shortcutsList
+    }
+
+    Component.onCompleted: {
+        updateShortcutsList()
+    }
+
+    function updateShortcutsList() {
+        shortcutsList.clear()
+        for (let gesture of gestures) {
+                var action = getShownAction(gesture.key)
+                if (action) {
+                    shortcutsList.append({"gesture": gesture.name, "action": action })
+                }
+        }
+    }
+
+    Connections {
+        target: plasmoid.configuration
+        onValueChanged: {
+            updateShortcutsList()
+        }
+    }
+
+    property var gestures: [
+        {key:"singleClick", name: "Single click"},
+        {key:"doubleClick", name: "Double click"},
+        {key:"middleClick", name: "Middle click"},
+        {key:"mouseWheelUp", name: "Wheel up"},
+        {key:"mouseWheelDown", name: "Wheel down"},
+        {key:"mouseDragUp", name: "Drag up"},
+        {key:"mouseDragDown", name: "Drag down"},
+        {key:"mouseDragLeft", name: "Drag left"},
+        {key:"mouseDragRight", name: "Drag right"},
+        {key:"pressHold", name: "Long press"},
+    ]
+
     function getShownAction(configKey){
         var configValue = plasmoid.configuration[configKey+"Action"]
         if (configValue != "") {
             var parts = configValue.toString().split(",")
-            if (parts[0] == "custom_command") {
-                var command = plasmoid.configuration[configKey+"Command"]
-                var commandShort = "Nothing is set"
-                if (command!==undefined && command!==""){
-                    var command = truncateString(command,30)
-                    commandShort = command
-                }
-                return "Run " + commandShort
-            }
-            if (parts[0] == "launch_application"){
-                var appName = logic.launcherData(plasmoid.configuration[configKey+"AppUrl"]).applicationName
-                if (appName.length>0) {
-                    return "Open" + appName
-                }
-                return "Nothing is set"
-            }
-            if (parts[0] == "Disabled") {
-                return parts[0]
-            }
-            return parts[1]
-        }
-        return "unknown"
-    }
+            let component = parts[0]
+            let shortcut = parts[1]
 
-    property var repeaterModel: [
-        ["Single click","singleClick"],
-        ["Double click","doubleClick"],
-        ["Middle click","middleClick"],
-        ["Wheel up","mouseWheelUp"],
-        ["Wheel down","mouseWheelDown"],
-        ["Drag up","mouseDragUp"],
-        ["Drag down","mouseDragDown"],
-        ["Drag left","mouseDragLeft"],
-        ["Drag right","mouseDragRight"],
-        ["Long press","pressHold"],
-    ]
+            var action = null
+
+            switch (component) {
+                case "custom_command":
+                    var command = plasmoid.configuration[configKey+"Command"]
+
+                    if (command){
+                        action = "Command • " + truncateString(command, 70).replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, ' ');
+                    }
+                    break
+                case "launch_application":
+                    var appName = logic.launcherData(plasmoid.configuration[configKey+"AppUrl"]).applicationName
+                    if (appName.length>0) {
+                        action = "Open • " + appName
+                    }
+                    break
+                default:
+                    component = (component.charAt(0).toUpperCase() + component.substring(1)).replace(/-|_/g, " ")
+                    if (shortcut && shortcut != "Disabled") {
+                        action = component + " • " + shortcut.replace(/-|_/g, " ")
+                    }
+            }
+        }
+        return action
+    }
 
     ColumnLayout {
         id: mainLayout
 
         anchors {
-            left: parent.left
-            top: parent.top
-            margins: Kirigami.Units.largeSpacing
+            centerIn: parent
         }
 
-        // Kirigami.Heading {
-        //     id: tooltipMaintext
-        //     Layout.minimumWidth: Math.min(implicitWidth, preferredTextWidth)
-        //     Layout.maximumWidth: preferredTextWidth
-        //     level: 3
-        //     elide: Text.ElideRight
-        //     text: Plasmoid.metaData.name
-        // }
-        
         GridLayout {
+            Layout.alignment: Qt.AlignRight
             columns: 2
-            rowSpacing: Kirigami.Units.smallSpacing
+            rowSpacing: Kirigami.Units.mediumSpacing
             columnSpacing: Kirigami.Units.gridUnit / 2.5
-            Layout.minimumWidth: Math.min(implicitWidth, preferredTextWidth)
-            Layout.maximumWidth: preferredTextWidth
+            Layout.maximumWidth: Math.min(implicitWidth, preferredTextWidth)
             Repeater {
-                model: repeaterModel
+                model: shortcutsList
                 PlasmaComponents.Label {
-                    text: modelData[0]
+                    text: gesture
                     Layout.row: index
                     Layout.column: 0
-                    Layout.fillWidth: true
-                    opacity: 0.8
+                    opacity: 0.9
                     font.weight: Font.DemiBold
-                    horizontalAlignment: Text.AlignRight
+                    Layout.alignment: Qt.AlignTop|Qt.AlignRight
                 }
             }
             Repeater {
-                model: repeaterModel
+                model: shortcutsList
                 PlasmaComponents.Label {
-                    text: getShownAction(modelData[1])
+                    text: action
                     Layout.row: index
                     Layout.column: 1
                     Layout.fillWidth: true
-                    opacity: 0.65
-                    elide: Text.ElideRight
+                    Layout.alignment: Qt.AlignTop
+                    opacity: 0.75
+                    wrapMode: Text.Wrap
                 }
             }
         }
