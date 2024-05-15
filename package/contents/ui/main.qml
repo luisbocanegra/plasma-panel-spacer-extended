@@ -132,6 +132,7 @@ PlasmoidItem {
     property string qdbusCommand: plasmoid.configuration.qdbusCommand
     property bool showHoverBg: plasmoid.configuration.showHoverBg
     property int hoverBgRadius: plasmoid.configuration.hoverBgRadius
+    property int scrollSensitivity: plasmoid.configuration.scrollSensitivity
 
     property bool bgFillPanel: plasmoid.configuration.bgFillPanel
     Plasmoid.constraintHints: bgFillPanel ? Plasmoid.CanFillArea : Plasmoid.NoHint
@@ -546,13 +547,21 @@ PlasmoidItem {
     }
 
     WheelHandler {
+        property int wheelDelta: 0
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onWheel: (event) => {
-            if (event.angleDelta.y > 0) {
+            // TODO: Different sensitivity per device type
+            const delta = (event.inverted ? -1 : 1) * (event.angleDelta.y ? event.angleDelta.y : -event.angleDelta.x);
+            wheelDelta += delta;
+            while (wheelDelta >= scrollSensitivity) {
+                wheelDelta -= scrollSensitivity;
                 printLog `WHEEL UP`
                 btn = qsTr('Wheel up')
                 runAction(mouseWheelUpAction,mouseWheelUpCommand,mouseWheelUpAppUrl)
-            } else {
+            }
+
+            while (wheelDelta <= -scrollSensitivity) {
+                wheelDelta += scrollSensitivity;
                 printLog `WHEEL DOWN`
                 btn = qsTr('Wheel down')
                 runAction(mouseWheelDownAction,mouseWheelDownCommand,mouseWheelDownAppUrl)

@@ -52,6 +52,7 @@ KCM.SimpleKCM {
 
     property alias cfg_showTooltip: showTooltip.checked
     property alias cfg_qdbusCommand: qdbusCommand.text
+    property alias cfg_scrollSensitivity: scrollSensitivity.value
 
     property bool isLoading: true
 
@@ -191,12 +192,7 @@ KCM.SimpleKCM {
                     onCheckedChanged: {
                         cfg_showTooltip = checked
                     }
-                }
-
-                Label {
-                    text: i18n("show list of actions when hovering the spacer")
-                    wrapMode: Text.WordWrap
-                    opacity: 0.7
+                    text: i18n("Show list of actions when hovering the spacer")
                 }
             }
 
@@ -204,6 +200,19 @@ KCM.SimpleKCM {
                 Kirigami.FormData.label: i18n("Qdbus executable:")
                 id: qdbusCommand
                 placeholderText: qsTr("Custom qdbus command e.g. qdbus, qdbus6, qdbus-qt6, /usr/lib/qt6/bin/qml")
+            }
+
+            RowLayout {
+                Kirigami.FormData.label: i18n("Scroll threshold:")
+                SpinBox {
+                    id: scrollSensitivity
+                    from: 120
+                    to: 10000
+                }
+                Label {
+                    text: i18n("Higher values may help reducing repeated scrolling events on some devices")
+                    wrapMode: Text.WordWrap
+                }
             }
 
             Kirigami.Separator {

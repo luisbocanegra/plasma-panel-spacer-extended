@@ -142,6 +142,9 @@
     <entry name="screenWidth" type="Int">
       <default>15360</default>
     </entry>
+    <entry name="scrollSensitivity" type="Int">
+      <default>120</default>
+    </entry>
   </group>
 
 </kcfg>
