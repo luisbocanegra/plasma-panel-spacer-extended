@@ -206,7 +206,7 @@ KCM.SimpleKCM {
                 Kirigami.FormData.label: i18n("Scroll threshold:")
                 SpinBox {
                     id: scrollSensitivity
-                    from: 120
+                    from: 1
                     to: 10000
                 }
                 Label {
