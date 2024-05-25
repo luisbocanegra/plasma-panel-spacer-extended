@@ -16,7 +16,15 @@ ColumnLayout {
     RowLayout {
         Layout.preferredWidth: 450
         Label {
-            text: configValue.split(",").join(" - ")
+            property var component: configValue.split(",")[0]
+            property var action: configValue.split(",")[1]
+            text: {
+                if (!["Disabled","custom_command","launch_application"].includes(component)) {
+                    return component+" - "+action
+                } else {
+                    return action
+                }
+            }                
             wrapMode: Text.Wrap
             Layout.fillWidth: true
         }
