@@ -14,8 +14,10 @@ ColumnLayout {
     property bool showList: false
     
     RowLayout {
+        Layout.preferredWidth: 450
         Label {
             text: configValue.split(",").join(" - ")
+            wrapMode: Text.Wrap
             Layout.fillWidth: true
         }
         Button {

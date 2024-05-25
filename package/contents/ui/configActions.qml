@@ -176,7 +176,6 @@ KCM.SimpleKCM {
     ColumnLayout {
         Kirigami.FormLayout {
             Layout.alignment: Qt.AlignTop
-            wideMode: true
 
             Kirigami.Separator {
                 Kirigami.FormData.label: i18n("General")
@@ -199,7 +198,7 @@ KCM.SimpleKCM {
             TextField {
                 Kirigami.FormData.label: i18n("Qdbus executable:")
                 id: qdbusCommand
-                placeholderText: qsTr("Custom qdbus command e.g. qdbus, qdbus6, qdbus-qt6, /usr/lib/qt6/bin/qml")
+                placeholderText: qsTr("e.g. qdbus, qdbus6, qdbus-qt6")
             }
 
             RowLayout {
@@ -209,11 +208,12 @@ KCM.SimpleKCM {
                     from: 1
                     to: 10000
                 }
-                Label {
-                    text: i18n("Higher values may help reducing repeated scrolling events on some devices")
-                    wrapMode: Text.WordWrap
+                KCM.ContextualHelpButton {
+                    toolTipText: "Higher values may help reducing repeated scrolling events on some devices"
                 }
             }
+        }
+        Kirigami.FormLayout {
 
             Kirigami.Separator {
                 Kirigami.FormData.label: i18n("Actions")
