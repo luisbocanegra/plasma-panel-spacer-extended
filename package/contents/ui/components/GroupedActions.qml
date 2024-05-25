@@ -35,18 +35,16 @@ ColumnLayout {
         }
     }
 
-    MyComboBox {
+    FilterListView {
         id: actionCombo
         Layout.fillWidth: true
-        model: modelData
-        textRole: "label"
         configName: confInternalName
-        isLoading: groupedActions.isLoading
+        componentValue: configValue.split(",")[0]
     }
 
     // Command area
     RowLayout {
-        visible: modelData.get(actionCombo.currentIndex)["component"] == "custom_command"
+        visible: actionCombo.componentValue == "custom_command"
 
         TextArea {
             wrapMode: TextArea.Wrap
@@ -146,7 +144,7 @@ ColumnLayout {
 
     
     RowLayout {
-        visible: modelData.get(actionCombo.currentIndex)["component"] == "launch_application"
+        visible: actionCombo.componentValue == "launch_application"
 
         Button {
             id: btnAddLauncher
