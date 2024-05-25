@@ -52,8 +52,8 @@ ColumnLayout {
     Kirigami.AbstractCard {
         visible: expandBtn.checked
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.min(contentItem.implicitHeight+20, 150)
-        Layout.maximumHeight: 150
+        Layout.preferredHeight: Math.min(contentItem.implicitHeight+20, 300)
+        Layout.maximumHeight: 300
         contentItem: ScrollView {
             Layout.fillWidth: true
             ListView {
