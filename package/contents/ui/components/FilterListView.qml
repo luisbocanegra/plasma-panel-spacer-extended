@@ -10,7 +10,9 @@ ColumnLayout {
     property string configValue: ""
     property string configName: ""
     property string componentValue: ""
-
+    property bool itemClicked: false
+    property bool showList: false
+    
     RowLayout {
         Label {
             text: configValue.split(",").join(" - ")
@@ -18,10 +20,13 @@ ColumnLayout {
         }
         Button {
             id: expandBtn
-            checkable: true
             icon.name: "edit-symbolic"
+            checkable: true
+            checked: showList
             onClicked: {
-                if (checked) {
+                showList = !showList
+                if (showList) {
+                    searchField.text = ""
                     searchField.forceActiveFocus()
                 }
             }
@@ -30,7 +35,7 @@ ColumnLayout {
 
     TextField {
         id: searchField
-        visible: expandBtn.checked
+        visible: showList
         Layout.fillWidth: true
         focus: true
         onTextChanged: {
@@ -50,7 +55,7 @@ ColumnLayout {
     }
 
     Kirigami.AbstractCard {
-        visible: expandBtn.checked
+        visible: showList
         Layout.fillWidth: true
         Layout.preferredHeight: Math.min(contentItem.implicitHeight+20, 300)
         Layout.maximumHeight: 300
@@ -72,6 +77,7 @@ ColumnLayout {
                     onClicked: {
                         componentValue = component
                         configValue = component + "," + shortcutName
+                        showList = false
                     }
                     Rectangle {
                         color: index & 1 ? "transparent" : Kirigami.Theme.alternateBackgroundColor
