@@ -23,7 +23,7 @@ Spacer with Mouse gestures for the KDE Plasma Panel featuring Latte Dock/Gnome/U
   * [x] Double click
   * [x] Middle click
   * [x] Mouse wheel up/down
-    * [ ] Min wheel steps
+    * [x] Min wheel steps
   * [x] Mouse drag (four axis)
     * [ ] Min track distance
   * [x] Long press
@@ -41,6 +41,12 @@ Spacer with Mouse gestures for the KDE Plasma Panel featuring Latte Dock/Gnome/U
 
 > [!IMPORTANT]
 > Development has switched to Plasma 6, PRs to backport changes to Plasma 5 version are welcomed
+
+### Arch Linux
+
+[aur/plasma6-applets-panel-spacer-extended](https://aur.archlinux.org/packages/plasma6-applets-panel-spacer-extended) use your preferred AUR helper (e.g `yay -S plasma6-applets-panel-spacer-extended`)
+
+### KDE Store
 
 * [Plasma 5](https://store.kde.org/p/2064339) version v1.4.0
 
