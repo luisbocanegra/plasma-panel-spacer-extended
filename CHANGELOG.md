@@ -1,5 +1,38 @@
 # Changelog
 
+## v1.8.1 (28-05-2024) Bugfix Release
+
+### Fixes
+
+- Fix weird Plasma freeze when selecting command action from settings
+
+## v1.8.0 (25-05-2024) Search actions
+
+### Improvements
+
+- Type to search actions (replaces the giant ugly combobox) https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/35
+
+### Fixes
+
+- Fix the annoying **Apply Settings** popup https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/35
+- Fit content in window and change some widths https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/35
+
+## v1.7.0 (20-05-2024)
+
+### Improvements
+
+- Scroll gesture sensitivity
+- Tooltip improvements
+  - Don't show disabled gestures in tooltip https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/31
+  - Wrap instead of eliding action name
+  - Replace dashes and underscores from component and shortcut names
+
+### Other
+
+- Tooltip is now shorter
+- Changed default hover radius to 5px and qdbus excecutable name (qdbus6)
+- Toggle debug in KWin script
+
 ## v1.6.1 (28-04-2024) - Bugfix Release
 
 ### Bug fixes
