@@ -33,6 +33,7 @@ PlasmoidItem {
     property var startPos: { "x": 0, "y": 0 }
     property var endPos: { "x": 0, "y": 0 }
     property var localStartPos: dragHandler.parent.mapFromGlobal(startPos.x, startPos.y)
+    property var dragHandler
     property bool pressed: dragHandler.active || tapHandler.pressed
     property bool dragging: false
     property bool wasDoubleClicked: false
@@ -455,49 +456,79 @@ PlasmoidItem {
         dragArea.y = localStartPos.y - (dragArea.height / 2)
     }
 
-    PointHandler {
-        id: dragHandler
+    function runDragAction() {
+        btn = ''
+        dragging = false
+        printLog `Drag end: ${endPos}`
+        const dragDirection = getDragDirection(startPos, endPos)
+        printLog `Drag direction ${dragDirection}`
+        switch (dragDirection) {
+            case "up":
+                dragInfo = qsTr('Drag up')
+                runAction(mouseDragUpAction, mouseDragUpCommand, mouseDragUpAppUrl)
+                break
+            case "down":
+                dragInfo = qsTr('Drag down')
+                runAction(mouseDragDownAction, mouseDragDownCommand, mouseDragDownAppUrl)
+                break
+            case "left":
+                dragInfo = qsTr('Drag left')
+                runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl)
+                break
+            case "right":
+                dragInfo = qsTr('Drag right')
+                runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
+                break
+            default:
+                dragInfo = ''
+        }
+    }
+
+    property Component pointHandlerComponent: PointHandler {
         target: null
         cursorShape: (active && dragging) ? Qt.ClosedHandCursor : Qt.ArrowCursor
         onActiveChanged: {
             if (active) {
                 dragging = true
-                startPos = dragHandler.parent.mapToGlobal(point.pressPosition.x, point.pressPosition.y)
-                localStartPos = dragHandler.parent.mapFromGlobal(startPos.x, startPos.y)
+                startPos = this.parent.mapToGlobal(point.pressPosition.x, point.pressPosition.y)
+                localStartPos = this.parent.mapFromGlobal(startPos.x, startPos.y)
                 printLog `Drag start: ${startPos}`
             }
         }
 
         onPointChanged: {
             if (active && dragging) {
-                endPos = dragHandler.parent.mapToGlobal(point.position.x, point.position.y)
+                endPos = this.parent.mapToGlobal(point.position.x, point.position.y)
                 const distance = getDistance(startPos, endPos)
                 if (!tapHandler.pressed && distance >= minDragDistance) {
-                    btn = ''
-                    dragging = false
-                    printLog `Drag end: ${endPos}`
-                    const dragDirection = getDragDirection(startPos, endPos)
-                    printLog `Drag direction ${dragDirection}`
-                    switch (dragDirection) {
-                        case "up":
-                            dragInfo = qsTr('Drag up')
-                            runAction(mouseDragUpAction, mouseDragUpCommand, mouseDragUpAppUrl)
-                            break
-                        case "down":
-                            dragInfo = qsTr('Drag down')
-                            runAction(mouseDragDownAction, mouseDragDownCommand, mouseDragDownAppUrl)
-                            break
-                        case "left":
-                            dragInfo = qsTr('Drag left')
-                            runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl)
-                            break
-                        case "right":
-                            dragInfo = qsTr('Drag right')
-                            runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
-                            break
-                        default:
-                            dragInfo = ''
-                    }
+                    runDragAction()
+                }
+            }
+        }
+    }
+
+    property Component dragHandlerComponent: DragHandler {
+        target: null
+        cursorShape: (active && dragging) ? Qt.ClosedHandCursor : Qt.ArrowCursor
+        acceptedDevices: PointerDevice.AllDevices
+        grabPermissions: PointerHandler.ApprovesCancellation
+        onActiveChanged: {
+            if (active) {
+                dragging = true
+                startPos = dragHandler.parent.mapToGlobal(persistentTranslation.x, persistentTranslation.y)
+                localStartPos = dragHandler.parent.mapFromGlobal(startPos.x, startPos.y)
+                printLog `Drag start: ${startPos}`
+            }
+        }
+
+        onGrabChanged: {
+            printLog `onGrabChanged`
+            if (dragging) {
+                printLog `(active && dragging)`
+                endPos = dragHandler.parent.mapToGlobal(persistentTranslation.x, persistentTranslation.y)
+                const distance = getDistance(startPos, endPos)
+                if (!tapHandler.pressed && distance >= minDragDistance) {
+                    runDragAction()
                 }
             }
         }
@@ -570,6 +601,11 @@ PlasmoidItem {
     }
 
     Component.onCompleted: {
+        if (Qt.platform.pluginName.includes("wayland")){
+            dragHandler = pointHandlerComponent.createObject(root)
+        } else {
+            dragHandler = dragHandlerComponent.createObject(root)
+        }
         plasmoid.configuration.screenWidth = horizontal ? screenGeometry.width : screenGeometry.height
     }
 
