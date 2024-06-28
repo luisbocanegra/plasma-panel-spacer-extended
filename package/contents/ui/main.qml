@@ -296,9 +296,9 @@ PlasmoidItem {
 
     function printLog(strings, ...values) {
         if (enableDebug) {
-            let str = "PPSE S:" + root.screen + " ID:" + Plasmoid.id + " ";
+            let str = Plasmoid.pluginName + " S:" + root.screen + " ID:" + Plasmoid.id + " ";
             strings.forEach((string, i) => {
-                str += string + (values[i] !== undefined ? values[i] : '');
+            str += string + (values[i] !== undefined ? values[i] : '');
             });
             console.log(str);
         }

@@ -1,7 +1,7 @@
 const enableDebug = true
 function printLog(strings, ...values) {
   if (enableDebug) {
-    let str = 'PPSE: ';
+    let str = 'luisbocanegra.panelspacer.extended: ';
     strings.forEach((string, i) => {
       str += string + (values[i] !== undefined ? values[i] : '');
     });

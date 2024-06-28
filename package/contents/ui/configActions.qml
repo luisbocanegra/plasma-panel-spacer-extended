@@ -128,6 +128,12 @@ KCM.SimpleKCM {
         getShortcuts.exec()
 
         exited.connect(function (cmd, exitCode, exitStatus, stdout, stderr) {
+            console.warn("----");
+            console.warn("cmd:", cmd);
+            console.warn("exitCode:", exitCode);
+            console.warn("exitStatus:", exitStatus);
+            console.warn("stdout:", stdout);
+            console.warn("stderr:", stderr);
             var lines = stdout.trim().split("\n")
             const blackList = [
                 "activate widget",
@@ -160,6 +166,7 @@ KCM.SimpleKCM {
                 var component = line[0].split("/")
                 component = component[component.length - 1]
                 const shortcutName = line[1]
+                console.log(component + " - " + shortcutName);
                 shortcutsList.append({
                     "label": component + " - " + shortcutName,
                     "component": component,
