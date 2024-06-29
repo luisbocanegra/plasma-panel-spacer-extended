@@ -47,7 +47,7 @@ PlasmoidItem {
 
     function getKwinScriptCommand(scriptName) {
         const scriptFile = toolsDir + scriptName + ".js"
-        const kwinCommand = "sh '" + scriptUtil + "' '"+ scriptName + "' " + "'" + scriptFile + "' " + enableDebug
+        const kwinCommand = "sh '" + scriptUtil + "' '"+ scriptName + "' '" + scriptFile + "' " + enableDebug + " '" +qdbusCommand+ "'"
         return kwinCommand
     }
 
