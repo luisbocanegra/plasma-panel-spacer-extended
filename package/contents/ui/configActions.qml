@@ -56,7 +56,8 @@ KCM.SimpleKCM {
 
     property bool isLoading: true
 
-    property string getShortcutsCommand: "for comp in $("+qdbusCommand.text+" org.kde.kglobalaccel | grep '/component/'); do IFS=$'\\n';for shortcut in $("+qdbusCommand.text+" org.kde.kglobalaccel $comp org.kde.kglobalaccel.Component.shortcutNames); do echo $comp,$shortcut;done; done | sort"
+    property string toolsDir: Qt.resolvedUrl("./tools").toString().substring(7) + "/"
+    property string getShortcutsCommand: "sh '" + toolsDir + "get_shortcuts.sh' '" + qdbusCommand.text + "'"
 
     ListModel {
         id: shortcutsList
@@ -119,15 +120,13 @@ KCM.SimpleKCM {
         function exec() {
             getShortcuts.connectSource(getShortcutsCommand)
         }
+
+        signal exited(string source, int exitCode, int exitStatus, string stdout, string stderr)
     }
 
-    signal exited(string source, int exitCode, int exitStatus, string stdout, string stderr)
-
-
-    Component.onCompleted: {
-        getShortcuts.exec()
-
-        exited.connect(function (cmd, exitCode, exitStatus, stdout, stderr) {
+    Connections {
+        target: getShortcuts
+        function onExited(cmd, exitCode, exitStatus, stdout, stderr) {
             console.warn("----");
             console.warn("cmd:", cmd);
             console.warn("exitCode:", exitCode);
@@ -156,8 +155,8 @@ KCM.SimpleKCM {
                 "kwin,show dashboard",
                 "kwin,stop current activity",
                 "kwin,toggle do not disturb"
-
-                ]
+            ]
+            shortcutsList.clear()
             for (let i = 0; i < lines.length; i++) {
                 if (blackList.some(term => lines[i].includes(term))) {
                     continue
@@ -166,19 +165,22 @@ KCM.SimpleKCM {
                 var component = line[0].split("/")
                 component = component[component.length - 1]
                 const shortcutName = line[1]
-                console.log(component + " - " + shortcutName);
+                // console.log(component + " - " + shortcutName);
                 shortcutsList.append({
                     "label": component + " - " + shortcutName,
                     "component": component,
                     "shortcutName": shortcutName
-                    })
+                })
             }
             console.log("SHORTCUTS LOADING FINISHED");
             isLoading = false
-        })
+        }
     }
 
-    signal configurationChanged
+
+    Component.onCompleted: {
+        getShortcuts.exec()
+    }
 
     ColumnLayout {
         Kirigami.FormLayout {
@@ -202,11 +204,21 @@ KCM.SimpleKCM {
                 }
             }
 
-            TextField {
+            RowLayout {
                 Kirigami.FormData.label: i18n("Qdbus executable:")
-                id: qdbusCommand
-                placeholderText: qsTr("e.g. qdbus, qdbus6, qdbus-qt6")
+                TextField {
+                    id: qdbusCommand
+                    placeholderText: qsTr("e.g. qdbus, qdbus6, qdbus-qt6")
+                }
+                Button {
+                    text: i18n("Refresh actions")
+                    icon.name: "view-refresh-symbolic"
+                    onClicked: {
+                        getShortcuts.exec()
+                    }
+                }
             }
+
 
             RowLayout {
                 Kirigami.FormData.label: i18n("Scroll threshold:")
