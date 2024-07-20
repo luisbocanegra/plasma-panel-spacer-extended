@@ -72,7 +72,7 @@ Spacer with Mouse gestures for the KDE Plasma Panel featuring Latte Dock/Gnome/U
 
 ## How does it work?
 
-1. Runs `qdbus org.kde.kglobalaccel /component/$COMPONENT org.kde.kglobalaccel.Component.invokeShortcut "ACTION NAME"` for shortcuts
+1. Runs `calls dbus method org.kde.kglobalaccel /component/$COMPONENT org.kde.kglobalaccel.Component.invokeShortcut "ACTION NAME"` for shortcuts
 2. App/URL/File actions depend on `kdeplasma-addons`
 
 ## Support the development

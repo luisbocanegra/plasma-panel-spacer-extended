@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-QDBUS_EXEC="$1"
-for comp in $($QDBUS_EXEC org.kde.kglobalaccel | grep '/component/'); do
-  IFS=$'\n'
-  for shortcut in $($QDBUS_EXEC org.kde.kglobalaccel $comp org.kde.kglobalaccel.Component.shortcutNames); do
-    echo $comp,$shortcut
+for comp in $(gdbus call --session --dest org.kde.kglobalaccel --object-path /kglobalaccel --method org.kde.KGlobalAccel.allComponents | sed -e "s|objectpath||g;s/[](\)',[]//g"); do
+  shortcuts=$(gdbus call --session --dest org.kde.kglobalaccel --object-path "$comp" --method org.kde.kglobalaccel.Component.shortcutNames | sed -e "s|objectpath||g;s/[](\)'[]//g")
+  IFS="," read -r -a shortcuts_array <<<"$shortcuts"
+  for shortcut in "${shortcuts_array[@]}"; do
+    echo "$comp,$(sed 's|^ ||' <<<$shortcut)"
   done
 done

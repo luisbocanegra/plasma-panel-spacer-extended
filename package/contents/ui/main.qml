@@ -47,7 +47,7 @@ PlasmoidItem {
 
     function getKwinScriptCommand(scriptName) {
         const scriptFile = toolsDir + scriptName + ".js"
-        const kwinCommand = "sh '" + scriptUtil + "' '"+ scriptName + "' '" + scriptFile + "' " + enableDebug + " '" +qdbusCommand+ "'"
+        const kwinCommand = "sh '" + scriptUtil + "' '"+ scriptName + "' '" + scriptFile + "' " + enableDebug
         return kwinCommand
     }
 
@@ -130,7 +130,6 @@ PlasmoidItem {
     property bool enableDebug: plasmoid.configuration.enableDebug
     property bool showTooltip: plasmoid.configuration.showTooltip
     property bool hideTooltip: false // hide tooltip after action
-    property string qdbusCommand: plasmoid.configuration.qdbusCommand
     property bool showHoverBg: plasmoid.configuration.showHoverBg
     property int hoverBgRadius: plasmoid.configuration.hoverBgRadius
     property int scrollSensitivity: plasmoid.configuration.scrollSensitivity
@@ -283,7 +282,7 @@ PlasmoidItem {
                 setMaximized(false)
                 return
             }
-            var shortcutCommand = qdbusCommand+' org.kde.kglobalaccel /component/'+component+' org.kde.kglobalaccel.Component.invokeShortcut '+'\"'+actionNme+'\"'
+            var shortcutCommand = 'gdbus call --session --dest org.kde.kglobalaccel --object-path /component/'+component+' --method org.kde.kglobalaccel.Component.invokeShortcut '+'\"'+actionNme+'\"'
             var kwinCommand = "true"
             if (requiresFocus.includes(component + "," + actionNme)) {
                 activateLastWindow()

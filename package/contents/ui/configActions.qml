@@ -51,13 +51,12 @@ KCM.SimpleKCM {
     property alias cfg_pressHoldAppUrl: pressHold.applicationUrlValue
 
     property alias cfg_showTooltip: showTooltip.checked
-    property alias cfg_qdbusCommand: qdbusCommand.text
     property alias cfg_scrollSensitivity: scrollSensitivity.value
 
     property bool isLoading: true
 
     property string toolsDir: Qt.resolvedUrl("./tools").toString().substring(7) + "/"
-    property string getShortcutsCommand: "sh '" + toolsDir + "get_shortcuts.sh' '" + qdbusCommand.text + "'"
+    property string getShortcutsCommand: "sh '" + toolsDir + "get_shortcuts.sh'"
 
     ListModel {
         id: shortcutsList
@@ -205,22 +204,6 @@ KCM.SimpleKCM {
             }
 
             RowLayout {
-                Kirigami.FormData.label: i18n("Qdbus executable:")
-                TextField {
-                    id: qdbusCommand
-                    placeholderText: qsTr("e.g. qdbus, qdbus6, qdbus-qt6")
-                }
-                Button {
-                    text: i18n("Refresh actions")
-                    icon.name: "view-refresh-symbolic"
-                    onClicked: {
-                        getShortcuts.exec()
-                    }
-                }
-            }
-
-
-            RowLayout {
                 Kirigami.FormData.label: i18n("Scroll threshold:")
                 SpinBox {
                     id: scrollSensitivity
@@ -231,6 +214,14 @@ KCM.SimpleKCM {
                     toolTipText: "Higher values may help reducing repeated scrolling events on some devices"
                 }
             }
+        }
+        Button {
+            text: i18n("Refresh actions")
+            icon.name: "view-refresh-symbolic"
+            onClicked: {
+                getShortcuts.exec()
+            }
+            Layout.alignment: Qt.AlignHCenter
         }
         Kirigami.FormLayout {
 

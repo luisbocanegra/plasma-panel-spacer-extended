@@ -125,10 +125,6 @@
       <default>true</default>
     </entry>
 
-    <entry name="qdbusCommand" type="String">
-      <default>qdbus6</default>
-    </entry>
-
     <!-- appearance -->
     <entry name="showHoverBg" type="Bool">
       <default>true</default>
