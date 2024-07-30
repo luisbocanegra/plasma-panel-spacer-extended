@@ -1,5 +1,18 @@
 # Changelog
 
+## v1.8.3 (30-07-2024) Switch to gdbus
+
+### Fixes
+
+- Get shortcuts using separate bash script (fixes [#40](https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/40))
+- Port from qdbus to gdbus command (fixes [#40](https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/40))
+
+## v1.8.2 (29-05-2024) Fix X11 window dragging
+
+### Fixes
+
+- Fixed broken window dragging in X11 session (works just like it did in earlier versions Drag + Release to grab and Click to drop). Wayland stays the same (Drag + Release to drop) [#32](https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/32)
+
 ## v1.8.1 (28-05-2024) Bugfix Release
 
 ### Fixes
