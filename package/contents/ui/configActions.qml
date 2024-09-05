@@ -156,6 +156,9 @@ KCM.SimpleKCM {
                 "kwin,toggle do not disturb"
             ]
             shortcutsList.clear()
+            shortcutsList.append(shortcutsListTemp.get(0))
+            shortcutsList.append(shortcutsListTemp.get(1))
+            shortcutsList.append(shortcutsListTemp.get(2))
             for (let i = 0; i < lines.length; i++) {
                 if (blackList.some(term => lines[i].includes(term))) {
                     continue
