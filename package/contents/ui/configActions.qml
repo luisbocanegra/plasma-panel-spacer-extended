@@ -52,6 +52,7 @@ KCM.SimpleKCM {
 
     property alias cfg_showTooltip: showTooltip.checked
     property alias cfg_scrollSensitivity: scrollSensitivity.value
+    property alias cfg_isContinuous: isContinuous.checked
 
     property bool isLoading: true
 
@@ -215,6 +216,22 @@ KCM.SimpleKCM {
                 }
                 KCM.ContextualHelpButton {
                     toolTipText: "Higher values may help reducing repeated scrolling events on some devices"
+                }
+            }
+            
+            RowLayout {
+                Kirigami.FormData.label: i18n("Continuous:")
+                
+                CheckBox {
+                    id: isContinuous
+                    checked: cfg_isContinuous
+                    onCheckedChanged: {
+                        cfg_isContinuous = checked
+                    }
+                    text: i18n("Enable continuous drag events.")
+                }
+                KCM.ContextualHelpButton {
+                    toolTipText: "When continuous, drag actions occur whenever a dragging pointer moves a certain distance without needing to release the drag."
                 }
             }
         }
