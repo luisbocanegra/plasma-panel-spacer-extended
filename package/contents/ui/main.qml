@@ -38,6 +38,7 @@ PlasmoidItem {
     property bool dragging: false
     property bool wasDoubleClicked: false
     // TODO make distance configurable instead??
+    property bool doubleClickAllowed: doubleClickAction[0] !== "Disabled"
     property int minDragDistance: horizontal ? root.height : root.width
     property var mouseButton: undefined
 
@@ -133,6 +134,7 @@ PlasmoidItem {
     property bool showHoverBg: plasmoid.configuration.showHoverBg
     property int hoverBgRadius: plasmoid.configuration.hoverBgRadius
     property int scrollSensitivity: plasmoid.configuration.scrollSensitivity
+    property bool isContinuous: plasmoid.configuration.isContinuous
 
     property bool bgFillPanel: plasmoid.configuration.bgFillPanel
     Plasmoid.constraintHints: bgFillPanel ? Plasmoid.CanFillArea : Plasmoid.NoHint
@@ -457,7 +459,6 @@ PlasmoidItem {
 
     function runDragAction() {
         btn = ''
-        dragging = false
         printLog `Drag end: ${endPos}`
         const dragDirection = getDragDirection(startPos, endPos)
         printLog `Drag direction ${dragDirection}`
@@ -499,8 +500,10 @@ PlasmoidItem {
             if (active && dragging) {
                 endPos = this.parent.mapToGlobal(point.position.x, point.position.y)
                 const distance = getDistance(startPos, endPos)
-                if (!tapHandler.pressed && distance >= minDragDistance) {
+                if ((!tapHandler.pressed || isContinuous) && distance >= minDragDistance) {
                     runDragAction()
+                    startPos = endPos
+                    if (!isContinuous) dragging = false
                 }
             }
         }
@@ -511,6 +514,9 @@ PlasmoidItem {
         cursorShape: (active && dragging) ? Qt.ClosedHandCursor : Qt.ArrowCursor
         acceptedDevices: PointerDevice.AllDevices
         grabPermissions: PointerHandler.ApprovesCancellation
+        property real activeX: xAxis.activeValue
+        property real activeY: yAxis.activeValue
+        signal pointChanged()
         onActiveChanged: {
             if (active) {
                 dragging = true
@@ -520,14 +526,24 @@ PlasmoidItem {
             }
         }
 
-        onGrabChanged: {
-            printLog `onGrabChanged`
+        onActiveXChanged: {
+            pointChanged()
+        }
+
+        onActiveYChanged: {
+            pointChanged()
+        }
+
+        onPointChanged: {
+            printLog `onPointChanged`
             if (dragging) {
                 printLog `(active && dragging)`
                 endPos = dragHandler.parent.mapToGlobal(persistentTranslation.x, persistentTranslation.y)
                 const distance = getDistance(startPos, endPos)
-                if (!tapHandler.pressed && distance >= minDragDistance) {
+                if ((!tapHandler.pressed || isContinuous) && distance >= minDragDistance) {
                     runDragAction()
+                    startPos = endPos
+                    if (!isContinuous) dragging = false
                 }
             }
         }
@@ -535,7 +551,7 @@ PlasmoidItem {
 
     Timer {
         id: singleTapTimer
-        interval: 300
+        interval: doubleClickAllowed ? 300 : 3
         onTriggered: {
             btn = qsTr('Single clicked')
             if (mouseButton === Qt.MiddleButton) {
@@ -561,6 +577,9 @@ PlasmoidItem {
         }
 
         onDoubleTapped: {
+            if (!doubleClickAllowed) {
+                return
+            }
             singleTapTimer.stop()
             printLog `Double tap detected!`
             btn = qsTr('Double clicked')
