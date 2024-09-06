@@ -228,10 +228,10 @@ KCM.SimpleKCM {
                     onCheckedChanged: {
                         cfg_isContinuous = checked
                     }
-                    text: i18n("Enable continuous drag events.")
+                    text: i18n("Enable continuous drag events")
                 }
                 KCM.ContextualHelpButton {
-                    toolTipText: "When continuous, drag actions occur whenever a dragging pointer moves a certain distance without needing to release the drag."
+                    toolTipText: "Keep dragging to chain actions without releasing the mouse/finger"
                 }
             }
         }
