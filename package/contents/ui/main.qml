@@ -89,6 +89,36 @@ PlasmoidItem {
         "kwin,Window to"
     ]
 
+    property var blockContinuousDrag: [
+        "kwin,ExposeClass",
+        "kwin,Kill Window",
+        "kwin,Setup Window Shortcut",
+        "kwin,Toggle Window Raise/Lower",
+        "kwin,Window Above Other Windows",
+        "kwin,Window Below Other Windows",
+        "kwin,Window Fullscreen",
+        "kwin,Window Maximize",
+        "kwin,Window Move",
+        "kwin,Window Operations Menu",
+        "kwin,Window Resize",
+        "kwin,Window Shade",
+        "kwin,Window Shrink",
+        "kwin,Cube",
+        "kwin,Overview",
+        "kwin,Cycle Overview",
+        "kwin,Cycle Overview Opposite",
+        "kwin,Edit Tiles",
+        "kwin,Expose",
+        "kwin,ExposeAll",
+        "kwin,Grid View",
+    ]
+
+    function stopContinuousDrag(action) {
+        var component = action[0]
+        var actionNme = action[1]
+        return blockContinuousDrag.includes(component + "," + actionNme)
+    }
+
     property var singleClickAction: plasmoid.configuration.singleClickAction.split(",")
     property var singleClickCommand: plasmoid.configuration.singleClickCommand
     property var singleClickAppUrl: plasmoid.configuration.singleClickAppUrl
@@ -293,6 +323,10 @@ PlasmoidItem {
             }
             printLog `RUNNING_SHORTCUT: ${kwinCommand+";"+shortcutCommand}`
             executable.exec(kwinCommand+";"+shortcutCommand);
+        }
+        // end the drag for these
+        if (stopContinuousDrag(action)) {
+            dragging = false
         }
     }
 
