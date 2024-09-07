@@ -18,6 +18,7 @@ PlasmoidItem {
     id: root
 
     property bool horizontal: Plasmoid.formFactor !== PlasmaCore.Types.Vertical
+    property bool isWayland: Qt.platform.pluginName.includes("wayland")
     property var activeTask: null
     property var activeProps: {"name":"", "title":"", "id":""}
     property var abstractTasksModel: TaskManager.AbstractTasksModel
@@ -457,12 +458,11 @@ PlasmoidItem {
         dragArea.y = localStartPos.y - (dragArea.height / 2)
     }
 
-    function runDragAction() {
+    function runDragAction(direction) {
         btn = ''
         printLog `Drag end: ${endPos}`
-        const dragDirection = getDragDirection(startPos, endPos)
-        printLog `Drag direction ${dragDirection}`
-        switch (dragDirection) {
+        printLog `Drag direction ${direction}`
+        switch (direction) {
             case "up":
                 dragInfo = qsTr('Drag up')
                 runAction(mouseDragUpAction, mouseDragUpCommand, mouseDragUpAppUrl)
@@ -493,6 +493,18 @@ PlasmoidItem {
                 startPos = this.parent.mapToGlobal(point.pressPosition.x, point.pressPosition.y)
                 localStartPos = this.parent.mapFromGlobal(startPos.x, startPos.y)
                 printLog `Drag start: ${startPos}`
+            } else {
+                if (isWayland) return
+                printLog `onActiveChanged`
+                if (dragging) {
+                    printLog `(active && dragging)`
+                    endPos = dragHandler.parent.mapToGlobal(point.position.x, point.position.y)
+                    const distance = getDistance(startPos, endPos)
+                    if (!tapHandler.pressed && distance >= minDragDistance) {
+                        const dragDirection = getDragDirection(startPos, endPos)
+                        runDragAction(dragDirection)
+                    }
+                }
             }
         }
 
@@ -501,47 +513,16 @@ PlasmoidItem {
                 endPos = this.parent.mapToGlobal(point.position.x, point.position.y)
                 const distance = getDistance(startPos, endPos)
                 if ((!tapHandler.pressed || isContinuous) && distance >= minDragDistance) {
-                    runDragAction()
-                    startPos = endPos
-                    if (!isContinuous) dragging = false
-                }
-            }
-        }
-    }
-
-    property Component dragHandlerComponent: DragHandler {
-        target: null
-        cursorShape: (active && dragging) ? Qt.ClosedHandCursor : Qt.ArrowCursor
-        acceptedDevices: PointerDevice.AllDevices
-        grabPermissions: PointerHandler.ApprovesCancellation
-        property real activeX: xAxis.activeValue
-        property real activeY: yAxis.activeValue
-        signal pointChanged()
-        onActiveChanged: {
-            if (active) {
-                dragging = true
-                startPos = dragHandler.parent.mapToGlobal(persistentTranslation.x, persistentTranslation.y)
-                localStartPos = dragHandler.parent.mapFromGlobal(startPos.x, startPos.y)
-                printLog `Drag start: ${startPos}`
-            }
-        }
-
-        onActiveXChanged: {
-            pointChanged()
-        }
-
-        onActiveYChanged: {
-            pointChanged()
-        }
-
-        onPointChanged: {
-            printLog `onPointChanged`
-            if (dragging) {
-                printLog `(active && dragging)`
-                endPos = dragHandler.parent.mapToGlobal(persistentTranslation.x, persistentTranslation.y)
-                const distance = getDistance(startPos, endPos)
-                if ((!tapHandler.pressed || isContinuous) && distance >= minDragDistance) {
-                    runDragAction()
+                    const dragDirection = getDragDirection(startPos, endPos)
+                    // we can't do a drag out of the panel on X11,
+                    // fallback to onActiveChanged == false (mouse released) above
+                    if (!isWayland && (
+                        (horizontal && ["up", "down"].includes(dragDirection))
+                        || (!horizontal && ["left", "right"].includes(dragDirection))
+                    )) {
+                        return
+                    }
+                    runDragAction(dragDirection)
                     startPos = endPos
                     if (!isContinuous) dragging = false
                 }
@@ -619,11 +600,7 @@ PlasmoidItem {
     }
 
     Component.onCompleted: {
-        if (Qt.platform.pluginName.includes("wayland")){
-            dragHandler = pointHandlerComponent.createObject(root)
-        } else {
-            dragHandler = dragHandlerComponent.createObject(root)
-        }
+        dragHandler = pointHandlerComponent.createObject(root)
         plasmoid.configuration.screenWidth = horizontal ? screenGeometry.width : screenGeometry.height
     }
 
