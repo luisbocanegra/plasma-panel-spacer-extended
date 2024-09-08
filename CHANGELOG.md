@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.9.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.8.3...v1.9.0) (2024-09-08)
+
+
+### Features
+
+* block continuous drag for some actions ([354ce85](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/354ce85bb4d082d3d9ff226d4c6d04896a7086e4))
+* continuous drag and remove delay if double click is disabled ([4a578c9](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/4a578c90dd264916a4e4cac1ab127bec846d837e))
+* update continuous drag wording ([0c27063](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/0c2706395d7c69395b5b387fc30726d62c2fa8da))
+
+
+### Bug Fixes
+
+* avoid crashing/freezing kwin when dragging a window on X11 ([f9bc677](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/f9bc677a83f727351bd780a5a1e069b1539c1070))
+* restore missing disabled, custom command and app/url actions ([1750297](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/17502971d4bb61b6634f6e88f3c8bfd01ac1efbd))
+
 ## v1.8.3 (30-07-2024) Switch to gdbus
 
 ### Fixes
