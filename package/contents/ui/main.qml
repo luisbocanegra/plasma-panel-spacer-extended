@@ -211,9 +211,9 @@ PlasmoidItem {
         // onDataChanged: {
         //     updateWindowsinfo()
         // }
-        // onCountChanged: {
-        //     updateWindowsinfo()
-        // }
+        onCountChanged: {
+            updateWindowsinfo()
+        }
     }
 
     function updateWindowsinfo() {
