@@ -206,13 +206,10 @@ PlasmoidItem {
         filterMinimized: true
 
         onActiveTaskChanged: {
-            updateWindowsinfo()
+            Qt.callLater(updateWindowsinfo)
         }
-        // onDataChanged: {
-        //     updateWindowsinfo()
-        // }
         onCountChanged: {
-            updateWindowsinfo()
+            Qt.callLater(updateWindowsinfo)
         }
     }
 
