@@ -349,6 +349,17 @@ PlasmoidItem {
         return null;
     }
 
+    property Item containment: {
+        let candidate = root.parent;
+        while (candidate) {
+            if (candidate.toString().indexOf("ContainmentItem_QML") > -1 ) {
+                return candidate;
+            }
+            candidate = candidate.parent;
+        }
+        return null
+    }
+
     Plasmoid.contextualActions: [
         PlasmaCore.Action {
             text: i18n("Set flexible size")
@@ -384,8 +395,12 @@ PlasmoidItem {
                 sizeHints[sizeHints.length - 1] += Math.min(child.Layout.maximumHeight, Math.max(child.Layout.minimumHeight, child.Layout.preferredHeight)) + panelLayout.columnSpacing;
             }
         }
-        sizeHints[0] *= 2; sizeHints[sizeHints.length - 1] *= 2
-        let opt = (horizontal ? panelLayout.width : panelLayout.height) / expandingSpacers - sizeHints[thisSpacerIndex] / 2 - sizeHints[thisSpacerIndex + 1] / 2
+        sizeHints[0] *= 2;
+        sizeHints[sizeHints.length - 1] *= 2
+        let opt = 0
+        if (containment) {
+            opt = (root.horizontal ? containment.width : containment.height) / expandingSpacers - sizeHints[thisSpacerIndex] / 2 - sizeHints[thisSpacerIndex + 1] / 2
+        }
         return Math.max(opt, 0)
     }
 
