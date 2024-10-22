@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.9.1](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.9.0...v1.9.1) (2024-10-22)
+
+
+### Bug Fixes
+
+* find and resize with containment ([1074478](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/107447818ef2fc3a308bc06afb98d2bb8c0de76b))
+* update last active window on count change ([01a1667](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/01a16677aa49ed9975d46f2eb02095a8a192bc9b)), closes [#41](https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/41)
+* Use Qt.callLater as an attempt to prevent a plasma crash ([46a12d9](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/46a12d946b6cc801a3bd97823032ffe3bcd88e6c))
+
 ## [1.9.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.8.3...v1.9.0) (2024-09-08)
 
 
