@@ -390,17 +390,19 @@ PlasmoidItem {
                 sizeHints.push(0)
                 expandingSpacers += 1
             } else if (root.horizontal) {
-                sizeHints[sizeHints.length - 1] += Math.min(child.Layout.maximumWidth, Math.max(child.Layout.minimumWidth, child.Layout.preferredWidth)) + panelLayout.rowSpacing;
+                sizeHints[sizeHints.length - 1] += Math.min(child.Layout.maximumWidth, Math.max(child.Layout.minimumWidth, child.Layout.preferredWidth))
+                    + panelLayout.columnSpacing + child.Layout.leftMargin + child.Layout.rightMargin
             } else {
-                sizeHints[sizeHints.length - 1] += Math.min(child.Layout.maximumHeight, Math.max(child.Layout.minimumHeight, child.Layout.preferredHeight)) + panelLayout.columnSpacing;
+                sizeHints[sizeHints.length - 1] += Math.min(child.Layout.maximumHeight, Math.max(child.Layout.minimumHeight, child.Layout.preferredHeight))
+                    + panelLayout.rowSpacing + child.Layout.topMargin + child.Layout.bottomMargin;
             }
         }
         sizeHints[0] *= 2;
         sizeHints[sizeHints.length - 1] *= 2
-        let opt = 0
-        if (containment) {
-            opt = (root.horizontal ? containment.width : containment.height) / expandingSpacers - sizeHints[thisSpacerIndex] / 2 - sizeHints[thisSpacerIndex + 1] / 2
-        }
+        let panelWidth = horizontal ? containment.width : containment.height
+        let layoutWidth = horizontal ? panelLayout.width : panelLayout.height
+        panelWidth -= panelWidth - layoutWidth
+        let opt = panelWidth / expandingSpacers - sizeHints[thisSpacerIndex] / 2 - sizeHints[thisSpacerIndex + 1] / 2
         return Math.max(opt, 0)
     }
 
