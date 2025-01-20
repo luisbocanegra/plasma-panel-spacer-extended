@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.10.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.9.0...v1.10.0) (2025-01-20)
+
+
+### Features
+
+* option for persistent highlight effect ([977ec65](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/977ec65d17df64443017f5b22856bce49a554b74))
+
+
+### Bug Fixes
+
+* find and resize with containment ([1074478](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/107447818ef2fc3a308bc06afb98d2bb8c0de76b))
+* handle panel-colorizer modification of widget and panel margins ([95c78ef](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/95c78efd867f956ab9a69dc552515febc3d98927))
+* stuck pressed effect after dragging ([2b90001](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/2b9000157ab934cb542c18620aa8d643e6df94a5))
+* update last active window on count change ([01a1667](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/01a16677aa49ed9975d46f2eb02095a8a192bc9b)), closes [#41](https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/41)
+* Use Qt.callLater as an attempt to prevent a plasma crash ([46a12d9](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/46a12d946b6cc801a3bd97823032ffe3bcd88e6c))
+
 ## [1.9.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.8.3...v1.9.0) (2024-09-08)
 
 
