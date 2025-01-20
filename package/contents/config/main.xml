@@ -145,6 +145,9 @@
     <entry name="scrollSensitivity" type="Int">
       <default>120</default>
     </entry>
+    <entry name="alwaysHighlighted" type="Bool">
+      <default>false</default>
+    </entry>
   </group>
 
 </kcfg>

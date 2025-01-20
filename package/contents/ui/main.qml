@@ -414,8 +414,19 @@ PlasmoidItem {
     Rectangle {
         anchors.fill: parent
         color: Kirigami.Theme.highlightColor
-        opacity: Plasmoid.containment.corona?.editMode || (pressed && showHoverBg && overPanel) ? 0.6 : 0.2
-        visible: (Plasmoid.containment.corona?.editMode || animator.running || (hoverHandler.hovered && showHoverBg) || Plasmoid.userConfiguring)
+        opacity: {
+            if (Plasmoid.containment.corona?.editMode) {
+                return 1
+            } else if (pressed && showHoverBg && overPanel) {
+                return 0.6
+            } else if (showHoverBg && hoverHandler.hovered) {
+                return 0.3
+            } else if (plasmoid.configuration.alwaysHighlighted) {
+                return 0.15
+            } else {
+                return 0
+            }
+        }
         radius: hoverBgRadius
 
         Behavior on opacity {
