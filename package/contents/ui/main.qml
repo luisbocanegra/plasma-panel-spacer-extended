@@ -170,6 +170,8 @@ PlasmoidItem {
     property bool bgFillPanel: plasmoid.configuration.bgFillPanel
     Plasmoid.constraintHints: bgFillPanel ? Plasmoid.CanFillArea : Plasmoid.NoHint
 
+    property bool overPanel: false
+
     Layout.fillWidth: Plasmoid.configuration.expanding
     Layout.fillHeight: Plasmoid.configuration.expanding
 
@@ -412,8 +414,8 @@ PlasmoidItem {
     Rectangle {
         anchors.fill: parent
         color: Kirigami.Theme.highlightColor
-        opacity: Plasmoid.containment.corona?.editMode || (pressed && showHoverBg) ? 0.6 : 0.2
-        visible: Plasmoid.containment.corona?.editMode || animator.running || (hoverHandler.hovered && showHoverBg) || Plasmoid.userConfiguring
+        opacity: Plasmoid.containment.corona?.editMode || (pressed && showHoverBg && overPanel) ? 0.6 : 0.2
+        visible: (Plasmoid.containment.corona?.editMode || animator.running || (hoverHandler.hovered && showHoverBg) || Plasmoid.userConfiguring)
         radius: hoverBgRadius
 
         Behavior on opacity {
@@ -561,6 +563,7 @@ PlasmoidItem {
             if (active && dragging) {
                 endPos = this.parent.mapToGlobal(point.position.x, point.position.y)
                 const distance = getDistance(startPos, endPos)
+                root.overPanel = distance <= minDragDistance
                 if ((!tapHandler.pressed || isContinuous) && distance >= minDragDistance) {
                     const dragDirection = getDragDirection(startPos, endPos)
                     // we can't do a drag out of the panel on X11,
