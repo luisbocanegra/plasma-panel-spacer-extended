@@ -2,6 +2,7 @@
 
 # Panel Spacer Extended
 
+[![nixpkgs unstable package](https://repology.org/badge/version-for-repo/nix_unstable/plasma-panel-spacer-extended.svg?header=nixpkgs%20unstable)](https://repology.org/project/plasma-panel-spacer-extended/versions)
 [![Dynamic JSON Badge](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fluisbocanegra%2Fplasma-panel-spacer-extended%2Fmain%2Fpackage%2Fmetadata.json&query=KPlugin.Version&style=for-the-badge&color=1f425f&labelColor=2d333b&logo=kde&label=KDE%20Store)](https://store.kde.org/p/2128047)
 [![Liberapay](https://img.shields.io/liberapay/patrons/luisbocanegra?style=for-the-badge&logo=liberapay&logoColor=%23F6C814&labelColor=%232D333B&label=supporters)](https://liberapay.com/luisbocanegra/)
 
@@ -55,6 +56,39 @@ Spacer with Mouse gestures for the KDE Plasma Panel featuring Latte Dock/Gnome/U
 1. **Right click on the Panel** > **Add Widgets** > **Get New Widgets** > **Download New Plasma Widgets**
 2. **Search** for "**Panel Spacer Extended**", install and add to your panel(s).
 3. Click on **Add new videos** pick your video(s) and apply.
+
+### Nix package
+
+For those using NixOS or the Nix package manager, there is a package available in nixpkgs.
+
+To install the widget use one of these methods:
+
+- NixOS
+
+  ```nix
+  environment.systemPackages = [
+    pkgs.plasma-panel-spacer-extended
+  ];
+  ```
+
+- [Home-manager](https://github.com/nix-community/home-manager)
+
+  ```nix
+  home.packages = [
+    pkgs.plasma-panel-spacer-extended
+  ];
+  ```
+
+- [Plasma-manager](https://github.com/nix-community/plasma-manager): If the widget gets added to a panel it will automatically be installed
+
+- Other distros using Nix package manager
+
+  ```sh
+  # without flakes:
+  nix-env -iA nixpkgs.plasma-panel-spacer-extended
+  # with flakes:
+  nix profile install nixpkgs#plasma-panel-spacer-extended
+  ```
 
 ### Manual install
 
