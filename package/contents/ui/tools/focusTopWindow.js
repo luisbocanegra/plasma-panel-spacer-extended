@@ -19,7 +19,7 @@ printLog`cursor: x:${cursorPos.x} y:${cursorPos.x} screen:${currentScreen.name}`
 printLog`active screen: ${workspace.activeScreen.name} current: ${currentScreen.name}`
 for (var i = 0; i < windows.length; i++) {
   let window = windows[i]
-  if (window.output === currentScreen
+  if (window.output === workspace.activeScreen
     && (window.onAllDesktops || window.desktops.includes(currentDesktop))
     && !window.desktopWindow
     && window.normalWindow
