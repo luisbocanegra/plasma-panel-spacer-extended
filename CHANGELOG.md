@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.10.0...v1.10.1) (2025-04-30)
+
+
+### Bug Fixes
+
+* window actions with touch input when cursor is in another screen ([7bc5f91](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/7bc5f9107596931054138940b2c80873f9c53c56))
+
 ## [1.10.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.9.0...v1.10.0) (2025-01-20)
 
 
