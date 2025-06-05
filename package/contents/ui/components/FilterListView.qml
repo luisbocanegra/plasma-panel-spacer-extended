@@ -99,7 +99,6 @@ ColumnLayout {
                 highlight: Item {}
                 highlightMoveDuration: 0
                 highlightResizeDuration: 0
-                boundsBehavior: Flickable.StopAtBoundsfiltered
 
                 Connections {
                     target: listView.model
