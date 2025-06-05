@@ -125,6 +125,8 @@ PlasmoidItem {
     Plasmoid.constraintHints: bgFillPanel ? Plasmoid.CanFillArea : Plasmoid.NoHint
 
     property bool overPanel: false
+    property string gestureDisplayName
+    property string actionDisplayText
 
     Layout.fillWidth: Plasmoid.configuration.expanding
     Layout.fillHeight: Plasmoid.configuration.expanding
@@ -234,6 +236,39 @@ PlasmoidItem {
         id: logic
     }
 
+    P5Support.DataSource {
+        id: sendNotification
+        engine: "executable"
+        connectedSources: []
+        onNewData: function (source) {
+            disconnectSource(source); // cmd finished
+        }
+
+        function exec(cmd) {
+            executable.connectSource(cmd);
+        }
+    }
+
+    property bool tick: false
+
+    function notify(title, text) {
+        let cmd;
+        if (plasmoid.configuration.notificationType === 1) {
+            // avoid hitting org.freedesktop.Notifications.Error.ExcessNotificationGeneration
+            // by addind extra space every other notification
+            if (tick) {
+                title += " ";
+            }
+            tick = !tick;
+            cmd = `gdbus call --session --dest org.freedesktop.Notifications --object-path /org/freedesktop/Notifications --method org.freedesktop.Notifications.Notify "${Plasmoid.metaData.name}" 0 "" "${title}" '${text}' "[]" {} 1000`;
+        } else if (plasmoid.configuration.notificationType === 2) {
+            cmd = `gdbus call --session --dest org.kde.plasmashell --object-path /org/kde/osdService --method org.kde.osdService.showText plasmashell '${title} • ${text}'`;
+        } else {
+            return;
+        }
+        sendNotification.exec(cmd);
+    }
+
     function runAction(action, command, application) {
         printLog`RUNNING_ACTION: ${action}`;
         var component = action[0];
@@ -247,6 +282,7 @@ PlasmoidItem {
                     commandFormatted += commandLines[i] + (commandLines[i].endsWith(";") ? " " : "; ");
                 }
                 printLog`RUNNING_CUSTOM_COMMAND: ${command}`;
+                notify(gestureDisplayName, command);
                 executable.exec(commandFormatted);
                 return;
             }
@@ -254,16 +290,19 @@ PlasmoidItem {
             if (component == "launch_application") {
                 if (application !== "") {
                     printLog`LAUNCHING_APPLICATION_URL: ${application}`;
+                    notify(gestureDisplayName, `Opening ${application}`);
                     logic.openUrl(application);
                 }
                 return;
             }
 
             if (actionNme == "Window Maximize Only") {
+                notify(gestureDisplayName, actionNme);
                 setMaximized(true);
                 return;
             }
             if (actionNme == "Window Unmaximize Only") {
+                notify(gestureDisplayName, actionNme);
                 setMaximized(false);
                 return;
             }
@@ -274,6 +313,7 @@ PlasmoidItem {
                 kwinCommand = getKwinScriptCommand("focusTopWindow", shortcutCommand);
             }
             printLog`RUNNING_SHORTCUT: ${kwinCommand + ";" + shortcutCommand}`;
+            notify(gestureDisplayName, `${component} • ${actionNme}`);
             executable.exec(kwinCommand + ";" + shortcutCommand);
         }
         // end the drag for these
@@ -453,7 +493,7 @@ PlasmoidItem {
                 hideTooltip = false;
                 info = "In " + Plasmoid.configuration.length + "|" + optimalSize;
             } else {
-                info = qsTr('Out (pressed=') + pressed + ') ' + Plasmoid.configuration.length + "|" + optimalSize;
+                info = i18n('Out (pressed=') + pressed + ') ' + Plasmoid.configuration.length + "|" + optimalSize;
             }
         }
     }
@@ -477,19 +517,23 @@ PlasmoidItem {
         printLog`Drag direction ${direction}`;
         switch (direction) {
         case "up":
-            dragInfo = qsTr('Drag up');
+            dragInfo = i18n('Drag up');
+            root.gestureDisplayName = dragInfo;
             runAction(mouseDragUpAction, mouseDragUpCommand, mouseDragUpAppUrl);
             break;
         case "down":
-            dragInfo = qsTr('Drag down');
+            dragInfo = i18n('Drag down');
+            root.gestureDisplayName = dragInfo;
             runAction(mouseDragDownAction, mouseDragDownCommand, mouseDragDownAppUrl);
             break;
         case "left":
-            dragInfo = qsTr('Drag left');
+            dragInfo = i18n('Drag left');
+            root.gestureDisplayName = dragInfo;
             runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl);
             break;
         case "right":
-            dragInfo = qsTr('Drag right');
+            dragInfo = i18n('Drag right');
+            root.gestureDisplayName = dragInfo;
             runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl);
             break;
         default:
@@ -547,12 +591,14 @@ PlasmoidItem {
         id: singleTapTimer
         interval: doubleClickAllowed ? 300 : 3
         onTriggered: {
-            btn = qsTr('Single clicked');
+            btn = i18n('Single clicked');
             if (mouseButton === Qt.MiddleButton) {
-                printLog`Middle button pressed`;
+                // printLog`Middle button pressed`;
+                root.gestureDisplayName = i18n('Middle button pressed');
                 runAction(middleClickAction, middleClickCommand, middleClickAppUrl);
             } else {
-                printLog`Left button pressed`;
+                // printLog`Left button pressed`;
+                root.gestureDisplayName = i18n('Left button pressed');
                 runAction(singleClickAction, singleClickCommand, singleClickAppUrl);
             }
         }
@@ -575,14 +621,16 @@ PlasmoidItem {
                 return;
             }
             singleTapTimer.stop();
-            printLog`Double tap detected!`;
-            btn = qsTr('Double clicked');
+            // printLog`Double tap detected!`;
+            btn = i18n('Double clicked');
+            root.gestureDisplayName = btn;
             runAction(doubleClickAction, doubleClickCommand, doubleClickAppUrl);
         }
 
         onLongPressed: {
-            printLog`Long press detected!`;
-            btn = "Hold";
+            // printLog`Long press detected!`;
+            btn = "Long press";
+            root.gestureDisplayName = btn;
             runAction(pressHoldAction, pressHoldCommand, pressHoldAppUrl);
             target = null;
             enabled = root;
@@ -599,14 +647,16 @@ PlasmoidItem {
             while (wheelDelta >= scrollSensitivity) {
                 wheelDelta -= scrollSensitivity;
                 printLog`WHEEL UP`;
-                btn = qsTr('Wheel up');
+                btn = i18n('Wheel up');
+                root.gestureDisplayName = btn;
                 runAction(mouseWheelUpAction, mouseWheelUpCommand, mouseWheelUpAppUrl);
             }
 
             while (wheelDelta <= -scrollSensitivity) {
                 wheelDelta += scrollSensitivity;
                 printLog`WHEEL DOWN`;
-                btn = qsTr('Wheel down');
+                btn = i18n('Wheel down');
+                root.gestureDisplayName = btn;
                 runAction(mouseWheelDownAction, mouseWheelDownCommand, mouseWheelDownAppUrl);
             }
         }

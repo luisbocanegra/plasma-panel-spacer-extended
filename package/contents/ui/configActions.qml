@@ -49,10 +49,6 @@ KCM.SimpleKCM {
     property alias cfg_pressHoldCommand: pressHold.commandValue
     property alias cfg_pressHoldAppUrl: pressHold.applicationUrlValue
 
-    property alias cfg_showTooltip: showTooltip.checked
-    property alias cfg_scrollSensitivity: scrollSensitivity.value
-    property alias cfg_isContinuous: isContinuous.checked
-
     property bool isLoading: true
 
     property string toolsDir: Qt.resolvedUrl("./tools").toString().substring(7) + "/"
@@ -163,55 +159,6 @@ KCM.SimpleKCM {
     }
 
     ColumnLayout {
-        Kirigami.FormLayout {
-            Layout.alignment: Qt.AlignTop
-
-            Kirigami.Separator {
-                Kirigami.FormData.label: i18n("General")
-                Kirigami.FormData.isSection: true
-            }
-
-            RowLayout {
-                Kirigami.FormData.label: i18n("Show tooltip:")
-
-                CheckBox {
-                    id: showTooltip
-                    checked: cfg_showTooltip
-                    onCheckedChanged: {
-                        cfg_showTooltip = checked;
-                    }
-                    text: i18n("Show list of actions when hovering the spacer")
-                }
-            }
-
-            RowLayout {
-                Kirigami.FormData.label: i18n("Scroll threshold:")
-                SpinBox {
-                    id: scrollSensitivity
-                    from: 1
-                    to: 10000
-                }
-                KCM.ContextualHelpButton {
-                    toolTipText: "Higher values may help reducing repeated scrolling events on some devices"
-                }
-            }
-
-            RowLayout {
-                Kirigami.FormData.label: i18n("Continuous:")
-
-                CheckBox {
-                    id: isContinuous
-                    checked: cfg_isContinuous
-                    onCheckedChanged: {
-                        cfg_isContinuous = checked;
-                    }
-                    text: i18n("Enable continuous drag events")
-                }
-                KCM.ContextualHelpButton {
-                    toolTipText: "Keep dragging to chain actions without releasing the mouse/finger"
-                }
-            }
-        }
         Button {
             text: i18n("Refresh actions")
             icon.name: "view-refresh-symbolic"
@@ -221,11 +168,6 @@ KCM.SimpleKCM {
             Layout.alignment: Qt.AlignHCenter
         }
         Kirigami.FormLayout {
-
-            Kirigami.Separator {
-                Kirigami.FormData.label: i18n("Actions")
-                Kirigami.FormData.isSection: true
-            }
 
             Components.GroupedActions {
                 id: singleClick
