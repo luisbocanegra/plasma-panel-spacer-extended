@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.11.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.10.1...v1.11.0) (2025-06-05)
+
+
+### Features
+
+* show gesture and action being executed in a notification or OSD ([c52e85a](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/c52e85ac8117b7cb250332e9690e9dd2dd7d833b))
+
+
+### Bug Fixes
+
+* remove invalid ListView boundsBehavior ([2acbf84](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/2acbf843d573c45897bad679585be3a922688397))
+
 ## [1.10.1](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.10.0...v1.10.1) (2025-04-30)
 
 
