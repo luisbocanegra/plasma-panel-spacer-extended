@@ -13,7 +13,7 @@ KCM.SimpleKCM {
     Kirigami.FormLayout {
         id: generalPage
         Layout.alignment: Qt.AlignTop
-        
+
         CheckBox {
             id: showTooltip
             Kirigami.FormData.label: i18n("General:")
@@ -21,7 +21,7 @@ KCM.SimpleKCM {
             checked: cfg_showTooltip
 
             onCheckedChanged: {
-                cfg_showTooltip = checked
+                cfg_showTooltip = checked;
             }
         }
     }

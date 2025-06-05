@@ -7,7 +7,6 @@ import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasma5support as P5Support
 import "components" as Components
 
-
 KCM.SimpleKCM {
     id: root
     property alias cfg_singleClickAction: singleClick.configValue
@@ -17,11 +16,11 @@ KCM.SimpleKCM {
     property alias cfg_doubleClickAction: doubleClick.configValue
     property alias cfg_doubleClickCommand: doubleClick.commandValue
     property alias cfg_doubleClickAppUrl: doubleClick.applicationUrlValue
-    
+
     property alias cfg_middleClickAction: middleClick.configValue
     property alias cfg_middleClickCommand: middleClick.commandValue
     property alias cfg_middleClickAppUrl: middleClick.applicationUrlValue
-    
+
     property alias cfg_mouseWheelUpAction: wheelUp.configValue
     property alias cfg_mouseWheelUpCommand: wheelUp.commandValue
     property alias cfg_mouseWheelUpAppUrl: wheelUp.applicationUrlValue
@@ -108,17 +107,17 @@ KCM.SimpleKCM {
         engine: "executable"
         connectedSources: []
 
-        onNewData: function(source, data) {
-            var exitCode = data["exit code"]
-            var exitStatus = data["exit status"]
-            var stdout = data["stdout"]
-            var stderr = data["stderr"]
-            exited(source, exitCode, exitStatus, stdout, stderr)
-            disconnectSource(source) // cmd finished
+        onNewData: function (source, data) {
+            var exitCode = data["exit code"];
+            var exitStatus = data["exit status"];
+            var stdout = data["stdout"];
+            var stderr = data["stderr"];
+            exited(source, exitCode, exitStatus, stdout, stderr);
+            disconnectSource(source); // cmd finished
         }
 
         function exec() {
-            getShortcuts.connectSource(getShortcutsCommand)
+            getShortcuts.connectSource(getShortcutsCommand);
         }
 
         signal exited(string source, int exitCode, int exitStatus, string stdout, string stderr)
@@ -133,56 +132,34 @@ KCM.SimpleKCM {
             console.warn("exitStatus:", exitStatus);
             console.warn("stdout:", stdout);
             console.warn("stderr:", stderr);
-            var lines = stdout.trim().split("\n")
-            const blackList = [
-                "activate widget",
-                "activate task",
-                "clear-history",
-                "clipboard_action",
-                "cycleNextAction",
-                "cyclePrevAction",
-                "edit_clipboard",
-                "khotkeys",
-                "repeat_action",
-                "show-barcode",
-                "show-on-mouse-pos",
-                "knotes",
-                "kwin,cycle-panels",
-                "kwin,next activity",
-                "kwin,switch to next activity",
-                "kwin,switch to previous activity",
-                "kwin,manage activities",
-                "kwin,show dashboard",
-                "kwin,stop current activity",
-                "kwin,toggle do not disturb"
-            ]
-            shortcutsList.clear()
-            shortcutsList.append(shortcutsListTemp.get(0))
-            shortcutsList.append(shortcutsListTemp.get(1))
-            shortcutsList.append(shortcutsListTemp.get(2))
+            var lines = stdout.trim().split("\n");
+            const blackList = ["activate widget", "activate task", "clear-history", "clipboard_action", "cycleNextAction", "cyclePrevAction", "edit_clipboard", "khotkeys", "repeat_action", "show-barcode", "show-on-mouse-pos", "knotes", "kwin,cycle-panels", "kwin,next activity", "kwin,switch to next activity", "kwin,switch to previous activity", "kwin,manage activities", "kwin,show dashboard", "kwin,stop current activity", "kwin,toggle do not disturb"];
+            shortcutsList.clear();
+            shortcutsList.append(shortcutsListTemp.get(0));
+            shortcutsList.append(shortcutsListTemp.get(1));
+            shortcutsList.append(shortcutsListTemp.get(2));
             for (let i = 0; i < lines.length; i++) {
                 if (blackList.some(term => lines[i].includes(term))) {
-                    continue
+                    continue;
                 }
-                const line = lines[i].toString().split(",")
-                var component = line[0].split("/")
-                component = component[component.length - 1]
-                const shortcutName = line[1]
+                const line = lines[i].toString().split(",");
+                var component = line[0].split("/");
+                component = component[component.length - 1];
+                const shortcutName = line[1];
                 // console.log(component + " - " + shortcutName);
                 shortcutsList.append({
                     "label": component + " - " + shortcutName,
                     "component": component,
                     "shortcutName": shortcutName
-                })
+                });
             }
             console.log("SHORTCUTS LOADING FINISHED");
-            isLoading = false
+            isLoading = false;
         }
     }
 
-
     Component.onCompleted: {
-        getShortcuts.exec()
+        getShortcuts.exec();
     }
 
     ColumnLayout {
@@ -201,7 +178,7 @@ KCM.SimpleKCM {
                     id: showTooltip
                     checked: cfg_showTooltip
                     onCheckedChanged: {
-                        cfg_showTooltip = checked
+                        cfg_showTooltip = checked;
                     }
                     text: i18n("Show list of actions when hovering the spacer")
                 }
@@ -218,15 +195,15 @@ KCM.SimpleKCM {
                     toolTipText: "Higher values may help reducing repeated scrolling events on some devices"
                 }
             }
-            
+
             RowLayout {
                 Kirigami.FormData.label: i18n("Continuous:")
-                
+
                 CheckBox {
                     id: isContinuous
                     checked: cfg_isContinuous
                     onCheckedChanged: {
-                        cfg_isContinuous = checked
+                        cfg_isContinuous = checked;
                     }
                     text: i18n("Enable continuous drag events")
                 }
@@ -239,7 +216,7 @@ KCM.SimpleKCM {
             text: i18n("Refresh actions")
             icon.name: "view-refresh-symbolic"
             onClicked: {
-                getShortcuts.exec()
+                getShortcuts.exec();
             }
             Layout.alignment: Qt.AlignHCenter
         }
@@ -255,7 +232,7 @@ KCM.SimpleKCM {
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "singleClickAction"
                 sectionLabel: "Single Click"
-                Kirigami.FormData.label: sectionLabel+":"
+                Kirigami.FormData.label: sectionLabel + ":"
                 isLoading: root.isLoading
             }
 
@@ -264,7 +241,7 @@ KCM.SimpleKCM {
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "doubleClickAction"
                 sectionLabel: "Double Click"
-                Kirigami.FormData.label: sectionLabel+":"
+                Kirigami.FormData.label: sectionLabel + ":"
                 isLoading: root.isLoading
             }
 
@@ -273,57 +250,52 @@ KCM.SimpleKCM {
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "middleClickAction"
                 sectionLabel: "Middle Click"
-                Kirigami.FormData.label: sectionLabel+":"
+                Kirigami.FormData.label: sectionLabel + ":"
                 isLoading: root.isLoading
             }
-
 
             Components.GroupedActions {
                 id: wheelUp
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "mouseWheelUpAction"
                 sectionLabel: "Wheel Up"
-                Kirigami.FormData.label: sectionLabel+":"
+                Kirigami.FormData.label: sectionLabel + ":"
                 isLoading: root.isLoading
             }
-
 
             Components.GroupedActions {
                 id: wheelDown
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "mouseWheelDownAction"
                 sectionLabel: "Wheel Down"
-                Kirigami.FormData.label: sectionLabel+":"
+                Kirigami.FormData.label: sectionLabel + ":"
                 isLoading: root.isLoading
             }
-
 
             Components.GroupedActions {
                 id: dragUp
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "mouseDragUpAction"
                 sectionLabel: "Drag Up"
-                Kirigami.FormData.label: sectionLabel+":"
+                Kirigami.FormData.label: sectionLabel + ":"
                 isLoading: root.isLoading
             }
-
 
             Components.GroupedActions {
                 id: dragDown
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "mouseDragDownAction"
                 sectionLabel: "Drag Down"
-                Kirigami.FormData.label: sectionLabel+":"
+                Kirigami.FormData.label: sectionLabel + ":"
                 isLoading: root.isLoading
             }
-
 
             Components.GroupedActions {
                 id: dragLeft
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "mouseDragLeftAction"
                 sectionLabel: "Drag Left"
-                Kirigami.FormData.label: sectionLabel+":"
+                Kirigami.FormData.label: sectionLabel + ":"
                 isLoading: root.isLoading
             }
 
@@ -332,7 +304,7 @@ KCM.SimpleKCM {
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "mouseDragRightAction"
                 sectionLabel: "Drag Right"
-                Kirigami.FormData.label: sectionLabel+":"
+                Kirigami.FormData.label: sectionLabel + ":"
                 isLoading: root.isLoading
             }
 
@@ -341,7 +313,7 @@ KCM.SimpleKCM {
                 modelData: isLoading ? shortcutsListTemp : shortcutsList
                 confInternalName: "pressHoldAction"
                 sectionLabel: "Long press"
-                Kirigami.FormData.label: sectionLabel+":"
+                Kirigami.FormData.label: sectionLabel + ":"
                 showSeparator: false
                 isLoading: root.isLoading
             }

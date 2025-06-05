@@ -20,7 +20,11 @@ PlasmoidItem {
     property bool horizontal: Plasmoid.formFactor !== PlasmaCore.Types.Vertical
     property bool isWayland: Qt.platform.pluginName.includes("wayland")
     property var activeTask: null
-    property var activeProps: {"name":"", "title":"", "id":""}
+    property var activeProps: {
+        "name": "",
+        "title": "",
+        "id": ""
+    }
     property var abstractTasksModel: TaskManager.AbstractTasksModel
     property var isMaximized: abstractTasksModel.IsMaximized
     property var isActive: abstractTasksModel.IsActive
@@ -31,8 +35,14 @@ PlasmoidItem {
     property bool noWindowActive: true
     property bool currentWindowMaximized: false
     property bool isActiveWindowPinned: false
-    property var startPos: { "x": 0, "y": 0 }
-    property var endPos: { "x": 0, "y": 0 }
+    property var startPos: {
+        "x": 0,
+        "y": 0
+    }
+    property var endPos: {
+        "x": 0,
+        "y": 0
+    }
     property var localStartPos: dragHandler.parent.mapFromGlobal(startPos.x, startPos.y)
     property var dragHandler
     property bool pressed: dragHandler.active || tapHandler.pressed
@@ -44,79 +54,23 @@ PlasmoidItem {
     property var mouseButton: undefined
 
     property string toolsDir: Qt.resolvedUrl("./tools").toString().substring(7) + "/"
-    property string scriptUtil: toolsDir+"run_kwin_script.sh"
+    property string scriptUtil: toolsDir + "run_kwin_script.sh"
     // property string kwinScriptUtil: "sh "+toolsDir + scriptUtil + " '"+focusTopScriptName+"' '"+focusTopScriptFile+"'"
 
     function getKwinScriptCommand(scriptName) {
-        const scriptFile = toolsDir + scriptName + ".js"
-        const kwinCommand = "sh '" + scriptUtil + "' '"+ scriptName + "' '" + scriptFile + "' " + enableDebug
-        return kwinCommand
+        const scriptFile = toolsDir + scriptName + ".js";
+        const kwinCommand = "sh '" + scriptUtil + "' '" + scriptName + "' '" + scriptFile + "' " + enableDebug;
+        return kwinCommand;
     }
 
-    property var requiresFocus: [
-        "kwin,ExposeClass",
-        "kwin,Decrease Opacity",
-        "kwin,Increase Opacity",
-        "kwin,InvertWindow",
-        "kwin,Kill Window",
-        "kwin,Setup Window Shortcut",
-        "kwin,Switch Window Down",
-        "kwin,Switch Window Left",
-        "kwin,Switch Window Right",
-        "kwin,Switch Window Up",
-        "kwin,Toggle Window Raise/Lower",
-        "kwin,Walk Through Windows of Current Application",
-        "kwin,Window Above Other Windows",
-        "kwin,Window Below Other Windows",
-        "kwin,Window Close",
-        "kwin,Window Fullscreen",
-        "kwin,Window Grow",
-        "kwin,Window Lower",
-        "kwin,Window Maximize",
-        "kwin,Window Minimize",
-        "kwin,Window Move",
-        "kwin,Window No Border",
-        "kwin,Window On All Desktops",
-        "kwin,Window One Desktop",
-        "kwin,Window One Screen",
-        "kwin,Window Operations Menu",
-        "kwin,Window Pack",
-        "kwin,Window Quick Tile",
-        "kwin,Window Raise",
-        "kwin,Window Resize",
-        "kwin,Window Shade",
-        "kwin,Window Shrink",
-        "kwin,Window to"
-    ]
+    property var requiresFocus: ["kwin,ExposeClass", "kwin,Decrease Opacity", "kwin,Increase Opacity", "kwin,InvertWindow", "kwin,Kill Window", "kwin,Setup Window Shortcut", "kwin,Switch Window Down", "kwin,Switch Window Left", "kwin,Switch Window Right", "kwin,Switch Window Up", "kwin,Toggle Window Raise/Lower", "kwin,Walk Through Windows of Current Application", "kwin,Window Above Other Windows", "kwin,Window Below Other Windows", "kwin,Window Close", "kwin,Window Fullscreen", "kwin,Window Grow", "kwin,Window Lower", "kwin,Window Maximize", "kwin,Window Minimize", "kwin,Window Move", "kwin,Window No Border", "kwin,Window On All Desktops", "kwin,Window One Desktop", "kwin,Window One Screen", "kwin,Window Operations Menu", "kwin,Window Pack", "kwin,Window Quick Tile", "kwin,Window Raise", "kwin,Window Resize", "kwin,Window Shade", "kwin,Window Shrink", "kwin,Window to"]
 
-    property var blockContinuousDrag: [
-        "kwin,ExposeClass",
-        "kwin,Kill Window",
-        "kwin,Setup Window Shortcut",
-        "kwin,Toggle Window Raise/Lower",
-        "kwin,Window Above Other Windows",
-        "kwin,Window Below Other Windows",
-        "kwin,Window Fullscreen",
-        "kwin,Window Maximize",
-        "kwin,Window Move",
-        "kwin,Window Operations Menu",
-        "kwin,Window Resize",
-        "kwin,Window Shade",
-        "kwin,Window Shrink",
-        "kwin,Cube",
-        "kwin,Overview",
-        "kwin,Cycle Overview",
-        "kwin,Cycle Overview Opposite",
-        "kwin,Edit Tiles",
-        "kwin,Expose",
-        "kwin,ExposeAll",
-        "kwin,Grid View",
-    ]
+    property var blockContinuousDrag: ["kwin,ExposeClass", "kwin,Kill Window", "kwin,Setup Window Shortcut", "kwin,Toggle Window Raise/Lower", "kwin,Window Above Other Windows", "kwin,Window Below Other Windows", "kwin,Window Fullscreen", "kwin,Window Maximize", "kwin,Window Move", "kwin,Window Operations Menu", "kwin,Window Resize", "kwin,Window Shade", "kwin,Window Shrink", "kwin,Cube", "kwin,Overview", "kwin,Cycle Overview", "kwin,Cycle Overview Opposite", "kwin,Edit Tiles", "kwin,Expose", "kwin,ExposeAll", "kwin,Grid View",]
 
     function stopContinuousDrag(action) {
-        var component = action[0]
-        var actionNme = action[1]
-        return blockContinuousDrag.includes(component + "," + actionNme)
+        var component = action[0];
+        var actionNme = action[1];
+        return blockContinuousDrag.includes(component + "," + actionNme);
     }
 
     property var singleClickAction: plasmoid.configuration.singleClickAction.split(",")
@@ -177,12 +131,8 @@ PlasmoidItem {
 
     Layout.minimumWidth: Plasmoid.containment.corona?.editMode ? Kirigami.Units.gridUnit * 2 : 1
     Layout.minimumHeight: Plasmoid.containment.corona?.editMode ? Kirigami.Units.gridUnit * 2 : 1
-    Layout.preferredWidth: horizontal
-        ? (Plasmoid.configuration.expanding ? optimalSize : Plasmoid.configuration.length)
-        : 0
-    Layout.preferredHeight: horizontal
-        ? 0
-        : (Plasmoid.configuration.expanding ? optimalSize : Plasmoid.configuration.length)
+    Layout.preferredWidth: horizontal ? (Plasmoid.configuration.expanding ? optimalSize : Plasmoid.configuration.length) : 0
+    Layout.preferredHeight: horizontal ? 0 : (Plasmoid.configuration.expanding ? optimalSize : Plasmoid.configuration.length)
 
     preferredRepresentation: fullRepresentation
 
@@ -208,45 +158,48 @@ PlasmoidItem {
         filterMinimized: true
 
         onActiveTaskChanged: {
-            Qt.callLater(updateWindowsinfo)
+            Qt.callLater(updateWindowsinfo);
         }
         onCountChanged: {
-            Qt.callLater(updateWindowsinfo)
+            Qt.callLater(updateWindowsinfo);
         }
     }
 
     function updateWindowsinfo() {
         for (var i = 0; i < tasksModel.count; i++) {
-            const currentTask = tasksModel.index(i, 0)
-            if (currentTask === undefined) continue
+            const currentTask = tasksModel.index(i, 0);
+            if (currentTask === undefined)
+                continue;
             if (tasksModel.data(currentTask, isWindow)) {
-                if (tasksModel.data(currentTask, isActive)) activeTask = currentTask
+                if (tasksModel.data(currentTask, isActive))
+                    activeTask = currentTask;
             }
         }
         if (activeTask) {
-            activeProps.name = tasksModel.data(activeTask, abstractTasksModel.AppName)
-            activeProps.id = tasksModel.data(activeTask, abstractTasksModel.WinIdList)
-            activeProps.title = tasksModel.data(activeTask, abstractTasksModel.display)
-            printLog`Active task: Name: ${activeProps.name} Title: ${activeProps.title} Id: ${activeProps.id}`
+            activeProps.name = tasksModel.data(activeTask, abstractTasksModel.AppName);
+            activeProps.id = tasksModel.data(activeTask, abstractTasksModel.WinIdList);
+            activeProps.title = tasksModel.data(activeTask, abstractTasksModel.display);
+            printLog`Active task: Name: ${activeProps.name} Title: ${activeProps.title} Id: ${activeProps.id}`;
         }
     }
 
     function dumpProps(obj) {
         console.error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         for (var k of Object.keys(obj)) {
-            const val = obj[k]
+            const val = obj[k];
             // if (typeof val === 'function') continue
-            if (k === 'metaData') continue
-            print(k + "=" + val + "\n")
+            if (k === 'metaData')
+                continue;
+            print(k + "=" + val + "\n");
         }
     }
 
     function activeTaskExists() {
-        return activeTask.display !== undefined
+        return activeTask.display !== undefined;
     }
 
     function activateLastWindow() {
-        printLog`Trying to activate last window...`
+        printLog`Trying to activate last window...`;
         if (activeTask) {
             if (activeTask !== tasksModel.activeTask) {
                 tasksModel.requestActivate(activeTask);
@@ -260,7 +213,7 @@ PlasmoidItem {
 
     function setMaximized(maximized) {
         if (maximized !== activeTask.IsMaximized) {
-            toggleMaximized()
+            toggleMaximized();
         }
     }
 
@@ -268,12 +221,12 @@ PlasmoidItem {
         id: executable
         engine: "executable"
         connectedSources: []
-        onNewData: function(source) {
-            disconnectSource(source) // cmd finished
+        onNewData: function (source) {
+            disconnectSource(source); // cmd finished
         }
 
         function exec(cmd) {
-            executable.connectSource(cmd)
+            executable.connectSource(cmd);
         }
     }
 
@@ -281,51 +234,51 @@ PlasmoidItem {
         id: logic
     }
 
-    function runAction(action,command,application) {
-        printLog `RUNNING_ACTION: ${action}`
-        var component = action[0]
-        var actionNme = action[1]
+    function runAction(action, command, application) {
+        printLog`RUNNING_ACTION: ${action}`;
+        var component = action[0];
+        var actionNme = action[1];
         if (actionNme != "Disabled") {
             // custom command
             if (component == "custom_command") {
-                var commandFormatted = ""
-                var commandLines = command.split('\n')
-                for (let i=0;i<commandLines.length;i++){
-                    commandFormatted += commandLines[i] + (commandLines[i].endsWith(";")?" ":"; ")
+                var commandFormatted = "";
+                var commandLines = command.split('\n');
+                for (let i = 0; i < commandLines.length; i++) {
+                    commandFormatted += commandLines[i] + (commandLines[i].endsWith(";") ? " " : "; ");
                 }
-                printLog `RUNNING_CUSTOM_COMMAND: ${command}`
+                printLog`RUNNING_CUSTOM_COMMAND: ${command}`;
                 executable.exec(commandFormatted);
-                return
+                return;
             }
 
-            if (component == "launch_application"){
+            if (component == "launch_application") {
                 if (application !== "") {
-                    printLog `LAUNCHING_APPLICATION_URL: ${application}`
+                    printLog`LAUNCHING_APPLICATION_URL: ${application}`;
                     logic.openUrl(application);
                 }
-                return
+                return;
             }
 
-            if (actionNme == "Window Maximize Only"){
-                setMaximized(true)
-                return
+            if (actionNme == "Window Maximize Only") {
+                setMaximized(true);
+                return;
             }
-            if (actionNme == "Window Unmaximize Only"){
-                setMaximized(false)
-                return
+            if (actionNme == "Window Unmaximize Only") {
+                setMaximized(false);
+                return;
             }
-            var shortcutCommand = 'gdbus call --session --dest org.kde.kglobalaccel --object-path /component/'+component+' --method org.kde.kglobalaccel.Component.invokeShortcut '+'\"'+actionNme+'\"'
-            var kwinCommand = "true"
+            var shortcutCommand = 'gdbus call --session --dest org.kde.kglobalaccel --object-path /component/' + component + ' --method org.kde.kglobalaccel.Component.invokeShortcut ' + '\"' + actionNme + '\"';
+            var kwinCommand = "true";
             if (requiresFocus.includes(component + "," + actionNme)) {
-                activateLastWindow()
-                kwinCommand = getKwinScriptCommand("focusTopWindow", shortcutCommand)
+                activateLastWindow();
+                kwinCommand = getKwinScriptCommand("focusTopWindow", shortcutCommand);
             }
-            printLog `RUNNING_SHORTCUT: ${kwinCommand+";"+shortcutCommand}`
-            executable.exec(kwinCommand+";"+shortcutCommand);
+            printLog`RUNNING_SHORTCUT: ${kwinCommand + ";" + shortcutCommand}`;
+            executable.exec(kwinCommand + ";" + shortcutCommand);
         }
         // end the drag for these
         if (stopContinuousDrag(action)) {
-            dragging = false
+            dragging = false;
         }
     }
 
@@ -333,7 +286,7 @@ PlasmoidItem {
         if (enableDebug) {
             let str = Plasmoid.pluginName + " S:" + root.screen + " ID:" + Plasmoid.id + " ";
             strings.forEach((string, i) => {
-            str += string + (values[i] !== undefined ? values[i] : '');
+                str += string + (values[i] !== undefined ? values[i] : '');
             });
             console.log(str);
         }
@@ -354,12 +307,12 @@ PlasmoidItem {
     property Item containment: {
         let candidate = root.parent;
         while (candidate) {
-            if (candidate.toString().indexOf("ContainmentItem_QML") > -1 ) {
+            if (candidate.toString().indexOf("ContainmentItem_QML") > -1) {
                 return candidate;
             }
             candidate = candidate.parent;
         }
-        return null
+        return null;
     }
 
     Plasmoid.contextualActions: [
@@ -374,7 +327,8 @@ PlasmoidItem {
     ]
 
     property real optimalSize: {
-        if (!panelLayout || !Plasmoid.configuration.expanding) return Plasmoid.configuration.length;
+        if (!panelLayout || !Plasmoid.configuration.expanding)
+            return Plasmoid.configuration.length;
         let expandingSpacers = 0;
         let thisSpacerIndex = null;
         let sizeHints = [0];
@@ -386,26 +340,23 @@ PlasmoidItem {
 
             if (child.applet?.plasmoid?.pluginName === 'luisbocanegra.panelspacer.extended' && child.applet.plasmoid.configuration.expanding) {
                 if (child.applet.plasmoid === Plasmoid) {
-
-                    thisSpacerIndex = expandingSpacers
+                    thisSpacerIndex = expandingSpacers;
                 }
-                sizeHints.push(0)
-                expandingSpacers += 1
+                sizeHints.push(0);
+                expandingSpacers += 1;
             } else if (root.horizontal) {
-                sizeHints[sizeHints.length - 1] += Math.min(child.Layout.maximumWidth, Math.max(child.Layout.minimumWidth, child.Layout.preferredWidth))
-                    + panelLayout.columnSpacing + child.Layout.leftMargin + child.Layout.rightMargin
+                sizeHints[sizeHints.length - 1] += Math.min(child.Layout.maximumWidth, Math.max(child.Layout.minimumWidth, child.Layout.preferredWidth)) + panelLayout.columnSpacing + child.Layout.leftMargin + child.Layout.rightMargin;
             } else {
-                sizeHints[sizeHints.length - 1] += Math.min(child.Layout.maximumHeight, Math.max(child.Layout.minimumHeight, child.Layout.preferredHeight))
-                    + panelLayout.rowSpacing + child.Layout.topMargin + child.Layout.bottomMargin;
+                sizeHints[sizeHints.length - 1] += Math.min(child.Layout.maximumHeight, Math.max(child.Layout.minimumHeight, child.Layout.preferredHeight)) + panelLayout.rowSpacing + child.Layout.topMargin + child.Layout.bottomMargin;
             }
         }
         sizeHints[0] *= 2;
-        sizeHints[sizeHints.length - 1] *= 2
-        let panelWidth = horizontal ? containment.width : containment.height
-        let layoutWidth = horizontal ? panelLayout.width : panelLayout.height
-        panelWidth -= panelWidth - layoutWidth
-        let opt = panelWidth / expandingSpacers - sizeHints[thisSpacerIndex] / 2 - sizeHints[thisSpacerIndex + 1] / 2
-        return Math.max(opt, 0)
+        sizeHints[sizeHints.length - 1] *= 2;
+        let panelWidth = horizontal ? containment.width : containment.height;
+        let layoutWidth = horizontal ? panelLayout.width : panelLayout.height;
+        panelWidth -= panelWidth - layoutWidth;
+        let opt = panelWidth / expandingSpacers - sizeHints[thisSpacerIndex] / 2 - sizeHints[thisSpacerIndex + 1] / 2;
+        return Math.max(opt, 0);
     }
 
     property string info: ""
@@ -416,15 +367,15 @@ PlasmoidItem {
         color: Kirigami.Theme.highlightColor
         opacity: {
             if (Plasmoid.containment.corona?.editMode) {
-                return 1
+                return 1;
             } else if (pressed && showHoverBg && overPanel) {
-                return 0.6
+                return 0.6;
             } else if (showHoverBg && hoverHandler.hovered) {
-                return 0.3
+                return 0.3;
             } else if (plasmoid.configuration.alwaysHighlighted) {
-                return 0.15
+                return 0.15;
             } else {
-                return 0
+                return 0;
             }
         }
         radius: hoverBgRadius
@@ -458,7 +409,7 @@ PlasmoidItem {
 
         PC3.Label {
             text: info + " " + btn + " " + dragInfo
-            rotation : horizontal ? 0 : 270
+            rotation: horizontal ? 0 : 270
             visible: enableDebug && !(Plasmoid.containment.corona?.editMode || animator.running)
         }
     }
@@ -476,7 +427,7 @@ PlasmoidItem {
     function getDistance(startPoint, endPoint) {
         var dx = endPoint.x - startPoint.x;
         var dy = endPoint.y - startPoint.y;
-        return Math.sqrt(dx * dx + dy * dy)
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
     PlasmaCore.ToolTipArea {
@@ -499,50 +450,50 @@ PlasmoidItem {
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onHoveredChanged: {
             if (hovered) {
-                hideTooltip = false
-                info = "In " + Plasmoid.configuration.length +"|"+ optimalSize
+                hideTooltip = false;
+                info = "In " + Plasmoid.configuration.length + "|" + optimalSize;
             } else {
-                info = qsTr('Out (pressed=') + pressed + ') ' + Plasmoid.configuration.length +"|"+ optimalSize
+                info = qsTr('Out (pressed=') + pressed + ') ' + Plasmoid.configuration.length + "|" + optimalSize;
             }
         }
     }
 
     onWidthChanged: {
-        localStartPos = dragHandler.parent.mapFromGlobal(startPos.x, startPos.y)
+        localStartPos = dragHandler.parent.mapFromGlobal(startPos.x, startPos.y);
     }
 
     onHeightChanged: {
-        localStartPos = dragHandler.parent.mapFromGlobal(startPos.x, startPos.y)
+        localStartPos = dragHandler.parent.mapFromGlobal(startPos.x, startPos.y);
     }
 
     onLocalStartPosChanged: {
-        dragArea.x = localStartPos.x - (dragArea.width / 2)
-        dragArea.y = localStartPos.y - (dragArea.height / 2)
+        dragArea.x = localStartPos.x - (dragArea.width / 2);
+        dragArea.y = localStartPos.y - (dragArea.height / 2);
     }
 
     function runDragAction(direction) {
-        btn = ''
-        printLog `Drag end: ${endPos}`
-        printLog `Drag direction ${direction}`
+        btn = '';
+        printLog`Drag end: ${endPos}`;
+        printLog`Drag direction ${direction}`;
         switch (direction) {
-            case "up":
-                dragInfo = qsTr('Drag up')
-                runAction(mouseDragUpAction, mouseDragUpCommand, mouseDragUpAppUrl)
-                break
-            case "down":
-                dragInfo = qsTr('Drag down')
-                runAction(mouseDragDownAction, mouseDragDownCommand, mouseDragDownAppUrl)
-                break
-            case "left":
-                dragInfo = qsTr('Drag left')
-                runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl)
-                break
-            case "right":
-                dragInfo = qsTr('Drag right')
-                runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl)
-                break
-            default:
-                dragInfo = ''
+        case "up":
+            dragInfo = qsTr('Drag up');
+            runAction(mouseDragUpAction, mouseDragUpCommand, mouseDragUpAppUrl);
+            break;
+        case "down":
+            dragInfo = qsTr('Drag down');
+            runAction(mouseDragDownAction, mouseDragDownCommand, mouseDragDownAppUrl);
+            break;
+        case "left":
+            dragInfo = qsTr('Drag left');
+            runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl);
+            break;
+        case "right":
+            dragInfo = qsTr('Drag right');
+            runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl);
+            break;
+        default:
+            dragInfo = '';
         }
     }
 
@@ -551,20 +502,21 @@ PlasmoidItem {
         cursorShape: (active && dragging) ? Qt.ClosedHandCursor : Qt.ArrowCursor
         onActiveChanged: {
             if (active) {
-                dragging = true
-                startPos = this.parent.mapToGlobal(point.pressPosition.x, point.pressPosition.y)
-                localStartPos = this.parent.mapFromGlobal(startPos.x, startPos.y)
-                printLog `Drag start: ${startPos}`
+                dragging = true;
+                startPos = this.parent.mapToGlobal(point.pressPosition.x, point.pressPosition.y);
+                localStartPos = this.parent.mapFromGlobal(startPos.x, startPos.y);
+                printLog`Drag start: ${startPos}`;
             } else {
-                if (isWayland) return
-                printLog `onActiveChanged`
+                if (isWayland)
+                    return;
+                printLog`onActiveChanged`;
                 if (dragging) {
-                    printLog `(active && dragging)`
-                    endPos = dragHandler.parent.mapToGlobal(point.position.x, point.position.y)
-                    const distance = getDistance(startPos, endPos)
+                    printLog`(active && dragging)`;
+                    endPos = dragHandler.parent.mapToGlobal(point.position.x, point.position.y);
+                    const distance = getDistance(startPos, endPos);
                     if (!tapHandler.pressed && distance >= minDragDistance) {
-                        const dragDirection = getDragDirection(startPos, endPos)
-                        runDragAction(dragDirection)
+                        const dragDirection = getDragDirection(startPos, endPos);
+                        runDragAction(dragDirection);
                     }
                 }
             }
@@ -572,22 +524,20 @@ PlasmoidItem {
 
         onPointChanged: {
             if (active && dragging) {
-                endPos = this.parent.mapToGlobal(point.position.x, point.position.y)
-                const distance = getDistance(startPos, endPos)
-                root.overPanel = distance <= minDragDistance
+                endPos = this.parent.mapToGlobal(point.position.x, point.position.y);
+                const distance = getDistance(startPos, endPos);
+                root.overPanel = distance <= minDragDistance;
                 if ((!tapHandler.pressed || isContinuous) && distance >= minDragDistance) {
-                    const dragDirection = getDragDirection(startPos, endPos)
+                    const dragDirection = getDragDirection(startPos, endPos);
                     // we can't do a drag out of the panel on X11,
                     // fallback to onActiveChanged == false (mouse released) above
-                    if (!isWayland && (
-                        (horizontal && ["up", "down"].includes(dragDirection))
-                        || (!horizontal && ["left", "right"].includes(dragDirection))
-                    )) {
-                        return
+                    if (!isWayland && ((horizontal && ["up", "down"].includes(dragDirection)) || (!horizontal && ["left", "right"].includes(dragDirection)))) {
+                        return;
                     }
-                    runDragAction(dragDirection)
-                    startPos = endPos
-                    if (!isContinuous) dragging = false
+                    runDragAction(dragDirection);
+                    startPos = endPos;
+                    if (!isContinuous)
+                        dragging = false;
                 }
             }
         }
@@ -597,13 +547,13 @@ PlasmoidItem {
         id: singleTapTimer
         interval: doubleClickAllowed ? 300 : 3
         onTriggered: {
-            btn = qsTr('Single clicked')
+            btn = qsTr('Single clicked');
             if (mouseButton === Qt.MiddleButton) {
-                printLog `Middle button pressed`
-                runAction(middleClickAction,middleClickCommand,middleClickAppUrl)
+                printLog`Middle button pressed`;
+                runAction(middleClickAction, middleClickCommand, middleClickAppUrl);
             } else {
-                printLog `Left button pressed`
-                runAction(singleClickAction,singleClickCommand,singleClickAppUrl)
+                printLog`Left button pressed`;
+                runAction(singleClickAction, singleClickCommand, singleClickAppUrl);
             }
         }
     }
@@ -612,62 +562,62 @@ PlasmoidItem {
         id: tapHandler
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
         onTapped: (eventPoint, button) => {
-            dragInfo = ''
-            hideTooltip = true
+            dragInfo = '';
+            hideTooltip = true;
             if (!singleTapTimer.running) {
-                mouseButton = button
+                mouseButton = button;
                 singleTapTimer.start();
             }
         }
 
         onDoubleTapped: {
             if (!doubleClickAllowed) {
-                return
+                return;
             }
-            singleTapTimer.stop()
-            printLog `Double tap detected!`
-            btn = qsTr('Double clicked')
-            runAction(doubleClickAction,doubleClickCommand,doubleClickAppUrl)
+            singleTapTimer.stop();
+            printLog`Double tap detected!`;
+            btn = qsTr('Double clicked');
+            runAction(doubleClickAction, doubleClickCommand, doubleClickAppUrl);
         }
 
         onLongPressed: {
-            printLog `Long press detected!`
-            btn = "Hold"
-            runAction(pressHoldAction,pressHoldCommand,pressHoldAppUrl)
-            target = null
-            enabled = root
+            printLog`Long press detected!`;
+            btn = "Hold";
+            runAction(pressHoldAction, pressHoldCommand, pressHoldAppUrl);
+            target = null;
+            enabled = root;
         }
     }
 
     WheelHandler {
         property int wheelDelta: 0
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-        onWheel: (event) => {
+        onWheel: event => {
             // TODO: Different sensitivity per device type
             const delta = (event.inverted ? -1 : 1) * (event.angleDelta.y ? event.angleDelta.y : -event.angleDelta.x);
             wheelDelta += delta;
             while (wheelDelta >= scrollSensitivity) {
                 wheelDelta -= scrollSensitivity;
-                printLog `WHEEL UP`
-                btn = qsTr('Wheel up')
-                runAction(mouseWheelUpAction,mouseWheelUpCommand,mouseWheelUpAppUrl)
+                printLog`WHEEL UP`;
+                btn = qsTr('Wheel up');
+                runAction(mouseWheelUpAction, mouseWheelUpCommand, mouseWheelUpAppUrl);
             }
 
             while (wheelDelta <= -scrollSensitivity) {
                 wheelDelta += scrollSensitivity;
-                printLog `WHEEL DOWN`
-                btn = qsTr('Wheel down')
-                runAction(mouseWheelDownAction,mouseWheelDownCommand,mouseWheelDownAppUrl)
+                printLog`WHEEL DOWN`;
+                btn = qsTr('Wheel down');
+                runAction(mouseWheelDownAction, mouseWheelDownCommand, mouseWheelDownAppUrl);
             }
         }
     }
 
     Component.onCompleted: {
-        dragHandler = pointHandlerComponent.createObject(root)
-        plasmoid.configuration.screenWidth = horizontal ? screenGeometry.width : screenGeometry.height
+        dragHandler = pointHandlerComponent.createObject(root);
+        plasmoid.configuration.screenWidth = horizontal ? screenGeometry.width : screenGeometry.height;
     }
 
     onHorizontalChanged: {
-        plasmoid.configuration.screenWidth = horizontal ? screenGeometry.width : screenGeometry.height
+        plasmoid.configuration.screenWidth = horizontal ? screenGeometry.width : screenGeometry.height;
     }
 }

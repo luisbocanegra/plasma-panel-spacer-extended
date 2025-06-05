@@ -12,19 +12,19 @@ ColumnLayout {
     property string componentValue: ""
     property bool itemClicked: false
     property bool showList: false
-    
+
     RowLayout {
         Layout.preferredWidth: 450
         Label {
             property var component: configValue.split(",")[0]
             property var action: configValue.split(",")[1]
             text: {
-                if (!["Disabled","custom_command","launch_application"].includes(component)) {
-                    return component+" - "+action
+                if (!["Disabled", "custom_command", "launch_application"].includes(component)) {
+                    return component + " - " + action;
                 } else {
-                    return action
+                    return action;
                 }
-            }                
+            }
             wrapMode: Text.Wrap
             Layout.fillWidth: true
         }
@@ -34,10 +34,10 @@ ColumnLayout {
             checkable: true
             checked: showList
             onClicked: {
-                showList = !showList
+                showList = !showList;
                 if (showList) {
-                    searchField.text = ""
-                    searchField.forceActiveFocus()
+                    searchField.text = "";
+                    searchField.forceActiveFocus();
                 }
             }
         }
@@ -49,7 +49,7 @@ ColumnLayout {
         Layout.fillWidth: true
         focus: true
         onTextChanged: {
-            shortcutsListFiltered.setFilterFixedString(text)
+            shortcutsListFiltered.setFilterFixedString(text);
         }
         placeholderText: "Search actions..."
     }
@@ -57,17 +57,18 @@ ColumnLayout {
     function dumpProps(obj) {
         console.error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         for (var k of Object.keys(obj)) {
-            const val = obj[k]
+            const val = obj[k];
             // if (typeof val === 'function') continue
-            if (k === 'metaData') continue
-            print(k + "=" + val + "\n")
+            if (k === 'metaData')
+                continue;
+            print(k + "=" + val + "\n");
         }
     }
 
     Kirigami.AbstractCard {
         visible: showList
         Layout.fillWidth: true
-        Layout.preferredHeight: Math.min(contentItem.implicitHeight+20, 300)
+        Layout.preferredHeight: Math.min(contentItem.implicitHeight + 20, 300)
         Layout.maximumHeight: 300
         contentItem: ScrollView {
             Layout.fillWidth: true
@@ -85,9 +86,9 @@ ColumnLayout {
                     width: listView.width
                     text: label
                     onClicked: {
-                        componentValue = component
-                        configValue = component + "," + shortcutName
-                        showList = false
+                        componentValue = component;
+                        configValue = component + "," + shortcutName;
+                        showList = false;
                     }
                     Rectangle {
                         color: index & 1 ? "transparent" : Kirigami.Theme.alternateBackgroundColor
@@ -103,7 +104,7 @@ ColumnLayout {
                 Connections {
                     target: listView.model
                     function onDataChanged() {
-                        updateCombo()
+                        updateCombo();
                     }
                 }
             }
@@ -115,8 +116,7 @@ ColumnLayout {
         sourceModel: shortcutsList
         filterRoleName: "label"
         filterRowCallback: (sourceRow, sourceParent) => {
-            return sourceModel.data(sourceModel.index(sourceRow, 0, sourceParent), filterRole).toLowerCase().includes(searchField.text.toLowerCase())
+            return sourceModel.data(sourceModel.index(sourceRow, 0, sourceParent), filterRole).toLowerCase().includes(searchField.text.toLowerCase());
         }
     }
 }
-

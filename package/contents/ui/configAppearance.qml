@@ -30,17 +30,17 @@ KCM.SimpleKCM {
             checked: cfg_alwaysHighlighted
 
             onCheckedChanged: {
-                cfg_alwaysHighlighted = checked
+                cfg_alwaysHighlighted = checked;
             }
         }
-        
+
         CheckBox {
             id: showHoverBg
             Kirigami.FormData.label: alwaysHighlighted.checked ? i18n("Increase on hover:") : i18n("On hover:")
             checked: cfg_showHoverBg
 
             onCheckedChanged: {
-                cfg_showHoverBg = checked
+                cfg_showHoverBg = checked;
             }
         }
 
@@ -50,7 +50,7 @@ KCM.SimpleKCM {
             checked: cfg_bgFillPanel
             enabled: showHoverBg.checked
             onCheckedChanged: {
-                cfg_bgFillPanel = checked
+                cfg_bgFillPanel = checked;
             }
         }
 
@@ -63,7 +63,7 @@ KCM.SimpleKCM {
             stepSize: 1
             enabled: showHoverBg.checked
             onValueChanged: {
-                cfg_hoverBgRadius = value
+                cfg_hoverBgRadius = value;
             }
         }
 
@@ -80,7 +80,7 @@ KCM.SimpleKCM {
             to: cfg_screenWidth
             stepSize: 1
             onValueChanged: {
-                cfg_length = value
+                cfg_length = value;
             }
         }
     }

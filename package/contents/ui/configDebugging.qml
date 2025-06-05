@@ -27,10 +27,9 @@ KCM.SimpleKCM {
                 checked: cfg_enableDebug
 
                 onCheckedChanged: {
-                    cfg_enableDebug = checked
+                    cfg_enableDebug = checked;
                 }
             }
         }
     }
 }
-

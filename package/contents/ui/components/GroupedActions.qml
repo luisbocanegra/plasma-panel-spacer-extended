@@ -8,9 +8,9 @@ import org.kde.plasma.private.quicklaunch 1.0
 import "."
 
 ColumnLayout {
+    id: groupedActions
     Layout.fillWidth: true
     Layout.fillHeight: true
-    id: groupedActions
     property var confInternalName: ""
     property ListModel modelData
     property var sectionLabel: ""
@@ -19,8 +19,10 @@ ColumnLayout {
     property alias applicationUrlValue: btnAddLauncher.applicationUrl
     property bool showSeparator: true
     property bool isLoading: true
-    
-    Item { implicitHeight: 4}
+
+    Item {
+        implicitHeight: 4
+    }
 
     Item {
         // HACK: Workaround for the command TextArea being marqued as changed when focused
@@ -28,10 +30,10 @@ ColumnLayout {
         // here and update it only when textarea singals onTextChanged
         // there is probably a simpler way or something I've missed...
         id: internalValue
-        property string value:""
+        property string value: ""
         // onValueChanged: console.log("internal value changed to:",value)
         Component.onCompleted: {
-            commandTextArea.text = value
+            commandTextArea.text = value;
         }
     }
 
@@ -46,10 +48,10 @@ ColumnLayout {
     ColumnLayout {
         visible: actionCombo.componentValue == "custom_command"
         TextArea {
+            id: commandTextArea
             wrapMode: TextArea.Wrap
             topPadding: activeFocus ? 6 : undefined
             bottomPadding: activeFocus ? 22 : undefined
-            id: commandTextArea
             Layout.fillWidth: true
             selectByMouse: true
             placeholderText: qsTr("Enter shell command or pick a executable")
@@ -67,29 +69,31 @@ ColumnLayout {
                 color: Kirigami.Theme.textColor
                 anchors.rightMargin: 8
                 anchors.bottomMargin: 5
-                opacity: parent.activeFocus?.6:0
+                opacity: parent.activeFocus ? .6 : 0
             }
         }
         RowLayout {
-            Item { Layout.fillWidth: true }
+            Item {
+                Layout.fillWidth: true
+            }
             Button {
-                id:btnCmdCopy
+                id: btnCmdCopy
                 icon.name: "edit-copy"
                 onClicked: {
-                    if (commandTextArea.text.length > 0){
-                        commandTextArea.selectAll()
-                        commandTextArea.copy()
+                    if (commandTextArea.text.length > 0) {
+                        commandTextArea.selectAll();
+                        commandTextArea.copy();
                     }
                 }
             }
 
             Button {
-                id:btnCmdPaste
+                id: btnCmdPaste
                 icon.name: "edit-paste"
                 onClicked: {
-                    commandTextArea.text=""
-                    commandTextArea.paste()
-                    internalValue.value = commandTextArea.text
+                    commandTextArea.text = "";
+                    commandTextArea.paste();
+                    internalValue.value = commandTextArea.text;
                 }
             }
 
@@ -100,12 +104,12 @@ ColumnLayout {
                 ToolTip.visible: hovered
                 ToolTip.text: "Pick a executable file"
                 onClicked: {
-                    fileDialogExec.open()
+                    fileDialogExec.open();
                 }
             }
 
             Button {
-                id:btnCmdClean
+                id: btnCmdClean
                 icon.name: "document-cleanup"
                 onClicked: commandTextArea.text = ""
             }
@@ -116,29 +120,27 @@ ColumnLayout {
     Logic {
         id: logic
         onLauncherAdded: {
-            var launcher = logic.launcherData(url)
-            console.log("APP:",url)
-            btnAddLauncher.text = launcher.applicationName + " - Tap to change"
-            btnAddLauncher.applicationUrl = url
-            btnAddLauncher.icon.name = launcher.iconName || "fork"
-            hiddenAppText.text = url
+            var launcher = logic.launcherData(url);
+            console.log("APP:", url);
+            btnAddLauncher.text = launcher.applicationName + " - Tap to change";
+            btnAddLauncher.applicationUrl = url;
+            btnAddLauncher.icon.name = launcher.iconName || "fork";
+            hiddenAppText.text = url;
         }
     }
 
     // Update button app name and icon
-    function updateAppButton(appVal)
-    {
-        if (appVal !== ""){
-            var launcher = logic.launcherData(appVal)
-            btnAddLauncher.text = launcher.applicationName + " - Tap to change"
-            btnAddLauncher.icon.name = launcher.iconName || "fork"
+    function updateAppButton(appVal) {
+        if (appVal !== "") {
+            var launcher = logic.launcherData(appVal);
+            btnAddLauncher.text = launcher.applicationName + " - Tap to change";
+            btnAddLauncher.icon.name = launcher.iconName || "fork";
         } else {
-            btnAddLauncher.text = "Choose an Application"
-            btnAddLauncher.icon.name = "application-default-symbolic"
+            btnAddLauncher.text = "Choose an Application";
+            btnAddLauncher.icon.name = "application-default-symbolic";
         }
     }
 
-    
     ColumnLayout {
         visible: actionCombo.componentValue == "launch_application"
         RowLayout {
@@ -147,12 +149,12 @@ ColumnLayout {
                 property string applicationUrl: ""
 
                 onClicked: {
-                    logic.addLauncher()
+                    logic.addLauncher();
                 }
 
                 Component.onCompleted: {
-                    updateAppButton(applicationUrlValue)
-                    hiddenAppText.text = applicationUrlValue
+                    updateAppButton(applicationUrlValue);
+                    hiddenAppText.text = applicationUrlValue;
                 }
             }
 
@@ -161,35 +163,37 @@ ColumnLayout {
                 placeholderText: qsTr("Enter URL or pick a file")
                 Layout.fillWidth: true
                 onTextChanged: {
-                    updateAppButton(text)
-                    btnAddLauncher.applicationUrl = hiddenAppText.text
+                    updateAppButton(text);
+                    btnAddLauncher.applicationUrl = hiddenAppText.text;
                 }
             }
         }
 
         RowLayout {
-            Item { Layout.fillWidth: true }
+            Item {
+                Layout.fillWidth: true
+            }
             Button {
-                id:btnAppCopy
+                id: btnAppCopy
                 icon.name: "edit-copy"
                 onClicked: {
                     if (hiddenAppText.text.length > 0) {
-                        hiddenAppText.selectAll()
-                        hiddenAppText.copy()
+                        hiddenAppText.selectAll();
+                        hiddenAppText.copy();
                     }
                 }
             }
 
             Button {
-                id:btnAppPaste
+                id: btnAppPaste
                 icon.name: "edit-paste"
                 onClicked: {
-                    hiddenAppText.text=""
-                    hiddenAppText.paste()
-                    btnAddLauncher.applicationUrl = hiddenAppText.text
+                    hiddenAppText.text = "";
+                    hiddenAppText.paste();
+                    btnAddLauncher.applicationUrl = hiddenAppText.text;
                 }
             }
-            
+
             Button {
                 id: btnUrl
                 icon.name: "document-open"
@@ -197,17 +201,17 @@ ColumnLayout {
                 ToolTip.visible: hovered
                 ToolTip.text: "Pick a file"
                 onClicked: {
-                    fileDialogUrl.open()
+                    fileDialogUrl.open();
                 }
             }
 
             Button {
-                id:btnUrlClean
+                id: btnUrlClean
                 icon.name: "document-cleanup"
                 onClicked: {
-                    btnAddLauncher.applicationUrl = ""
-                    btnAddLauncher.text = "Choose an Application"
-                    hiddenAppText.text=""
+                    btnAddLauncher.applicationUrl = "";
+                    btnAddLauncher.text = "Choose an Application";
+                    hiddenAppText.text = "";
                 }
             }
         }
@@ -215,16 +219,18 @@ ColumnLayout {
 
     FileDialog {
         id: fileDialogExec
-        onAccepted: commandTextArea.text = fileDialogExec.fileUrl.toString().replace("file://","")
+        onAccepted: commandTextArea.text = fileDialogExec.fileUrl.toString().replace("file://", "")
     }
 
     FileDialog {
         id: fileDialogUrl
         onAccepted: {
-            hiddenAppText.text = fileDialogUrl.fileUrl.toString()
+            hiddenAppText.text = fileDialogUrl.fileUrl.toString();
         }
     }
-    Item { implicitHeight: 4}
+    Item {
+        implicitHeight: 4
+    }
 
     // Separator
     Rectangle {
