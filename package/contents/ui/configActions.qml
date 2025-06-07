@@ -158,107 +158,95 @@ KCM.SimpleKCM {
         getShortcuts.exec();
     }
 
-    ColumnLayout {
+    Kirigami.FormLayout {
+
         Button {
             text: i18n("Refresh actions")
             icon.name: "view-refresh-symbolic"
             onClicked: {
                 getShortcuts.exec();
             }
-            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
         }
-        Kirigami.FormLayout {
+        Components.GroupedActions {
+            id: singleClick
+            modelData: isLoading ? shortcutsListTemp : shortcutsList
+            confInternalName: "singleClickAction"
+            Kirigami.FormData.label: "Single Click:"
+            isLoading: root.isLoading
+        }
 
-            Components.GroupedActions {
-                id: singleClick
-                modelData: isLoading ? shortcutsListTemp : shortcutsList
-                confInternalName: "singleClickAction"
-                sectionLabel: "Single Click"
-                Kirigami.FormData.label: sectionLabel + ":"
-                isLoading: root.isLoading
-            }
+        Components.GroupedActions {
+            id: doubleClick
+            modelData: isLoading ? shortcutsListTemp : shortcutsList
+            confInternalName: "doubleClickAction"
+            Kirigami.FormData.label: "Double Click:"
+            isLoading: root.isLoading
+        }
 
-            Components.GroupedActions {
-                id: doubleClick
-                modelData: isLoading ? shortcutsListTemp : shortcutsList
-                confInternalName: "doubleClickAction"
-                sectionLabel: "Double Click"
-                Kirigami.FormData.label: sectionLabel + ":"
-                isLoading: root.isLoading
-            }
+        Components.GroupedActions {
+            id: middleClick
+            modelData: isLoading ? shortcutsListTemp : shortcutsList
+            confInternalName: "middleClickAction"
+            Kirigami.FormData.label: "Middle Click:"
+            isLoading: root.isLoading
+        }
 
-            Components.GroupedActions {
-                id: middleClick
-                modelData: isLoading ? shortcutsListTemp : shortcutsList
-                confInternalName: "middleClickAction"
-                sectionLabel: "Middle Click"
-                Kirigami.FormData.label: sectionLabel + ":"
-                isLoading: root.isLoading
-            }
+        Components.GroupedActions {
+            id: wheelUp
+            modelData: isLoading ? shortcutsListTemp : shortcutsList
+            confInternalName: "mouseWheelUpAction"
+            Kirigami.FormData.label: "Wheel Up:"
+            isLoading: root.isLoading
+        }
 
-            Components.GroupedActions {
-                id: wheelUp
-                modelData: isLoading ? shortcutsListTemp : shortcutsList
-                confInternalName: "mouseWheelUpAction"
-                sectionLabel: "Wheel Up"
-                Kirigami.FormData.label: sectionLabel + ":"
-                isLoading: root.isLoading
-            }
+        Components.GroupedActions {
+            id: wheelDown
+            modelData: isLoading ? shortcutsListTemp : shortcutsList
+            confInternalName: "mouseWheelDownAction"
+            Kirigami.FormData.label: "Wheel Down:"
+            isLoading: root.isLoading
+        }
 
-            Components.GroupedActions {
-                id: wheelDown
-                modelData: isLoading ? shortcutsListTemp : shortcutsList
-                confInternalName: "mouseWheelDownAction"
-                sectionLabel: "Wheel Down"
-                Kirigami.FormData.label: sectionLabel + ":"
-                isLoading: root.isLoading
-            }
+        Components.GroupedActions {
+            id: dragUp
+            modelData: isLoading ? shortcutsListTemp : shortcutsList
+            confInternalName: "mouseDragUpAction"
+            Kirigami.FormData.label: "Drag Up:"
+            isLoading: root.isLoading
+        }
 
-            Components.GroupedActions {
-                id: dragUp
-                modelData: isLoading ? shortcutsListTemp : shortcutsList
-                confInternalName: "mouseDragUpAction"
-                sectionLabel: "Drag Up"
-                Kirigami.FormData.label: sectionLabel + ":"
-                isLoading: root.isLoading
-            }
+        Components.GroupedActions {
+            id: dragDown
+            modelData: isLoading ? shortcutsListTemp : shortcutsList
+            confInternalName: "mouseDragDownAction"
+            Kirigami.FormData.label: "Drag Down:"
+            isLoading: root.isLoading
+        }
 
-            Components.GroupedActions {
-                id: dragDown
-                modelData: isLoading ? shortcutsListTemp : shortcutsList
-                confInternalName: "mouseDragDownAction"
-                sectionLabel: "Drag Down"
-                Kirigami.FormData.label: sectionLabel + ":"
-                isLoading: root.isLoading
-            }
+        Components.GroupedActions {
+            id: dragLeft
+            modelData: isLoading ? shortcutsListTemp : shortcutsList
+            confInternalName: "mouseDragLeftAction"
+            Kirigami.FormData.label: "Drag Left:"
+            isLoading: root.isLoading
+        }
 
-            Components.GroupedActions {
-                id: dragLeft
-                modelData: isLoading ? shortcutsListTemp : shortcutsList
-                confInternalName: "mouseDragLeftAction"
-                sectionLabel: "Drag Left"
-                Kirigami.FormData.label: sectionLabel + ":"
-                isLoading: root.isLoading
-            }
+        Components.GroupedActions {
+            id: dragRight
+            modelData: isLoading ? shortcutsListTemp : shortcutsList
+            confInternalName: "mouseDragRightAction"
+            Kirigami.FormData.label: "Drag Right:"
+            isLoading: root.isLoading
+        }
 
-            Components.GroupedActions {
-                id: dragRight
-                modelData: isLoading ? shortcutsListTemp : shortcutsList
-                confInternalName: "mouseDragRightAction"
-                sectionLabel: "Drag Right"
-                Kirigami.FormData.label: sectionLabel + ":"
-                isLoading: root.isLoading
-            }
-
-            Components.GroupedActions {
-                id: pressHold
-                modelData: isLoading ? shortcutsListTemp : shortcutsList
-                confInternalName: "pressHoldAction"
-                sectionLabel: "Long press"
-                Kirigami.FormData.label: sectionLabel + ":"
-                showSeparator: false
-                isLoading: root.isLoading
-            }
+        Components.GroupedActions {
+            id: pressHold
+            modelData: isLoading ? shortcutsListTemp : shortcutsList
+            confInternalName: "pressHoldAction"
+            Kirigami.FormData.label: "Long press:"
+            showSeparator: false
+            isLoading: root.isLoading
         }
     }
 }
