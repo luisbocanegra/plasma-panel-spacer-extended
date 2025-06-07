@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.1](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.11.0...v1.11.1) (2025-06-07)
+
+
+### Bug Fixes
+
+* settings window freezing ([5b03d61](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/5b03d6196514b690d132b5a65155a9da450942e5))
+
 ## [1.11.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.10.1...v1.11.0) (2025-06-05)
 
 
