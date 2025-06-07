@@ -9,8 +9,7 @@ import "."
 
 ColumnLayout {
     id: groupedActions
-    Layout.fillWidth: true
-    Layout.fillHeight: true
+    Layout.preferredWidth: 450
     property var confInternalName: ""
     property ListModel modelData
     property var sectionLabel: ""
@@ -45,74 +44,71 @@ ColumnLayout {
     }
 
     // Command area
-    ColumnLayout {
+    TextArea {
+        id: commandTextArea
         visible: actionCombo.componentValue == "custom_command"
-        TextArea {
-            id: commandTextArea
-            wrapMode: TextArea.Wrap
-            topPadding: activeFocus ? 6 : undefined
-            bottomPadding: activeFocus ? 22 : undefined
+        wrapMode: TextArea.Wrap
+        selectByMouse: true
+        placeholderText: qsTr("Enter shell command or pick a executable")
+        onTextChanged: internalValue.value = text
+        persistentSelection: false
+        // cursor position
+        property int cursorLine: 1 + text.substring(0, cursorPosition).split("\n").length - 1
+        property int cursorColumn: cursorPosition - text.lastIndexOf("\n", cursorPosition - 1)
+        Text {
+            anchors.bottom: parent.bottom
+            anchors.right: parent.right
+            horizontalAlignment: Text.AlignRight
+            text: commandTextArea.cursorLine + ", " + commandTextArea.cursorColumn
+            color: Kirigami.Theme.textColor
+            anchors.rightMargin: 8
+            anchors.bottomMargin: 5
+            opacity: parent.activeFocus ? .6 : 0
+        }
+        Layout.fillWidth: true
+        Kirigami.SpellCheck.enabled: false
+    }
+    RowLayout {
+        visible: actionCombo.componentValue == "custom_command"
+        Item {
             Layout.fillWidth: true
-            selectByMouse: true
-            placeholderText: qsTr("Enter shell command or pick a executable")
-            onTextChanged: internalValue.value = text
-            persistentSelection: false
-            // cursor position
-            property int cursorLine: 1 + text.substring(0, cursorPosition).split("\n").length - 1
-            property int cursorColumn: cursorPosition - text.lastIndexOf("\n", cursorPosition - 1)
-
-            Text {
-                anchors.bottom: parent.bottom
-                anchors.right: parent.right
-                horizontalAlignment: Text.AlignRight
-                text: commandTextArea.cursorLine + ", " + commandTextArea.cursorColumn
-                color: Kirigami.Theme.textColor
-                anchors.rightMargin: 8
-                anchors.bottomMargin: 5
-                opacity: parent.activeFocus ? .6 : 0
+        }
+        Button {
+            id: btnCmdCopy
+            icon.name: "edit-copy"
+            onClicked: {
+                if (commandTextArea.text.length > 0) {
+                    commandTextArea.selectAll();
+                    commandTextArea.copy();
+                }
             }
         }
-        RowLayout {
-            Item {
-                Layout.fillWidth: true
-            }
-            Button {
-                id: btnCmdCopy
-                icon.name: "edit-copy"
-                onClicked: {
-                    if (commandTextArea.text.length > 0) {
-                        commandTextArea.selectAll();
-                        commandTextArea.copy();
-                    }
-                }
-            }
 
-            Button {
-                id: btnCmdPaste
-                icon.name: "edit-paste"
-                onClicked: {
-                    commandTextArea.text = "";
-                    commandTextArea.paste();
-                    internalValue.value = commandTextArea.text;
-                }
+        Button {
+            id: btnCmdPaste
+            icon.name: "edit-paste"
+            onClicked: {
+                commandTextArea.text = "";
+                commandTextArea.paste();
+                internalValue.value = commandTextArea.text;
             }
+        }
 
-            Button {
-                id: btnExecutable
-                icon.name: "document-open"
-                ToolTip.delay: 1000
-                ToolTip.visible: hovered
-                ToolTip.text: "Pick a executable file"
-                onClicked: {
-                    fileDialogExec.open();
-                }
+        Button {
+            id: btnExecutable
+            icon.name: "document-open"
+            ToolTip.delay: 1000
+            ToolTip.visible: hovered
+            ToolTip.text: "Pick a executable file"
+            onClicked: {
+                fileDialogExec.open();
             }
+        }
 
-            Button {
-                id: btnCmdClean
-                icon.name: "document-cleanup"
-                onClicked: commandTextArea.text = ""
-            }
+        Button {
+            id: btnCmdClean
+            icon.name: "document-cleanup"
+            onClicked: commandTextArea.text = ""
         }
     }
 
