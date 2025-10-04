@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.2](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.11.1...v1.11.2) (2025-10-04)
+
+
+### Bug Fixes
+
+* shortcuts not loading due to helper script shell incompatibility ([a3e4bc8](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/a3e4bc820db319fcb9646a4d197f3445e49d6172))
+
 ## [1.11.1](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.11.0...v1.11.1) (2025-06-07)
 
 
