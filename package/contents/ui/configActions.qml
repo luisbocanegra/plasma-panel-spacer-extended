@@ -51,8 +51,8 @@ KCM.SimpleKCM {
 
     property bool isLoading: true
 
-    property string toolsDir: Qt.resolvedUrl("./tools").toString().substring(7) + "/"
-    property string getShortcutsCommand: "sh '" + toolsDir + "get_shortcuts.sh'"
+    property string toolsDir: Qt.resolvedUrl("./tools").toString().substring(7)
+    property string getShortcutsCommand: `'${toolsDir}/get_shortcuts.sh'`
 
     ListModel {
         id: shortcutsList

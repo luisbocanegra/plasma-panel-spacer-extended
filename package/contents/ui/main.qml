@@ -53,15 +53,11 @@ PlasmoidItem {
     property int minDragDistance: horizontal ? root.height : root.width
     property var mouseButton: undefined
 
-    property string toolsDir: Qt.resolvedUrl("./tools").toString().substring(7) + "/"
-    property string scriptUtil: toolsDir + "run_kwin_script.sh"
-    // property string kwinScriptUtil: "sh "+toolsDir + scriptUtil + " '"+focusTopScriptName+"' '"+focusTopScriptFile+"'"
+    property string toolsDir: Qt.resolvedUrl("./tools").toString().substring(7)
+    property string scriptUtil: `${toolsDir}/run_kwin_script.sh`
 
-    function getKwinScriptCommand(scriptName) {
-        const scriptFile = toolsDir + scriptName + ".js";
-        const kwinCommand = "sh '" + scriptUtil + "' '" + scriptName + "' '" + scriptFile + "' " + enableDebug;
-        return kwinCommand;
-    }
+    property string kwinScriptFile: `${toolsDir}/focusTopWindow.js`
+    property string kwinCommand: `'${scriptUtil}' focusTopWindow '${kwinScriptFile}' ${enableDebug}`
 
     property var requiresFocus: ["kwin,ExposeClass", "kwin,Decrease Opacity", "kwin,Increase Opacity", "kwin,InvertWindow", "kwin,Kill Window", "kwin,Setup Window Shortcut", "kwin,Switch Window Down", "kwin,Switch Window Left", "kwin,Switch Window Right", "kwin,Switch Window Up", "kwin,Toggle Window Raise/Lower", "kwin,Walk Through Windows of Current Application", "kwin,Window Above Other Windows", "kwin,Window Below Other Windows", "kwin,Window Close", "kwin,Window Fullscreen", "kwin,Window Grow", "kwin,Window Lower", "kwin,Window Maximize", "kwin,Window Minimize", "kwin,Window Move", "kwin,Window No Border", "kwin,Window On All Desktops", "kwin,Window One Desktop", "kwin,Window One Screen", "kwin,Window Operations Menu", "kwin,Window Pack", "kwin,Window Quick Tile", "kwin,Window Raise", "kwin,Window Resize", "kwin,Window Shade", "kwin,Window Shrink", "kwin,Window to"]
 
@@ -306,15 +302,15 @@ PlasmoidItem {
                 setMaximized(false);
                 return;
             }
-            var shortcutCommand = 'gdbus call --session --dest org.kde.kglobalaccel --object-path /component/' + component + ' --method org.kde.kglobalaccel.Component.invokeShortcut ' + '\"' + actionNme + '\"';
-            var kwinCommand = "true";
+            const shortcutCommand = 'gdbus call --session --dest org.kde.kglobalaccel --object-path /component/' + component + ' --method org.kde.kglobalaccel.Component.invokeShortcut ' + '\"' + actionNme + '\"';
+            let preCmd = "true";
             if (requiresFocus.includes(component + "," + actionNme)) {
                 activateLastWindow();
-                kwinCommand = getKwinScriptCommand("focusTopWindow", shortcutCommand);
+                preCmd = kwinCommand;
             }
-            printLog`RUNNING_SHORTCUT: ${kwinCommand + ";" + shortcutCommand}`;
+            printLog`RUNNING_SHORTCUT: ${preCmd + ";" + shortcutCommand}`;
             notify(gestureDisplayName, `${component} • ${actionNme}`);
-            executable.exec(kwinCommand + ";" + shortcutCommand);
+            executable.exec(preCmd + ";" + shortcutCommand);
         }
         // end the drag for these
         if (stopContinuousDrag(action)) {
