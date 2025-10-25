@@ -110,9 +110,11 @@ Item {
                 }
                 break;
             case "launch_application":
-                var appName = logic.launcherData(plasmoid.configuration[configKey + "AppUrl"]).applicationName;
-                if (appName.length > 0) {
-                    action = "Open • " + appName;
+                if (quickLaunch.pluginFound) {
+                    var appName = quickLaunch.launcherData(plasmoid.configuration[configKey + "AppUrl"]).applicationName;
+                    if (appName.length > 0) {
+                        action = "Open • " + appName;
+                    }
                 }
                 break;
             default:

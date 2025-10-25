@@ -10,13 +10,12 @@ import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 import org.kde.kirigami as Kirigami
 import org.kde.taskmanager as TaskManager
-import org.kde.plasma.private.quicklaunch
 import org.kde.plasma.plasma5support as P5Support
 import org.kde.plasma.components as PC3
 
 PlasmoidItem {
     id: root
-
+    property var logic: null
     property bool horizontal: Plasmoid.formFactor !== PlasmaCore.Types.Vertical
     property bool isWayland: Qt.platform.pluginName.includes("wayland")
     property var activeTask: null
@@ -228,10 +227,6 @@ PlasmoidItem {
         }
     }
 
-    Logic {
-        id: logic
-    }
-
     P5Support.DataSource {
         id: sendNotification
         engine: "executable"
@@ -287,7 +282,7 @@ PlasmoidItem {
                 if (application !== "") {
                     printLog`LAUNCHING_APPLICATION_URL: ${application}`;
                     notify(gestureDisplayName, `Opening ${application}`);
-                    logic.openUrl(application);
+                    quickLaunch.openUrl(application);
                 }
                 return;
             }
@@ -656,6 +651,10 @@ PlasmoidItem {
                 runAction(mouseWheelDownAction, mouseWheelDownCommand, mouseWheelDownAppUrl);
             }
         }
+    }
+
+    QuickLaunch {
+        id: quickLaunch
     }
 
     Component.onCompleted: {

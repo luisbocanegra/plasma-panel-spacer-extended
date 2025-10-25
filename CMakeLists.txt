@@ -1,16 +1,23 @@
 cmake_minimum_required(VERSION 3.16)
 project("plasmoid-spacer-extended")
-option(BUILD_PLUGIN "Build the plugin" OFF)
+
+set(QT_MIN_VERSION "6.8.0")
+set(KF6_MIN_VERSION "6.14.0")
+set(KDE_COMPILERSETTINGS_LEVEL "5.82")
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FeatureSummary)
+
+find_package(ECM ${KF6_MIN_VERSION} REQUIRED NO_MODULE)
+
+option(BUILD_PLUGIN "Build the plugin" ON)
 option(INSTALL_PLASMOID "Install plasmoid" ON)
 option(PACKAGE_PLASMOID "Package plasmoid" OFF)
 
-# Use Extra CMake Modules (ECM) for common functionality.
-# See http://api.kde.org/ecm/manual/ecm.7.html
-# and http://api.kde.org/ecm/manual/ecm-kde-modules.7.html
-find_package(ECM REQUIRED NO_MODULE)
-
-# Needed by find_package(KF5Plasma) below.
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_MODULE_PATH})
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
 # Get id and version from metadata
 file(READ ${CMAKE_CURRENT_SOURCE_DIR}/package/metadata.json METADATA)
