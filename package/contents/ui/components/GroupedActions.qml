@@ -215,13 +215,13 @@ ColumnLayout {
 
     FileDialog {
         id: fileDialogExec
-        onAccepted: commandTextArea.text = fileDialogExec.fileUrl.toString().replace("file://", "")
+        onAccepted: commandTextArea.text = fileDialogExec.selectedFile.toString().replace("file://", "")
     }
 
     FileDialog {
         id: fileDialogUrl
         onAccepted: {
-            hiddenAppText.text = fileDialogUrl.fileUrl.toString();
+            hiddenAppText.text = fileDialogUrl.selectedFile.toString();
         }
     }
     Item {
