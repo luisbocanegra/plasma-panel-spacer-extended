@@ -4,11 +4,11 @@ import QtQuick.Layouts 1.15
 // import org.kde.kirigami 2.4 as Kirigami
 import org.kde.kirigami as Kirigami
 import QtQuick.Dialogs
-import org.kde.plasma.private.quicklaunch 1.0
 import "."
+import "../"
 
 ColumnLayout {
-    id: groupedActions
+    id: root
     Layout.preferredWidth: 450
     property var confInternalName: ""
     property ListModel modelData
@@ -24,9 +24,9 @@ ColumnLayout {
     }
 
     Item {
-        // HACK: Workaround for the command TextArea being marqued as changed when focused
-        // requesting a confirmation that isnt actually needed, so store its value
-        // here and update it only when textarea singals onTextChanged
+        // HACK: Workaround for the command TextArea being marked as changed when focused
+        // requesting a confirmation that isn't actually needed, so store its value
+        // here and update it only when textarea signals onTextChanged
         // there is probably a simpler way or something I've missed...
         id: internalValue
         property string value: ""
@@ -39,7 +39,7 @@ ColumnLayout {
     FilterListView {
         id: actionCombo
         Layout.fillWidth: true
-        configName: confInternalName
+        configName: root.confInternalName
         componentValue: configValue.split(",")[0]
     }
 
@@ -112,23 +112,31 @@ ColumnLayout {
         }
     }
 
-    // App selection
-    Logic {
-        id: logic
-        onLauncherAdded: {
-            var launcher = logic.launcherData(url);
+    QuickLaunch {
+        id: quickLaunch
+        onLauncherAdded: url => {
+            var launcher = quickLaunch.launcherData(url);
             console.log("APP:", url);
             btnAddLauncher.text = launcher.applicationName + " - Tap to change";
             btnAddLauncher.applicationUrl = url;
             btnAddLauncher.icon.name = launcher.iconName || "fork";
             hiddenAppText.text = url;
         }
+        onLogicChanged: {
+            if (logic) {
+                root.updateAppButton(root.applicationUrlValue);
+            }
+        }
+        visible: false
     }
 
     // Update button app name and icon
-    function updateAppButton(appVal) {
-        if (appVal !== "") {
-            var launcher = logic.launcherData(appVal);
+    function updateAppButton(url) {
+        if (!quickLaunch.logic) {
+            return;
+        }
+        if (url !== "") {
+            var launcher = quickLaunch.launcherData(url);
             btnAddLauncher.text = launcher.applicationName + " - Tap to change";
             btnAddLauncher.icon.name = launcher.iconName || "fork";
         } else {
@@ -139,33 +147,47 @@ ColumnLayout {
 
     ColumnLayout {
         visible: actionCombo.componentValue == "launch_application"
-        RowLayout {
-            Button {
-                id: btnAddLauncher
-                property string applicationUrl: ""
 
-                onClicked: {
-                    logic.addLauncher();
-                }
+        Label {
+            text: i18n("C++ plugin not found, install it to launch applications on Plasma 6.5 or newer. <a href=\"https://google.com\">Install instructions TODO</a>")
+            wrapMode: Label.Wrap
+            Layout.fillWidth: true
+            color: Kirigami.Theme.neutralTextColor
+            onLinkActivated: link => Qt.openUrlExternally(link)
+            HoverHandler {
+                cursorShape: Qt.PointingHandCursor
+            }
+            visible: !quickLaunch.pluginFound
+        }
 
-                Component.onCompleted: {
-                    updateAppButton(applicationUrlValue);
-                    hiddenAppText.text = applicationUrlValue;
-                }
+        Button {
+            id: btnAddLauncher
+            visible: quickLaunch.pluginFound
+            Layout.fillWidth: true
+            property string applicationUrl: ""
+
+            onClicked: {
+                quickLaunch.addLauncher();
             }
 
-            TextArea {
-                id: hiddenAppText
-                placeholderText: qsTr("Enter URL or pick a file")
-                Layout.fillWidth: true
-                onTextChanged: {
-                    updateAppButton(text);
-                    btnAddLauncher.applicationUrl = hiddenAppText.text;
-                }
+            Component.onCompleted: {
+                hiddenAppText.text = root.applicationUrlValue;
+            }
+        }
+
+        TextField {
+            id: hiddenAppText
+            visible: quickLaunch.pluginFound
+            placeholderText: qsTr("Enter URL or pick a file")
+            Layout.fillWidth: true
+            onTextChanged: {
+                root.updateAppButton(text);
+                btnAddLauncher.applicationUrl = hiddenAppText.text;
             }
         }
 
         RowLayout {
+            visible: quickLaunch.pluginFound
             Item {
                 Layout.fillWidth: true
             }
@@ -233,6 +255,6 @@ ColumnLayout {
         Layout.fillWidth: true
         height: 1
         color: Kirigami.ColorUtils.linearInterpolation(Kirigami.Theme.backgroundColor, Kirigami.Theme.textColor, 0.15)
-        visible: showSeparator
+        visible: root.showSeparator
     }
 }
