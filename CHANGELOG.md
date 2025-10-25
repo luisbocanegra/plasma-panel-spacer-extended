@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.11.3](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.11.2...v1.11.3) (2025-10-25)
+
+
+### Bug Fixes
+
+* build quicklaunchplugin and load it conditionally ([#79](https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/79)) ([02a55ba](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/02a55ba4f1a79f5dae507843d9b179a4bb9ac96c))
+* file dialogs Qt6 compatibility ([c0d7ebf](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/c0d7ebf958edaf18ef33e0468384f5b56aac6054))
+
 ## [1.11.2](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.11.1...v1.11.2) (2025-10-04)
 
 
