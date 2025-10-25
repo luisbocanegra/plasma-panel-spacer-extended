@@ -149,7 +149,7 @@ ColumnLayout {
         visible: actionCombo.componentValue == "launch_application"
 
         Label {
-            text: i18n("C++ plugin not found, install it to launch applications on Plasma 6.5 or newer. <a href=\"https://google.com\">Install instructions TODO</a>")
+            text: i18n("C++ plugin not found, install it to launch applications on Plasma 6.5 or newer. <a href=\"https://github.com/luisbocanegra/plasma-panel-spacer-extended#build-from-source-with-c-plugin\">Install instructions</a>")
             wrapMode: Label.Wrap
             Layout.fillWidth: true
             color: Kirigami.Theme.neutralTextColor

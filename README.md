@@ -33,7 +33,7 @@ Spacer with Mouse gestures for the KDE Plasma Panel featuring Latte Dock/Gnome/U
 * [x] Actions
   * [x] Run any keyboard shortcut (detects all available shortcuts in **System Settings** > **Shortcuts**)
   * [x] Run custom commands
-  * [x] Launch Applications/Urls/Files
+  * [x] Launch Applications/Urls/Files ([requires building and installing the C++ plugin on Plasma 6.5 or newer](#build-from-source-with-c-plugin))
 * [ ] Sync configuration across widget instances
 * [ ] Quick disable/reset defaults
 * [x] Popup/Notification showing shortcut being run
@@ -84,14 +84,14 @@ To install the widget use one of these methods:
 
 ### KDE Store
 
-* [Plasma 5](https://store.kde.org/p/2064339) version v1.4.0
+* [Plasma 5](https://store.kde.org/p/2064339) **No longer maintained**
 
 * [Plasma 6](https://store.kde.org/p/2128047)
 
 1. **Right click on the Panel** > **Add Widgets** > **Get New Widgets** > **Download New Plasma Widgets**
 2. **Search** for "**Panel Spacer Extended**" and install it.
 
-### Install from source
+### Build from source (with C++ plugin)
 
 1. Install dependencies (please let me know if I missed something) or their equivalent for your distribution
 
@@ -105,6 +105,8 @@ To install the widget use one of these methods:
     ```
 
     *NOTE: `kdeplasma-addons` is a runtime dependency*
+
+    *NOTE: Due to changes in Plasma 6.5 `kdeplasma-addons` is no longer a dependency, instead the plugin has become optional and needs to be compiled from source or a distribution package, no change is needed for Plasma 6.4*
 
 2. Clone and install
 
