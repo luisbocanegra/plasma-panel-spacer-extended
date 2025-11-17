@@ -152,6 +152,9 @@
     <entry name="notificationType" type="Int">
       <default>0</default>
     </entry>
+    <entry name="contextMenuActions" type="String">
+      <default>[]</default>
+    </entry>
   </group>
 
 </kcfg>

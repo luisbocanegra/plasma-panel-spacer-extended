@@ -9,6 +9,12 @@ ConfigModel {
     }
 
     ConfigCategory {
+        name: i18n("Context Menu")
+        icon: "application-menu"
+        source: "configContextMenu.qml"
+    }
+
+    ConfigCategory {
         name: i18n("Behavior")
         icon: "preferences-desktop"
         source: "configBehavior.qml"

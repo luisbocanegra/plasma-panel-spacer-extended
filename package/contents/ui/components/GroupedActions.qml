@@ -20,10 +20,6 @@ ColumnLayout {
     property bool isLoading: true
 
     Item {
-        implicitHeight: 4
-    }
-
-    Item {
         // HACK: Workaround for the command TextArea being marked as changed when focused
         // requesting a confirmation that isn't actually needed, so store its value
         // here and update it only when textarea signals onTextChanged
@@ -34,6 +30,7 @@ ColumnLayout {
         Component.onCompleted: {
             commandTextArea.text = value;
         }
+        visible: false
     }
 
     FilterListView {
@@ -245,9 +242,6 @@ ColumnLayout {
         onAccepted: {
             hiddenAppText.text = fileDialogUrl.selectedFile.toString();
         }
-    }
-    Item {
-        implicitHeight: 4
     }
 
     // Separator
