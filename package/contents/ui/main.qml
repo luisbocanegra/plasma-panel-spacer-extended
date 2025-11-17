@@ -346,16 +346,127 @@ PlasmoidItem {
         return null;
     }
 
-    Plasmoid.contextualActions: [
+    readonly property PlasmaCore.Action expandingAction: PlasmaCore.Action {
+        text: Plasmoid.configuration.expanding ? i18n("Set fixed size") : i18n("Set flexible size")
+        icon.name: "distribute-horizontal-x"
+        onTriggered: Plasmoid.configuration.expanding = !Plasmoid.configuration.expanding;
+    }
+    property string contextMenuActions: Plasmoid.configuration.contextMenuActions
+
+    Component {
+        id: actionComponent
         PlasmaCore.Action {
-            text: i18n("Set flexible size")
-            checkable: true
-            checked: Plasmoid.configuration.expanding
-            onTriggered: checked => {
-                Plasmoid.configuration.expanding = checked;
+            property string actionIcon
+            property var callback
+            objectName: "PSECustomMenuAction"
+            icon.name: actionIcon
+            onTriggered: {
+                if (callback && typeof callback === "function") {
+                    callback();
+                }
             }
         }
-    ]
+    }
+
+    Component {
+        id: separatorComponent
+        PlasmaCore.Action {
+            objectName: "PSECustomMenuAction"
+            isSeparator: true
+        }
+    }
+
+    function delay(interval, callback, parentItem) {
+        let timer = Qt.createQmlObject("import QtQuick; Timer {}", parentItem);
+        timer.interval = interval;
+        timer.repeat = false;
+        timer.triggered.connect(callback);
+        timer.triggered.connect(function release() {
+            timer.triggered.disconnect(callback);
+            timer.triggered.disconnect(release);
+            timer.destroy();
+        });
+        timer.start();
+    }
+
+    onContextMenuActionsChanged: updateContextualActions()
+
+    function truncateString(str, n) {
+        if (str.length > n) {
+            return str.slice(0, n) + "...";
+        } else {
+            return str;
+        }
+    }
+
+    function updateContextualActions() {
+        Plasmoid.contextualActions = Plasmoid.contextualActions.filter(item => {
+            if (item && item.objectName === "PSECustomMenuAction") {
+                item.destroy();
+                return false;
+            }
+            return true;
+        });
+        let actions = [];
+        console.log(contextMenuActions);
+
+        try {
+            const customActions = JSON.parse(contextMenuActions);
+            for (let act of customActions) {
+                let [component, shortcut] = act.action.split(",");
+                if (shortcut === "Disabled") {
+                    continue;
+                }
+                let actionText;
+                let actionIcon;
+
+                switch (component) {
+                case "custom_command":
+                    var command = act.command;
+
+                    if (command) {
+                        actionText = "Command • " + truncateString(command, 70).replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, ' ');
+                        actionIcon = "scriptnew-symbolic"
+                    }
+                    break;
+                case "launch_application":
+                    if (quickLaunch.pluginFound) {
+                        var launcher = quickLaunch.launcherData(act.url);
+                        if (launcher) {
+                            actionText = launcher.applicationName;
+                            actionIcon = launcher.iconName;
+                        }
+                    }
+                    break;
+                default:
+                    if (shortcut && shortcut != "Disabled") {
+                        actionText = (component.charAt(0).toUpperCase() + component.substring(1)).replace(/-|_/g, " ") + " • " + shortcut.replace(/-|_/g, " ");
+                        actionIcon = "input-keyboard-symbolic";
+                    }
+                }
+
+                if (!actionText) {
+                    continue;
+                }
+
+                let action = actionComponent.createObject(root, {
+                    text: actionText || "Unknown",
+                    actionIcon: actionIcon || "",
+                    callback: () => runAction([component, shortcut], act.command, act.url)
+                });
+                actions.push(action);
+            }
+        } catch (e) {
+            console.log("Error loading contextMenuActions:", e);
+        }
+        if (actions.length > 0) {
+            actions.push(separatorComponent.createObject(root))
+        }
+        actions.push(expandingAction)
+        Plasmoid.contextualActions = actions;
+    }
+
+    Plasmoid.contextualActions: [expandingAction]
 
     property real optimalSize: {
         if (!panelLayout || !Plasmoid.configuration.expanding)
@@ -655,6 +766,11 @@ PlasmoidItem {
 
     QuickLaunch {
         id: quickLaunch
+        onPluginFoundChanged: {
+            if (pluginFound) {
+                root.updateContextualActions()
+            }
+        }
     }
 
     Component.onCompleted: {
