@@ -112,7 +112,7 @@ ColumnLayout {
 
     KSortFilterProxyModel {
         id: shortcutsListFiltered
-        sourceModel: shortcutsList
+        sourceModel: actionsModel.actions
         filterRoleName: "label"
         filterRowCallback: (sourceRow, sourceParent) => {
             return sourceModel.data(sourceModel.index(sourceRow, 0, sourceParent), filterRole).toLowerCase().includes(searchField.text.toLowerCase());
