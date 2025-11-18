@@ -139,7 +139,7 @@ PlasmoidItem {
         engine: "executable"
         connectedSources: []
         onNewData: function (source) {
-            disconnectSource(source); // cmd finished
+            disconnectSource(source);
         }
 
         function exec(cmd) {
@@ -147,37 +147,28 @@ PlasmoidItem {
         }
     }
 
-    P5Support.DataSource {
-        id: sendNotification
-        engine: "executable"
-        connectedSources: []
-        onNewData: function (source) {
-            disconnectSource(source); // cmd finished
-        }
+    property int notificationCount: 1
 
-        function exec(cmd) {
-            executable.connectSource(cmd);
-        }
+    Timer {
+        id: countReset
+        interval: 1000
+        onTriggered: root.notificationCount = 1
     }
-
-    property bool tick: false
 
     function notify(title, text) {
         let cmd;
         if (Plasmoid.configuration.notificationType === 1) {
             // avoid hitting org.freedesktop.Notifications.Error.ExcessNotificationGeneration
-            // by addind extra space every other notification
-            if (tick) {
-                title += " ";
-            }
-            tick = !tick;
+            notificationCount += 1;
+            title = `${title} ${notificationCount}`;
             cmd = `gdbus call --session --dest org.freedesktop.Notifications --object-path /org/freedesktop/Notifications --method org.freedesktop.Notifications.Notify "${Plasmoid.metaData.name}" 0 "" "${title}" '${text}' "[]" {} 1000`;
         } else if (Plasmoid.configuration.notificationType === 2) {
             cmd = `gdbus call --session --dest org.kde.plasmashell --object-path /org/kde/osdService --method org.kde.osdService.showText plasmashell '${title} • ${text}'`;
         } else {
             return;
         }
-        sendNotification.exec(cmd);
+        executable.exec(`ms=${Date.now()};` + cmd);
+        countReset.restart();
     }
 
     function runAction(action, command, application) {
@@ -187,7 +178,9 @@ PlasmoidItem {
         if (actionNme != "Disabled") {
             // custom command
             if (component == "custom_command") {
-                var commandFormatted = "";
+                // make each command unique to allow rapid calls to finish
+                // https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/83
+                var commandFormatted = `ms=${Date.now()};`;
                 var commandLines = command.split('\n');
                 for (let i = 0; i < commandLines.length; i++) {
                     commandFormatted += commandLines[i] + (commandLines[i].endsWith(";") ? " " : "; ");
