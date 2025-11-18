@@ -1,25 +1,16 @@
 import QtQuick
 import QtQuick.Layouts
-import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components as PlasmaComponents
-import org.kde.plasma.extras as PlasmaExtras
 import org.kde.plasma.plasmoid
 import org.kde.kirigami as Kirigami
+import "code/utils.js" as Utils
 
 Item {
-
-    property int preferredTextWidth: Kirigami.Units.gridUnit * 20
+    id: root
+    property int preferredTextWidth: Kirigami.Units.gridUnit * 25
 
     implicitWidth: mainLayout.implicitWidth + Kirigami.Units.gridUnit
     implicitHeight: mainLayout.implicitHeight + Kirigami.Units.gridUnit
-
-    function truncateString(str, n) {
-        if (str.length > n) {
-            return str.slice(0, n) + "...";
-        } else {
-            return str;
-        }
-    }
 
     ListModel {
         id: shortcutsList
@@ -43,9 +34,9 @@ Item {
     }
 
     Connections {
-        target: plasmoid.configuration
-        onValueChanged: {
-            updateShortcutsList();
+        target: Plasmoid.configuration
+        function onValueChanged() {
+            root.updateShortcutsList();
         }
     }
 
@@ -93,7 +84,7 @@ Item {
     ]
 
     function getShownAction(configKey) {
-        var configValue = plasmoid.configuration[configKey + "Action"];
+        var configValue = Plasmoid.configuration[configKey + "Action"];
         if (configValue != "") {
             var parts = configValue.toString().split(",");
             let component = parts[0];
@@ -103,15 +94,16 @@ Item {
 
             switch (component) {
             case "custom_command":
-                var command = plasmoid.configuration[configKey + "Command"];
+                var command = Plasmoid.configuration[configKey + "Command"];
 
                 if (command) {
-                    action = "Command • " + truncateString(command, 70).replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, ' ');
+                    action = "Command • " + Utils.truncateString(command, 70).replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, ' ');
                 }
                 break;
             case "launch_application":
+                // main QuickLaunch {}
                 if (quickLaunch.pluginFound) {
-                    var appName = quickLaunch.launcherData(plasmoid.configuration[configKey + "AppUrl"]).applicationName;
+                    var appName = quickLaunch.launcherData(Plasmoid.configuration[configKey + "AppUrl"]).applicationName;
                     if (appName.length > 0) {
                         action = "Open • " + appName;
                     }
@@ -139,10 +131,12 @@ Item {
             columns: 2
             rowSpacing: Kirigami.Units.mediumSpacing
             columnSpacing: Kirigami.Units.gridUnit / 2.5
-            Layout.maximumWidth: Math.min(implicitWidth, preferredTextWidth)
+            Layout.maximumWidth: Math.min(implicitWidth, root.preferredTextWidth)
             Repeater {
                 model: shortcutsList
                 PlasmaComponents.Label {
+                    required property string gesture
+                    required property int index
                     text: gesture
                     Layout.row: index
                     Layout.column: 0
@@ -154,6 +148,8 @@ Item {
             Repeater {
                 model: shortcutsList
                 PlasmaComponents.Label {
+                    required property string action
+                    required property int index
                     text: action
                     Layout.row: index
                     Layout.column: 1

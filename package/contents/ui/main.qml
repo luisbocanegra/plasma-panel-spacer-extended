@@ -12,28 +12,14 @@ import org.kde.kirigami as Kirigami
 import org.kde.taskmanager as TaskManager
 import org.kde.plasma.plasma5support as P5Support
 import org.kde.plasma.components as PC3
+import "code/utils.js" as Utils
 
 PlasmoidItem {
     id: root
     property var logic: null
     property bool horizontal: Plasmoid.formFactor !== PlasmaCore.Types.Vertical
     property bool isWayland: Qt.platform.pluginName.includes("wayland")
-    property var activeTask: null
-    property var activeProps: {
-        "name": "",
-        "title": "",
-        "id": ""
-    }
-    property var abstractTasksModel: TaskManager.AbstractTasksModel
-    property var isMaximized: abstractTasksModel.IsMaximized
-    property var isActive: abstractTasksModel.IsActive
-    property var isWindow: abstractTasksModel.IsWindow
 
-    property var isFullScreen: abstractTasksModel.IsFullScreen
-    property var isMinimized: abstractTasksModel.IsMinimized
-    property bool noWindowActive: true
-    property bool currentWindowMaximized: false
-    property bool isActiveWindowPinned: false
     property var startPos: {
         "x": 0,
         "y": 0
@@ -68,55 +54,55 @@ PlasmoidItem {
         return blockContinuousDrag.includes(component + "," + actionNme);
     }
 
-    property var singleClickAction: plasmoid.configuration.singleClickAction.split(",")
-    property var singleClickCommand: plasmoid.configuration.singleClickCommand
-    property var singleClickAppUrl: plasmoid.configuration.singleClickAppUrl
+    property var singleClickAction: Plasmoid.configuration.singleClickAction.split(",")
+    property var singleClickCommand: Plasmoid.configuration.singleClickCommand
+    property var singleClickAppUrl: Plasmoid.configuration.singleClickAppUrl
 
-    property var doubleClickAction: plasmoid.configuration.doubleClickAction.split(",")
-    property var doubleClickCommand: plasmoid.configuration.doubleClickCommand
-    property var doubleClickAppUrl: plasmoid.configuration.doubleClickAppUrl
+    property var doubleClickAction: Plasmoid.configuration.doubleClickAction.split(",")
+    property var doubleClickCommand: Plasmoid.configuration.doubleClickCommand
+    property var doubleClickAppUrl: Plasmoid.configuration.doubleClickAppUrl
 
-    property var middleClickAction: plasmoid.configuration.middleClickAction.split(",")
-    property var middleClickCommand: plasmoid.configuration.middleClickCommand
-    property var middleClickAppUrl: plasmoid.configuration.middleClickAppUrl
+    property var middleClickAction: Plasmoid.configuration.middleClickAction.split(",")
+    property var middleClickCommand: Plasmoid.configuration.middleClickCommand
+    property var middleClickAppUrl: Plasmoid.configuration.middleClickAppUrl
 
-    property var mouseWheelUpAction: plasmoid.configuration.mouseWheelUpAction.split(",")
-    property var mouseWheelUpCommand: plasmoid.configuration.mouseWheelUpCommand
-    property var mouseWheelUpAppUrl: plasmoid.configuration.mouseWheelUpAppUrl
+    property var mouseWheelUpAction: Plasmoid.configuration.mouseWheelUpAction.split(",")
+    property var mouseWheelUpCommand: Plasmoid.configuration.mouseWheelUpCommand
+    property var mouseWheelUpAppUrl: Plasmoid.configuration.mouseWheelUpAppUrl
 
-    property var mouseWheelDownAction: plasmoid.configuration.mouseWheelDownAction.split(",")
-    property var mouseWheelDownCommand: plasmoid.configuration.mouseWheelDownCommand
-    property var mouseWheelDownAppUrl: plasmoid.configuration.mouseWheelDownAppUrl
+    property var mouseWheelDownAction: Plasmoid.configuration.mouseWheelDownAction.split(",")
+    property var mouseWheelDownCommand: Plasmoid.configuration.mouseWheelDownCommand
+    property var mouseWheelDownAppUrl: Plasmoid.configuration.mouseWheelDownAppUrl
 
-    property var mouseDragDownAction: plasmoid.configuration.mouseDragDownAction.split(",")
-    property var mouseDragDownCommand: plasmoid.configuration.mouseDragDownCommand
-    property var mouseDragDownAppUrl: plasmoid.configuration.mouseDragDownAppUrl
+    property var mouseDragDownAction: Plasmoid.configuration.mouseDragDownAction.split(",")
+    property var mouseDragDownCommand: Plasmoid.configuration.mouseDragDownCommand
+    property var mouseDragDownAppUrl: Plasmoid.configuration.mouseDragDownAppUrl
 
-    property var mouseDragUpAction: plasmoid.configuration.mouseDragUpAction.split(",")
-    property var mouseDragUpCommand: plasmoid.configuration.mouseDragUpCommand
-    property var mouseDragUpAppUrl: plasmoid.configuration.mouseDragUpAppUrl
+    property var mouseDragUpAction: Plasmoid.configuration.mouseDragUpAction.split(",")
+    property var mouseDragUpCommand: Plasmoid.configuration.mouseDragUpCommand
+    property var mouseDragUpAppUrl: Plasmoid.configuration.mouseDragUpAppUrl
 
-    property var mouseDragLeftAction: plasmoid.configuration.mouseDragLeftAction.split(",")
-    property var mouseDragLeftCommand: plasmoid.configuration.mouseDragLeftCommand
-    property var mouseDragLeftAppUrl: plasmoid.configuration.mouseDragLeftAppUrl
+    property var mouseDragLeftAction: Plasmoid.configuration.mouseDragLeftAction.split(",")
+    property var mouseDragLeftCommand: Plasmoid.configuration.mouseDragLeftCommand
+    property var mouseDragLeftAppUrl: Plasmoid.configuration.mouseDragLeftAppUrl
 
-    property var mouseDragRightAction: plasmoid.configuration.mouseDragRightAction.split(",")
-    property var mouseDragRightCommand: plasmoid.configuration.mouseDragRightCommand
-    property var mouseDragRightAppUrl: plasmoid.configuration.mouseDragRightAppUrl
+    property var mouseDragRightAction: Plasmoid.configuration.mouseDragRightAction.split(",")
+    property var mouseDragRightCommand: Plasmoid.configuration.mouseDragRightCommand
+    property var mouseDragRightAppUrl: Plasmoid.configuration.mouseDragRightAppUrl
 
-    property var pressHoldAction: plasmoid.configuration.pressHoldAction.split(",")
-    property var pressHoldCommand: plasmoid.configuration.pressHoldCommand
-    property var pressHoldAppUrl: plasmoid.configuration.pressHoldAppUrl
+    property var pressHoldAction: Plasmoid.configuration.pressHoldAction.split(",")
+    property var pressHoldCommand: Plasmoid.configuration.pressHoldCommand
+    property var pressHoldAppUrl: Plasmoid.configuration.pressHoldAppUrl
 
-    property bool enableDebug: plasmoid.configuration.enableDebug
-    property bool showTooltip: plasmoid.configuration.showTooltip
+    property bool enableDebug: Plasmoid.configuration.enableDebug
+    property bool showTooltip: Plasmoid.configuration.showTooltip
     property bool hideTooltip: false // hide tooltip after action
-    property bool showHoverBg: plasmoid.configuration.showHoverBg
-    property int hoverBgRadius: plasmoid.configuration.hoverBgRadius
-    property int scrollSensitivity: plasmoid.configuration.scrollSensitivity
-    property bool isContinuous: plasmoid.configuration.isContinuous
+    property bool showHoverBg: Plasmoid.configuration.showHoverBg
+    property int hoverBgRadius: Plasmoid.configuration.hoverBgRadius
+    property int scrollSensitivity: Plasmoid.configuration.scrollSensitivity
+    property bool isContinuous: Plasmoid.configuration.isContinuous
 
-    property bool bgFillPanel: plasmoid.configuration.bgFillPanel
+    property bool bgFillPanel: Plasmoid.configuration.bgFillPanel
     Plasmoid.constraintHints: bgFillPanel ? Plasmoid.CanFillArea : Plasmoid.NoHint
 
     property bool overPanel: false
@@ -133,53 +119,6 @@ PlasmoidItem {
 
     preferredRepresentation: fullRepresentation
 
-    TaskManager.VirtualDesktopInfo {
-        id: virtualDesktopInfo
-    }
-
-    TaskManager.ActivityInfo {
-        id: activityInfo
-        readonly property string nullUuid: "00000000-0000-0000-0000-000000000000"
-    }
-
-    TaskManager.TasksModel {
-        id: tasksModel
-        sortMode: TaskManager.TasksModel.SortVirtualDesktop
-        groupMode: TaskManager.TasksModel.GroupDisabled
-        virtualDesktop: virtualDesktopInfo.currentDesktop
-        activity: activityInfo.currentActivity
-        screenGeometry: Plasmoid.containment.screenGeometry
-        filterByVirtualDesktop: true
-        filterByScreen: true
-        filterByActivity: true
-        filterMinimized: true
-
-        onActiveTaskChanged: {
-            Qt.callLater(updateWindowsinfo);
-        }
-        onCountChanged: {
-            Qt.callLater(updateWindowsinfo);
-        }
-    }
-
-    function updateWindowsinfo() {
-        for (var i = 0; i < tasksModel.count; i++) {
-            const currentTask = tasksModel.index(i, 0);
-            if (currentTask === undefined)
-                continue;
-            if (tasksModel.data(currentTask, isWindow)) {
-                if (tasksModel.data(currentTask, isActive))
-                    activeTask = currentTask;
-            }
-        }
-        if (activeTask) {
-            activeProps.name = tasksModel.data(activeTask, abstractTasksModel.AppName);
-            activeProps.id = tasksModel.data(activeTask, abstractTasksModel.WinIdList);
-            activeProps.title = tasksModel.data(activeTask, abstractTasksModel.display);
-            printLog`Active task: Name: ${activeProps.name} Title: ${activeProps.title} Id: ${activeProps.id}`;
-        }
-    }
-
     function dumpProps(obj) {
         console.error("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
         for (var k of Object.keys(obj)) {
@@ -191,27 +130,8 @@ PlasmoidItem {
         }
     }
 
-    function activeTaskExists() {
-        return activeTask.display !== undefined;
-    }
-
-    function activateLastWindow() {
-        printLog`Trying to activate last window...`;
-        if (activeTask) {
-            if (activeTask !== tasksModel.activeTask) {
-                tasksModel.requestActivate(activeTask);
-            }
-        }
-    }
-
-    function toggleMaximized() {
-        tasksModel.requestToggleMaximized(tasksModel.activeTask);
-    }
-
-    function setMaximized(maximized) {
-        if (maximized !== activeTask.IsMaximized) {
-            toggleMaximized();
-        }
+    TasksModel {
+        id: tasksModel
     }
 
     P5Support.DataSource {
@@ -244,7 +164,7 @@ PlasmoidItem {
 
     function notify(title, text) {
         let cmd;
-        if (plasmoid.configuration.notificationType === 1) {
+        if (Plasmoid.configuration.notificationType === 1) {
             // avoid hitting org.freedesktop.Notifications.Error.ExcessNotificationGeneration
             // by addind extra space every other notification
             if (tick) {
@@ -252,7 +172,7 @@ PlasmoidItem {
             }
             tick = !tick;
             cmd = `gdbus call --session --dest org.freedesktop.Notifications --object-path /org/freedesktop/Notifications --method org.freedesktop.Notifications.Notify "${Plasmoid.metaData.name}" 0 "" "${title}" '${text}' "[]" {} 1000`;
-        } else if (plasmoid.configuration.notificationType === 2) {
+        } else if (Plasmoid.configuration.notificationType === 2) {
             cmd = `gdbus call --session --dest org.kde.plasmashell --object-path /org/kde/osdService --method org.kde.osdService.showText plasmashell '${title} • ${text}'`;
         } else {
             return;
@@ -289,18 +209,18 @@ PlasmoidItem {
 
             if (actionNme == "Window Maximize Only") {
                 notify(gestureDisplayName, actionNme);
-                setMaximized(true);
+                tasksModel.setMaximized(true);
                 return;
             }
             if (actionNme == "Window Unmaximize Only") {
                 notify(gestureDisplayName, actionNme);
-                setMaximized(false);
+                tasksModel.setMaximized(false);
                 return;
             }
             const shortcutCommand = 'gdbus call --session --dest org.kde.kglobalaccel --object-path /component/' + component + ' --method org.kde.kglobalaccel.Component.invokeShortcut ' + '\"' + actionNme + '\"';
             let preCmd = "true";
             if (requiresFocus.includes(component + "," + actionNme)) {
-                activateLastWindow();
+                tasksModel.activateLastWindow();
                 preCmd = kwinCommand;
             }
             printLog`RUNNING_SHORTCUT: ${preCmd + ";" + shortcutCommand}`;
@@ -324,7 +244,7 @@ PlasmoidItem {
     }
 
     // Search the actual gridLayout of the panel
-    property GridLayout panelLayout: {
+    property Item panelLayout: {
         let candidate = root.parent;
         while (candidate) {
             if (candidate instanceof GridLayout) {
@@ -349,7 +269,7 @@ PlasmoidItem {
     readonly property PlasmaCore.Action expandingAction: PlasmaCore.Action {
         text: Plasmoid.configuration.expanding ? i18n("Set fixed size") : i18n("Set flexible size")
         icon.name: "distribute-horizontal-x"
-        onTriggered: Plasmoid.configuration.expanding = !Plasmoid.configuration.expanding;
+        onTriggered: Plasmoid.configuration.expanding = !Plasmoid.configuration.expanding
     }
     property string contextMenuActions: Plasmoid.configuration.contextMenuActions
 
@@ -376,28 +296,7 @@ PlasmoidItem {
         }
     }
 
-    function delay(interval, callback, parentItem) {
-        let timer = Qt.createQmlObject("import QtQuick; Timer {}", parentItem);
-        timer.interval = interval;
-        timer.repeat = false;
-        timer.triggered.connect(callback);
-        timer.triggered.connect(function release() {
-            timer.triggered.disconnect(callback);
-            timer.triggered.disconnect(release);
-            timer.destroy();
-        });
-        timer.start();
-    }
-
     onContextMenuActionsChanged: updateContextualActions()
-
-    function truncateString(str, n) {
-        if (str.length > n) {
-            return str.slice(0, n) + "...";
-        } else {
-            return str;
-        }
-    }
 
     function updateContextualActions() {
         Plasmoid.contextualActions = Plasmoid.contextualActions.filter(item => {
@@ -425,8 +324,8 @@ PlasmoidItem {
                     var command = act.command;
 
                     if (command) {
-                        actionText = "Command • " + truncateString(command, 70).replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, ' ');
-                        actionIcon = "scriptnew-symbolic"
+                        actionText = "Command • " + Utils.truncateString(command, 70).replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, ' ');
+                        actionIcon = "scriptnew-symbolic";
                     }
                     break;
                 case "launch_application":
@@ -460,9 +359,9 @@ PlasmoidItem {
             console.log("Error loading contextMenuActions:", e);
         }
         if (actions.length > 0) {
-            actions.push(separatorComponent.createObject(root))
+            actions.push(separatorComponent.createObject(root));
         }
-        actions.push(expandingAction)
+        actions.push(expandingAction);
         Plasmoid.contextualActions = actions;
     }
 
@@ -480,8 +379,8 @@ PlasmoidItem {
                 continue;
             }
 
-            if (child.applet?.plasmoid?.pluginName === 'luisbocanegra.panelspacer.extended' && child.applet.plasmoid.configuration.expanding) {
-                if (child.applet.plasmoid === Plasmoid) {
+            if (child.applet?.Plasmoid?.pluginName === 'luisbocanegra.panelspacer.extended' && child.applet.Plasmoid.configuration.expanding) {
+                if (child.applet.Plasmoid === Plasmoid) {
                     thisSpacerIndex = expandingSpacers;
                 }
                 sizeHints.push(0);
@@ -514,7 +413,7 @@ PlasmoidItem {
                 return 0.6;
             } else if (showHoverBg && hoverHandler.hovered) {
                 return 0.3;
-            } else if (plasmoid.configuration.alwaysHighlighted) {
+            } else if (Plasmoid.configuration.alwaysHighlighted) {
                 return 0.15;
             } else {
                 return 0;
@@ -768,17 +667,17 @@ PlasmoidItem {
         id: quickLaunch
         onPluginFoundChanged: {
             if (pluginFound) {
-                root.updateContextualActions()
+                root.updateContextualActions();
             }
         }
     }
 
     Component.onCompleted: {
         dragHandler = pointHandlerComponent.createObject(root);
-        plasmoid.configuration.screenWidth = horizontal ? screenGeometry.width : screenGeometry.height;
+        Plasmoid.configuration.screenWidth = horizontal ? screenGeometry.width : screenGeometry.height;
     }
 
     onHorizontalChanged: {
-        plasmoid.configuration.screenWidth = horizontal ? screenGeometry.width : screenGeometry.height;
+        Plasmoid.configuration.screenWidth = horizontal ? screenGeometry.width : screenGeometry.height;
     }
 }
