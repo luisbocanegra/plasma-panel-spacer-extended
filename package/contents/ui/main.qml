@@ -324,8 +324,13 @@ PlasmoidItem {
                     var command = act.command;
 
                     if (command) {
-                        actionText = "Command • " + Utils.truncateString(command, 70).replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, ' ');
-                        actionIcon = "scriptnew-symbolic";
+                        const formattedCmd = Utils.truncateString(command, 70).replace(/(\r\n|\n|\r)/gm, " ").replace(/\s+/g, ' ');
+                        if (act.name) {
+                            actionText = act.name;
+                        } else {
+                            actionText = "Command • " + formattedCmd;
+                        }
+                        actionIcon = act.icon || "scriptnew-symbolic";
                     }
                     break;
                 case "launch_application":

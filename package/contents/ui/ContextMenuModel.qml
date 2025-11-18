@@ -27,8 +27,15 @@ Item {
         model.append({
             "action": "kwin,Overview",
             "command": "",
-            "url": ""
+            "url": "",
+            "icon": "",
+            "name": ""
         });
+        updated();
+    }
+
+    function restoreDefault() {
+        model.clear();
         updated();
     }
 

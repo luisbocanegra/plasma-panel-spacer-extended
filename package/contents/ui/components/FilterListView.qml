@@ -5,25 +5,43 @@ import org.kde.kirigami as Kirigami
 import org.kde.kitemmodels
 
 ColumnLayout {
-    id: myComponent
+    id: root
 
     property string configValue: ""
     property string configName: ""
     property string componentValue: ""
+    property string customName
+    property string customIcon
+
     property bool itemClicked: false
     property bool showList: false
+    property bool showCustomIcon
 
     RowLayout {
         Layout.preferredWidth: 450
+        Kirigami.Icon {
+            Layout.preferredHeight: 16
+            Layout.preferredWidth: 16
+            source: root.customIcon
+            visible: source !== "" && root.showCustomIcon
+        }
         Label {
             property var component: configValue.split(",")[0]
             property var action: configValue.split(",")[1]
             text: {
+                let name = "";
+
                 if (!["Disabled", "custom_command", "launch_application"].includes(component)) {
-                    return component + " - " + action;
+                    name = component + " - " + action;
                 } else {
-                    return action;
+                    name = action;
                 }
+
+                if (root.customName) {
+                    name = `${root.customName} (${name})`;
+                }
+
+                return name;
             }
             wrapMode: Text.Wrap
             Layout.fillWidth: true
