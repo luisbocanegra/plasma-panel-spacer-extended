@@ -36,6 +36,13 @@ Item {
 
     function restoreDefault() {
         model.clear();
+        model.append({
+            "action": "custom_command,Custom Command",
+            "command": "plasma-systemmonitor",
+            "url": "",
+            "icon": "utilities-system-monitor",
+            "name": "System Monitor"
+        });
         updated();
     }
 

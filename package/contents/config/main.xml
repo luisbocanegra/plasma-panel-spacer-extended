@@ -153,7 +153,7 @@
       <default>0</default>
     </entry>
     <entry name="contextMenuActions" type="String">
-      <default>[]</default>
+      <default>[{"action":"custom_command,Custom Command","command":"plasma-systemmonitor","url":"","icon":"utilities-system-monitor","name":"System Monitor"}]</default>
     </entry>
   </group>
 
