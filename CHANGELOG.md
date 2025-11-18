@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.12.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.11.3...v1.12.0) (2025-11-18)
+
+
+### Features
+
+* add action to open system monitor from context by default ([2626005](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/26260059e648b7d8a37030288f19a202c3c79a2d))
+* custom context menu actions ([c0363c5](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/c0363c5db148c53788a2090678aa595ffecd515e))
+* custom icon and name for context menu actions ([6b247c9](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/6b247c91256e89451e76828785e7d8e2a67ee088))
+
+
+### Bug Fixes
+
+* commands and notifications not running when invoked too fast ([df568ca](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/df568ca50ba5d531837fd9c7ef6081f6d00e628e))
+
 ## [1.11.3](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.11.2...v1.11.3) (2025-10-25)
 
 
