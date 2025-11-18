@@ -16,6 +16,12 @@ KCM.ScrollViewKCM {
         onTriggered: contextMenuModel.addMenuItem()
     }
 
+    readonly property Kirigami.Action restoreDefaultAction: Kirigami.Action {
+        icon.name: "edit-undo-symbolic"
+        text: i18n("Reset to default")
+        onTriggered: contextMenuModel.restoreDefault()
+    }
+
     function updateConfig() {
         let actions = new Array();
         for (let i = 0; i < contextMenuModel.model.count; i++) {
@@ -23,7 +29,9 @@ KCM.ScrollViewKCM {
             actions.push({
                 "action": item.action,
                 "command": item.command,
-                "url": item.url
+                "url": item.url,
+                "icon": item.icon,
+                "name": item.name
             });
         }
         cfg_contextMenuActions = JSON.stringify(actions);
@@ -64,7 +72,7 @@ KCM.ScrollViewKCM {
         header: Kirigami.InlineViewHeader {
             width: list.width
             text: i18n("Actions")
-            actions: [root.addContextMenuAction]
+            actions: [root.restoreDefaultAction, root.addContextMenuAction]
         }
         delegate: Item {
             id: itemDelegate
@@ -72,6 +80,8 @@ KCM.ScrollViewKCM {
             required property string action
             required property string command
             required property string url
+            required property string icon
+            required property string name
             required property int index
 
             implicitWidth: ListView.view.width
@@ -109,7 +119,10 @@ KCM.ScrollViewKCM {
                         configValue: itemDelegate.action
                         commandValue: itemDelegate.command
                         applicationUrlValue: itemDelegate.url
+                        customIcon: itemDelegate.icon
+                        customName: itemDelegate.name
                         showSeparator: false
+                        showCustomNameAndIcon: true
 
                         onConfigValueChanged: {
                             if (root.isLoading)
@@ -125,6 +138,16 @@ KCM.ScrollViewKCM {
                             if (root.isLoading)
                                 return;
                             contextMenuModel.updateItem(itemDelegate.index, "url", applicationUrlValue);
+                        }
+                        onCustomIconChanged: {
+                            if (root.isLoading)
+                                return;
+                            contextMenuModel.updateItem(itemDelegate.index, "icon", customIcon);
+                        }
+                        onCustomNameChanged: {
+                            if (root.isLoading)
+                                return;
+                            contextMenuModel.updateItem(itemDelegate.index, "name", customName);
                         }
                     }
 

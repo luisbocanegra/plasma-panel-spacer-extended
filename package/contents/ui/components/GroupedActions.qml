@@ -1,8 +1,11 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-// import org.kde.kirigami 2.4 as Kirigami
+import org.kde.plasma.core as PlasmaCore
+import org.kde.ksvg as KSvg
+import org.kde.iconthemes as KIconThemes
 import org.kde.kirigami as Kirigami
+import org.kde.plasma.plasmoid
 import QtQuick.Dialogs
 import "."
 import "../"
@@ -16,7 +19,11 @@ ColumnLayout {
     property alias configValue: actionCombo.configValue
     property alias commandValue: internalValue.value
     property alias applicationUrlValue: btnAddLauncher.applicationUrl
+    property string customName
+    property string customIcon
+
     property bool showSeparator: true
+    property bool showCustomNameAndIcon: false
     property bool isLoading: true
 
     Item {
@@ -38,34 +45,92 @@ ColumnLayout {
         Layout.fillWidth: true
         configName: root.confInternalName
         componentValue: configValue.split(",")[0]
+        customIcon: root.customIcon
+        customName: root.customName
+        showCustomIcon: root.showCustomNameAndIcon
+    }
+
+    RowLayout {
+        visible: actionCombo.showList && root.showCustomNameAndIcon
+        Label {
+            text: i18n("Name:")
+        }
+        TextField {
+            Layout.fillWidth: true
+            placeholderText: i18n("Custom name")
+            text: root.customName
+            onTextChanged: root.customName = text
+        }
+        Label {
+            text: i18n("Icon:")
+        }
+        Button {
+            id: iconButton
+            hoverEnabled: true
+            ToolTip.delay: Kirigami.Units.toolTipDelay
+            ToolTip.text: i18nc("@info:tooltip", "Icon name is \"%1\"", root.customIcon)
+            ToolTip.visible: iconButton.hovered && root.customIcon.length > 0
+
+            KIconThemes.IconDialog {
+                id: iconDialog
+                onIconNameChanged: {
+                    root.customIcon = iconName;
+                }
+            }
+
+            onPressed: iconMenu.opened ? iconMenu.close() : iconMenu.open()
+
+            Kirigami.Icon {
+                anchors.centerIn: parent
+                width: parent.width
+                height: width
+                source: root.customIcon
+            }
+
+            Menu {
+                id: iconMenu
+
+                // Appear below the button
+                y: parent.height
+
+                MenuItem {
+                    text: i18nc("@item:inmenu Open icon chooser dialog", "Choose…")
+                    icon.name: "document-open-folder"
+                    Accessible.description: i18nc("@info:whatsthis", "Choose an icon for Application Launcher")
+                    onClicked: iconDialog.open()
+                }
+                MenuItem {
+                    text: i18nc("@item:inmenu Reset icon to default", "Reset to default icon")
+                    icon.name: "edit-clear"
+                    enabled: root.customIcon !== ""
+                    onClicked: root.customIcon = ""
+                }
+                MenuItem {
+                    text: i18nc("@action:inmenu", "Remove icon")
+                    icon.name: "delete"
+                    enabled: root.customIcon !== ""
+                    onClicked: root.customIcon = ""
+                }
+            }
+        }
     }
 
     // Command area
-    TextArea {
-        id: commandTextArea
-        visible: actionCombo.componentValue == "custom_command"
-        wrapMode: TextArea.Wrap
-        selectByMouse: true
-        placeholderText: qsTr("Enter shell command or pick a executable")
-        onTextChanged: internalValue.value = text
-        persistentSelection: false
-        // cursor position
-        property int cursorLine: 1 + text.substring(0, cursorPosition).split("\n").length - 1
-        property int cursorColumn: cursorPosition - text.lastIndexOf("\n", cursorPosition - 1)
-        Text {
-            anchors.bottom: parent.bottom
-            anchors.right: parent.right
-            horizontalAlignment: Text.AlignRight
-            text: commandTextArea.cursorLine + ", " + commandTextArea.cursorColumn
-            color: Kirigami.Theme.textColor
-            anchors.rightMargin: 8
-            anchors.bottomMargin: 5
-            opacity: parent.activeFocus ? .6 : 0
-        }
-        Layout.fillWidth: true
-        Kirigami.SpellCheck.enabled: false
-    }
     RowLayout {
+        Label {
+            text: i18n("Command:")
+        }
+        TextField {
+            id: commandTextArea
+            visible: actionCombo.componentValue == "custom_command"
+            wrapMode: TextArea.Wrap
+            selectByMouse: true
+            placeholderText: qsTr("command script or executable")
+            onTextChanged: internalValue.value = text
+            persistentSelection: false
+            Layout.fillWidth: true
+            Kirigami.SpellCheck.enabled: false
+        }
         visible: actionCombo.componentValue == "custom_command"
         Item {
             Layout.fillWidth: true
