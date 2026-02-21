@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.13.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.12.0...v1.13.0) (2026-02-21)
+
+
+### Features
+
+* add flexible size to widget configuration window ([e9185fe](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/e9185fe28d5fcd60473acd88558d5be3227dc44e))
+
+
+### Bug Fixes
+
+* add missing icon in metadata ([c87794e](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/c87794ed329a009670a916b17873efb163f7071c))
+* slow rezie in panel fit-content mode ([0700593](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/070059387a6b281c5374f49a34fb0536523d7d15))
+
 ## [1.12.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.11.3...v1.12.0) (2025-11-18)
 
 
