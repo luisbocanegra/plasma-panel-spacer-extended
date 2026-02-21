@@ -109,13 +109,23 @@ PlasmoidItem {
     property string gestureDisplayName
     property string actionDisplayText
 
-    Layout.fillWidth: Plasmoid.configuration.expanding
-    Layout.fillHeight: Plasmoid.configuration.expanding
+    property var panelView: null
+    property bool expanding: Plasmoid.configuration.expanding && panelLengthMode !== 1
+    property int panelLengthMode: panelView?.lengthMode ?? 0
+
+    Item {
+        onWindowChanged: window => {
+            root.panelView = window;
+        }
+    }
+
+    Layout.fillWidth: expanding
+    Layout.fillHeight: expanding
 
     Layout.minimumWidth: Plasmoid.containment.corona?.editMode ? Kirigami.Units.gridUnit * 2 : 1
     Layout.minimumHeight: Plasmoid.containment.corona?.editMode ? Kirigami.Units.gridUnit * 2 : 1
-    Layout.preferredWidth: horizontal ? (Plasmoid.configuration.expanding ? optimalSize : Plasmoid.configuration.length) : 0
-    Layout.preferredHeight: horizontal ? 0 : (Plasmoid.configuration.expanding ? optimalSize : Plasmoid.configuration.length)
+    Layout.preferredWidth: horizontal ? (expanding ? optimalSize : Plasmoid.configuration.length) : 0
+    Layout.preferredHeight: horizontal ? 0 : (expanding ? optimalSize : Plasmoid.configuration.length)
 
     preferredRepresentation: fullRepresentation
 
@@ -260,9 +270,9 @@ PlasmoidItem {
     }
 
     readonly property PlasmaCore.Action expandingAction: PlasmaCore.Action {
-        text: Plasmoid.configuration.expanding ? i18n("Set fixed size") : i18n("Set flexible size")
+        text: root.expanding ? i18n("Set fixed size") : i18n("Set flexible size")
         icon.name: "distribute-horizontal-x"
-        onTriggered: Plasmoid.configuration.expanding = !Plasmoid.configuration.expanding
+        onTriggered: root.expanding = !root.expanding
     }
     property string contextMenuActions: Plasmoid.configuration.contextMenuActions
 
@@ -366,7 +376,7 @@ PlasmoidItem {
     Plasmoid.contextualActions: [expandingAction]
 
     property real optimalSize: {
-        if (!panelLayout || !Plasmoid.configuration.expanding)
+        if (!panelLayout || !expanding)
             return Plasmoid.configuration.length;
         let expandingSpacers = 0;
         let thisSpacerIndex = null;
@@ -377,7 +387,7 @@ PlasmoidItem {
                 continue;
             }
 
-            if (child.applet?.Plasmoid?.pluginName === 'luisbocanegra.panelspacer.extended' && child.applet.Plasmoid.configuration.expanding) {
+            if (child.applet?.Plasmoid?.pluginName === 'luisbocanegra.panelspacer.extended' && child.applet.expanding) {
                 if (child.applet.Plasmoid === Plasmoid) {
                     thisSpacerIndex = expandingSpacers;
                 }
