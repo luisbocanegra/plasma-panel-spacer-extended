@@ -12,6 +12,7 @@
         "Description": "Spacer with mouse actions/gestures",
         "EnabledByDefault": false,
         "Id": "luisbocanegra.panelspacer.extended",
+        "Icon": "distribute-horizontal-x",
         "License": "GPL-2.0+",
         "Name": "Panel Spacer Extended",
         "Version": "1.12.0",
