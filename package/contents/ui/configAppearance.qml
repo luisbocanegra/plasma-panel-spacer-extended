@@ -12,6 +12,7 @@ KCM.SimpleKCM {
     property alias cfg_length: fixedLength.value
     property alias cfg_alwaysHighlighted: alwaysHighlighted.checked
     property int cfg_screenWidth
+    property alias cfg_expanding: expanding.checked
 
     signal configurationChanged
 
@@ -69,12 +70,17 @@ KCM.SimpleKCM {
 
         Kirigami.Separator {
             Kirigami.FormData.isSection: true
-            Kirigami.FormData.label: "Fixed size mode"
+            Kirigami.FormData.label: "Size"
+        }
+
+        CheckBox {
+            id: expanding
+            Kirigami.FormData.label: i18n("Flexible size:")
         }
 
         SpinBox {
             id: fixedLength
-            Kirigami.FormData.label: i18n("Length:")
+            Kirigami.FormData.label: i18n("Fixed size:")
             value: length
             from: 0
             to: cfg_screenWidth
@@ -82,6 +88,7 @@ KCM.SimpleKCM {
             onValueChanged: {
                 cfg_length = value;
             }
+            enabled: !root.cfg_expanding
         }
     }
 }
