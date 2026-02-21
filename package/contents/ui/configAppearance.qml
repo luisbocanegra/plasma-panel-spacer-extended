@@ -73,9 +73,25 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: "Size"
         }
 
-        CheckBox {
-            id: expanding
+        RowLayout {
             Kirigami.FormData.label: i18n("Flexible size:")
+            Kirigami.FormData.buddyFor: expanding
+            spacing: Kirigami.Units.smallSpacing
+            CheckBox {
+                id: expanding
+                Layout.alignment: Qt.AlignTop
+            }
+            Label {
+                id: expandingLabel
+                text: i18n("To avoid sizing bugs, flexible size is automatically disabled when using when the Panel width is set to Fit content, see <a href=\"%1\">#91</a> and <a href=\"%2\">BUG:495378</a>.", "https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/91", "https://bugs.kde.org/show_bug.cgi?id=495378")
+                wrapMode: Label.Wrap
+                Layout.preferredWidth: 350
+                onLinkActivated: link => Qt.openUrlExternally(link)
+                HoverHandler {
+                    cursorShape: Qt.PointingHandCursor
+                }
+                Layout.margins: Kirigami.Units.smallSpacing
+            }
         }
 
         SpinBox {
