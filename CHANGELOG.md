@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.14.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.13.0...v1.14.0) (2026-03-27)
+
+
+### Features
+
+* customizable drag distance ([cfc0a5d](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/cfc0a5dc7992055e1545089d8edf6dcebbfc9d44))
+
 ## [1.13.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.12.0...v1.13.0) (2026-02-21)
 
 
