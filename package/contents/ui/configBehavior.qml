@@ -12,6 +12,8 @@ KCM.SimpleKCM {
     property alias cfg_showTooltip: showTooltip.checked
     property alias cfg_scrollSensitivity: scrollSensitivity.value
     property alias cfg_isContinuous: isContinuous.checked
+    property alias cfg_customDragDistanceEnabled: customDragDistanceEnabled.checked
+    property alias cfg_customDragDistance: customDragDistance.value
     property int cfg_notificationType
 
     ColumnLayout {
@@ -49,6 +51,22 @@ KCM.SimpleKCM {
                 }
                 KCM.ContextualHelpButton {
                     toolTipText: "Keep dragging to chain actions without releasing the mouse/finger"
+                }
+            }
+
+            RowLayout {
+                Kirigami.FormData.label: i18n("Custom drag distance:")
+                CheckBox {
+                    id: customDragDistanceEnabled
+                }
+                KCM.ContextualHelpButton {
+                    toolTipText: i18n("Set the minimum drag distance (in pixels) to trigger the actions. By default, the distance is the same as the panel thickness.")
+                }
+                SpinBox {
+                    id: customDragDistance
+                    enabled: root.cfg_customDragDistanceEnabled
+                    from: 1
+                    to: 9999
                 }
             }
 

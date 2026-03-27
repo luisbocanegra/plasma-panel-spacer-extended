@@ -30,7 +30,7 @@ Spacer with Mouse gestures for the KDE Plasma Panel featuring Latte Dock/Gnome/U
   * [x] Mouse wheel up/down
     * [x] Min wheel steps
   * [x] Mouse drag (four axis)
-    * [ ] Min track distance
+    * [x] Min drag distance
   * [x] Long press
     * [ ] Hold duration
 * [x] Actions

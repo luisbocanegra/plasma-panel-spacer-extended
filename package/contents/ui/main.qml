@@ -35,7 +35,7 @@ PlasmoidItem {
     property bool wasDoubleClicked: false
     // TODO make distance configurable instead??
     property bool doubleClickAllowed: doubleClickAction[0] !== "Disabled"
-    property int minDragDistance: horizontal ? root.height : root.width
+    property int minDragDistance: Plasmoid.configuration.customDragDistanceEnabled ? Plasmoid.configuration.customDragDistance : Math.min(root.height, root.width)
     property var mouseButton: undefined
 
     property string toolsDir: Qt.resolvedUrl("./tools").toString().substring(7)

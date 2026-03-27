@@ -155,6 +155,12 @@
     <entry name="contextMenuActions" type="String">
       <default>[{"action":"custom_command,Custom Command","command":"plasma-systemmonitor","url":"","icon":"utilities-system-monitor","name":"System Monitor"}]</default>
     </entry>
+    <entry name="customDragDistanceEnabled" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="customDragDistance" type="Int">
+      <default>10</default>
+    </entry>
   </group>
 
 </kcfg>
