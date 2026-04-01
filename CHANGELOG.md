@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.15.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.14.0...v1.15.0) (2026-04-01)
+
+
+### Features
+
+* allow to hide widget when the spacer is in fit content mode ([47386e8](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/47386e8be3fc4a6c2b6a0c2b7b37d5efa3d84be7))
+
+
+### Bug Fixes
+
+* ensure widget can always be interacted with in edit mode ([38578be](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/38578beafd98e78efc9306ea3de28306a6a9b512))
+
 ## [1.14.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.13.0...v1.14.0) (2026-03-27)
 
 
