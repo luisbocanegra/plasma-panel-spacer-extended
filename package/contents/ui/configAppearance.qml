@@ -104,7 +104,6 @@ KCM.SimpleKCM {
             onValueChanged: {
                 cfg_length = value;
             }
-            enabled: !root.cfg_expanding
         }
     }
 }

@@ -124,8 +124,18 @@ PlasmoidItem {
 
     Layout.minimumWidth: Plasmoid.containment.corona?.editMode ? Kirigami.Units.gridUnit * 2 : 1
     Layout.minimumHeight: Plasmoid.containment.corona?.editMode ? Kirigami.Units.gridUnit * 2 : 1
-    Layout.preferredWidth: horizontal ? (expanding ? optimalSize : Plasmoid.configuration.length) : 0
-    Layout.preferredHeight: horizontal ? 0 : (expanding ? optimalSize : Plasmoid.configuration.length)
+    Layout.preferredWidth: {
+        if (Plasmoid.containment.corona?.editMode) {
+            return root.horizontal ? root.height : root.width;
+        }
+        return horizontal ? (expanding ? optimalSize : Plasmoid.configuration.length) : 0;
+    }
+    Layout.preferredHeight: {
+        if (Plasmoid.containment.corona?.editMode) {
+            return root.horizontal ? root.height : root.width;
+        }
+        return horizontal ? 0 : (expanding ? optimalSize : Plasmoid.configuration.length);
+    }
 
     preferredRepresentation: fullRepresentation
 
