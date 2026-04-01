@@ -112,6 +112,7 @@ PlasmoidItem {
     property var panelView: null
     property bool expanding: Plasmoid.configuration.expanding && panelLengthMode !== 1
     property int panelLengthMode: panelView?.lengthMode ?? 0
+    readonly property bool hideInFitContent: Plasmoid.configuration.hideInFitContent
 
     Item {
         onWindowChanged: window => {
@@ -121,6 +122,8 @@ PlasmoidItem {
 
     Layout.fillWidth: expanding
     Layout.fillHeight: expanding
+
+    Plasmoid.status: (hideInFitContent && panelLengthMode === 1) ? PlasmaCore.Types.HiddenStatus : PlasmaCore.Types.ActiveStatus
 
     Layout.minimumWidth: Plasmoid.containment.corona?.editMode ? Kirigami.Units.gridUnit * 2 : 1
     Layout.minimumHeight: Plasmoid.containment.corona?.editMode ? Kirigami.Units.gridUnit * 2 : 1

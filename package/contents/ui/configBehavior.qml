@@ -26,7 +26,7 @@ KCM.SimpleKCM {
                 CheckBox {
                     id: showTooltip
                 }
-                KCM.ContextualHelpButton {
+                Kirigami.ContextualHelpButton {
                     toolTipText: i18n("Show list of actions when hovering the spacer")
                 }
             }
@@ -38,7 +38,7 @@ KCM.SimpleKCM {
                     from: 1
                     to: 10000
                 }
-                KCM.ContextualHelpButton {
+                Kirigami.ContextualHelpButton {
                     toolTipText: "Higher values may help reducing repeated scrolling events with some input devices"
                 }
             }
@@ -49,7 +49,7 @@ KCM.SimpleKCM {
                 CheckBox {
                     id: isContinuous
                 }
-                KCM.ContextualHelpButton {
+                Kirigami.ContextualHelpButton {
                     toolTipText: "Keep dragging to chain actions without releasing the mouse/finger"
                 }
             }
@@ -59,7 +59,7 @@ KCM.SimpleKCM {
                 CheckBox {
                     id: customDragDistanceEnabled
                 }
-                KCM.ContextualHelpButton {
+                Kirigami.ContextualHelpButton {
                     toolTipText: i18n("Set the minimum drag distance (in pixels) to trigger the actions. By default, the distance is the same as the panel thickness.")
                 }
                 SpinBox {

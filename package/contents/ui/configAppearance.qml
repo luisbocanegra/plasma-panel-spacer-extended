@@ -13,6 +13,7 @@ KCM.SimpleKCM {
     property alias cfg_alwaysHighlighted: alwaysHighlighted.checked
     property int cfg_screenWidth
     property alias cfg_expanding: expanding.checked
+    property alias cfg_hideInFitContent: hideInFitContent.checked
 
     signal configurationChanged
 
@@ -73,25 +74,19 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: "Size"
         }
 
-        RowLayout {
+        CheckBox {
+            id: expanding
             Kirigami.FormData.label: i18n("Flexible size:")
-            Kirigami.FormData.buddyFor: expanding
-            spacing: Kirigami.Units.smallSpacing
-            CheckBox {
-                id: expanding
-                Layout.alignment: Qt.AlignTop
-            }
-            Label {
-                id: expandingLabel
-                text: i18n("To avoid sizing bugs, flexible size is automatically disabled when using when the Panel width is set to Fit content, see <a href=\"%1\">#91</a> and <a href=\"%2\">BUG:495378</a>.", "https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/91", "https://bugs.kde.org/show_bug.cgi?id=495378")
-                wrapMode: Label.Wrap
-                Layout.preferredWidth: 350
-                onLinkActivated: link => Qt.openUrlExternally(link)
-                HoverHandler {
-                    cursorShape: Qt.PointingHandCursor
-                }
-                Layout.margins: Kirigami.Units.smallSpacing
-            }
+            Layout.alignment: Qt.AlignTop
+        }
+        Label {
+            id: expandingLabel
+            text: i18n("To avoid sizing bugs, flexible size is automatically disabled when using when the Panel width is set to Fit content, see <a href=\"%1\">#91</a> and <a href=\"%2\">BUG:495378</a>.", "https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/91", "https://bugs.kde.org/show_bug.cgi?id=495378")
+            font: Kirigami.Theme.smallFont
+            wrapMode: Label.Wrap
+            onLinkActivated: link => Qt.openUrlExternally(link)
+            Layout.maximumWidth: 400
+            Layout.topMargin: Kirigami.Units.smallSpacing
         }
 
         SpinBox {
@@ -104,6 +99,21 @@ KCM.SimpleKCM {
             onValueChanged: {
                 cfg_length = value;
             }
+        }
+
+        CheckBox {
+            id: hideInFitContent
+            Kirigami.FormData.label: i18n("Hide in fit content panel:")
+            enabled: showHoverBg.checked
+            Layout.alignment: Qt.AlignTop
+        }
+        Label {
+            text: i18n("This can be used in conjunction with <a href=\"%1\" >Panel Colorizer</a> to keep the other widgets centered in <strong>Fill Width</strong> mode but hide the widget when the panel switches back to <strong>Fit Content</strong> mode.", "https://github.com/luisbocanegra/plasma-panel-colorizer")
+            font: Kirigami.Theme.smallFont
+            wrapMode: Label.Wrap
+            onLinkActivated: link => Qt.openUrlExternally(link)
+            Layout.maximumWidth: 400
+            Layout.topMargin: Kirigami.Units.smallSpacing
         }
     }
 }

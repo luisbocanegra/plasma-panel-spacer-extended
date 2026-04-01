@@ -161,6 +161,9 @@
     <entry name="customDragDistance" type="Int">
       <default>10</default>
     </entry>
+    <entry name="hideInFitContent" type="Bool">
+      <default>false</default>
+    </entry>
   </group>
 
 </kcfg>
