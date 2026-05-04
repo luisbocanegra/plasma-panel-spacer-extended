@@ -171,6 +171,9 @@
       <label>Use the wallpaper area for gestures when the widget is placed on the desktop</label>
       <default>false</default>
     </entry>
+    <entry name="contextualActionsEnabled" type="Bool">
+      <default>true</default>
+    </entry>
   </group>
 
 </kcfg>

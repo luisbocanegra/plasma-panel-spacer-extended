@@ -18,6 +18,7 @@ Item {
         }
 
         for (let action of actions) {
+            action.enabled = action.enabled ?? true;
             model.append(action);
         }
         root.isLoading = false;
@@ -29,7 +30,8 @@ Item {
             "command": "",
             "url": "",
             "icon": "",
-            "name": ""
+            "name": "",
+            "enabled": true
         });
         updated();
     }
@@ -41,7 +43,8 @@ Item {
             "command": "plasma-systemmonitor",
             "url": "",
             "icon": "utilities-system-monitor",
-            "name": "System Monitor"
+            "name": "System Monitor",
+            "enabled": true
         });
         updated();
     }
@@ -58,6 +61,12 @@ Item {
 
     function moveItem(oldIndex, newIndex) {
         model.move(oldIndex, newIndex, 1);
+        updated();
+    }
+
+    function toggleMenuItemEnabled(index) {
+        const enabled = model.get(index).enabled;
+        model.setProperty(index, "enabled", !enabled);
         updated();
     }
 }

@@ -10,6 +10,7 @@ KCM.ScrollViewKCM {
     id: root
     property string cfg_contextMenuActions
     property bool isLoading: actionsModel.isLoading
+    property alias cfg_contextualActionsEnabled: contextualActionsEnabled.checked
     readonly property Kirigami.Action addContextMenuAction: Kirigami.Action {
         icon.name: "list-add-symbolic"
         text: i18n("Add action")
@@ -31,7 +32,8 @@ KCM.ScrollViewKCM {
                 "command": item.command,
                 "url": item.url,
                 "icon": item.icon,
-                "name": item.name
+                "name": item.name,
+                "enabled": item.enabled
             });
         }
         cfg_contextMenuActions = JSON.stringify(actions);
@@ -53,6 +55,11 @@ KCM.ScrollViewKCM {
     }
 
     header: Kirigami.FormLayout {
+
+        CheckBox {
+            id: contextualActionsEnabled
+            Kirigami.FormData.label: i18n("Enable:")
+        }
 
         Button {
             text: i18n("Refresh actions")
@@ -82,6 +89,7 @@ KCM.ScrollViewKCM {
             required property string url
             required property string icon
             required property string name
+            required property var model
             required property int index
 
             implicitWidth: ListView.view.width
@@ -109,6 +117,14 @@ KCM.ScrollViewKCM {
                             contextMenuModel.moveItem(oldIndex, newIndex, 1);
                         }
                         visible: itemDelegate.view.count > 1
+                    }
+
+                    CheckBox {
+                        id: enabledCheckBox
+                        checked: itemDelegate.model.enabled
+                        onCheckedChanged: {
+                            contextMenuModel.toggleMenuItemEnabled(itemDelegate.index);
+                        }
                     }
 
                     GroupedActions {

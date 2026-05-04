@@ -403,6 +403,7 @@ PlasmoidItem {
         }
         visible: root.onDesktop
     }
+    property bool contextualActionsEnabled: Plasmoid.configuration.contextualActionsEnabled
     property string contextMenuActions: Plasmoid.configuration.contextMenuActions
 
     Component {
@@ -444,11 +445,12 @@ PlasmoidItem {
     }
 
     function addContextualActions(contextMenuItem) {
-        if (inEditMode || !contextMenuItem)
+        if (inEditMode || !contextMenuItem || !contextualActionsEnabled)
             return;
         let actions = [];
         try {
-            const customActions = JSON.parse(contextMenuActions);
+            const customActions = JSON.parse(contextMenuActions).filter(act => act.enabled === true || act.enabled === undefined);
+
             for (let act of customActions) {
                 let [component, shortcut] = act.action.split(",");
                 if (shortcut === "Disabled") {
@@ -647,6 +649,7 @@ PlasmoidItem {
     }
     onContextMenuActionsChanged: Qt.callLater(updateContextualActions)
     onContainmentItemChanged: Qt.callLater(updateContextualActions)
+    onContextualActionsEnabledChanged: Qt.callLater(updateContextualActions)
     onInEditModeChanged: {
         if (!inEditMode) {
             updateContextualActions();
