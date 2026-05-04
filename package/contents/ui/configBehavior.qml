@@ -14,6 +14,7 @@ KCM.SimpleKCM {
     property alias cfg_isContinuous: isContinuous.checked
     property alias cfg_customDragDistanceEnabled: customDragDistanceEnabled.checked
     property alias cfg_customDragDistance: customDragDistance.value
+    property alias cfg_gesturesOnDesktop: gesturesOnDesktop.checked
     property int cfg_notificationType
 
     ColumnLayout {
@@ -60,13 +61,23 @@ KCM.SimpleKCM {
                     id: customDragDistanceEnabled
                 }
                 Kirigami.ContextualHelpButton {
-                    toolTipText: i18n("Set the minimum drag distance (in pixels) to trigger the actions. By default, the distance is the same as the panel thickness.")
+                    toolTipText: i18n("Set the minimum drag distance (in pixels) to trigger the actions. By default, the distance is the same as the panel thickness, or 10% of the smaller screen dimension when placed on the desktop.")
                 }
                 SpinBox {
                     id: customDragDistance
                     enabled: root.cfg_customDragDistanceEnabled
                     from: 1
                     to: 9999
+                }
+            }
+
+            RowLayout {
+                Kirigami.FormData.label: i18n("Enable gestures on desktop:")
+                CheckBox {
+                    id: gesturesOnDesktop
+                }
+                Kirigami.ContextualHelpButton {
+                    toolTipText: i18n("When the widget is placed on the desktop, gestures will work anywhere on the desktop instead of just on the widget area.<br><b>Note:</b> This option will not work when the desktop layout is set to 'Folder View', to switch to 'Desktop' layout, right-click on the desktop, choose 'Desktop and Wallpaper', and set 'Layout' to 'Desktop'.")
                 }
             }
 

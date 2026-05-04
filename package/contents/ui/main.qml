@@ -3,13 +3,12 @@
 
     SPDX-License-Identifier: GPL-2.0-only OR GPL-3.0-only OR LicenseRef-KDE-Accepted-GPL
 */
-
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasmoid
 import org.kde.kirigami as Kirigami
-import org.kde.taskmanager as TaskManager
 import org.kde.plasma.plasma5support as P5Support
 import org.kde.plasma.components as PC3
 import "code/utils.js" as Utils
@@ -18,25 +17,11 @@ PlasmoidItem {
     id: root
     property var logic: null
     property bool horizontal: Plasmoid.formFactor !== PlasmaCore.Types.Vertical
-    property bool isWayland: Qt.platform.pluginName.includes("wayland")
-
-    property var startPos: {
-        "x": 0,
-        "y": 0
-    }
-    property var endPos: {
-        "x": 0,
-        "y": 0
-    }
-    property var localStartPos: dragHandler.parent.mapFromGlobal(startPos.x, startPos.y)
-    property var dragHandler
-    property bool pressed: dragHandler.active || tapHandler.pressed
-    property bool dragging: false
-    property bool wasDoubleClicked: false
-    // TODO make distance configurable instead??
-    property bool doubleClickAllowed: doubleClickAction[0] !== "Disabled"
-    property int minDragDistance: Plasmoid.configuration.customDragDistanceEnabled ? Plasmoid.configuration.customDragDistance : Math.min(root.height, root.width)
-    property var mouseButton: undefined
+    property bool inEditMode: Plasmoid.containment?.corona?.editMode ?? false
+    property bool pressed: desktopGesturesItem?.pressed ?? false
+    property bool dragging: desktopGesturesItem?.isDragging ?? false
+    property bool hovered: desktopGesturesItem?.hovered ?? false
+    property bool doubleClickEnabled: doubleClickAction[0] !== "Disabled"
 
     property string toolsDir: Qt.resolvedUrl("./tools").toString().substring(7)
     property string scriptUtil: `${toolsDir}/run_kwin_script.sh`
@@ -96,10 +81,10 @@ PlasmoidItem {
 
     property bool enableDebug: Plasmoid.configuration.enableDebug
     property bool showTooltip: Plasmoid.configuration.showTooltip
-    property bool hideTooltip: false // hide tooltip after action
+    property bool hideTooltip: false
+    property bool hideWidget: Plasmoid.configuration.hideWidget
     property bool showHoverBg: Plasmoid.configuration.showHoverBg
     property int hoverBgRadius: Plasmoid.configuration.hoverBgRadius
-    property int scrollSensitivity: Plasmoid.configuration.scrollSensitivity
     property bool isContinuous: Plasmoid.configuration.isContinuous
 
     property bool bgFillPanel: Plasmoid.configuration.bgFillPanel
@@ -113,6 +98,113 @@ PlasmoidItem {
     property bool expanding: Plasmoid.configuration.expanding && panelLengthMode !== 1
     property int panelLengthMode: panelView?.lengthMode ?? 0
     readonly property bool hideInFitContent: Plasmoid.configuration.hideInFitContent
+
+    property bool onDesktop: Plasmoid.location === PlasmaCore.Types.Floating
+    property bool gesturesOnDesktop: Plasmoid.configuration.gesturesOnDesktop
+    property var wallpaperItem: containmentItem?.wallpaperGraphicsObject ?? null
+    property var wallpaperPluginName: wallpaperItem?.pluginName ?? null
+    property var containmentPluginName: containmentItem?.pluginName ?? null
+    property var containmentItem: Plasmoid.containment ?? null
+
+    property Component desktopComponent: GesturesArea {
+        anchors.fill: parent
+        customDragDistanceEnabled: Plasmoid.configuration.customDragDistanceEnabled
+        customDragDistance: Plasmoid.configuration.customDragDistance
+        enableDebug: Plasmoid.configuration.enableDebug
+        isContinuous: Plasmoid.configuration.isContinuous
+        horizontal: root.horizontal
+        doubleClickEnabled: root.doubleClickEnabled
+        scrollSensitivity: Plasmoid.configuration.scrollSensitivity
+        showTapFeedback: root.onDesktop
+        tapColor: Kirigami.Theme.highlightColor
+        onDesktop: root.onDesktop && root.gesturesOnDesktop
+        onLeftClick: {
+            root.btn = "Left Click";
+            root.runAction(root.singleClickAction, root.singleClickCommand, root.singleClickAppUrl);
+        }
+        onMiddleClick: {
+            root.btn = "Middle Click";
+            root.runAction(root.middleClickAction, root.middleClickCommand, root.middleClickAppUrl);
+        }
+        onLongPress: {
+            root.btn = "Long Press";
+            root.runAction(root.pressHoldAction, root.pressHoldCommand, root.pressHoldAppUrl);
+        }
+        onDoubleClick: {
+            root.btn = "Double Click";
+            root.runAction(root.doubleClickAction, root.doubleClickCommand, root.doubleClickAppUrl);
+        }
+        onWheelUp: {
+            root.btn = "Wheel Up";
+            root.runAction(root.mouseWheelUpAction, root.mouseWheelUpCommand, root.mouseWheelUpAppUrl);
+        }
+        onWheelDown: {
+            root.btn = "Wheel Down";
+            root.runAction(root.mouseWheelDownAction, root.mouseWheelDownCommand, root.mouseWheelDownAppUrl);
+        }
+        onDragUp: {
+            root.btn = "Drag Up";
+            root.runAction(root.mouseDragUpAction, root.mouseDragUpCommand, root.mouseDragUpAppUrl);
+            root.dragInfo = "up";
+        }
+        onDragDown: {
+            root.btn = "Drag Down";
+            root.runAction(root.mouseDragDownAction, root.mouseDragDownCommand, root.mouseDragDownAppUrl);
+            root.dragInfo = "down";
+        }
+        onDragLeft: {
+            root.btn = "Drag Left";
+            root.runAction(root.mouseDragLeftAction, root.mouseDragLeftCommand, root.mouseDragLeftAppUrl);
+            root.dragInfo = "left";
+        }
+        onDragRight: {
+            root.btn = "Drag Right";
+            root.runAction(root.mouseDragRightAction, root.mouseDragRightCommand, root.mouseDragRightAppUrl);
+            root.dragInfo = "right";
+        }
+
+        PlasmaCore.ToolTipArea {
+            anchors.fill: parent
+            mainItem: Tooltip {}
+            active: root.hovered && !root.pressed && !root.dragging
+            visible: root.showTooltip && !root.onDesktop
+            x: root.desktopGesturesItem.mouseX
+            y: root.desktopGesturesItem.mouseY
+        }
+    }
+
+    property var desktopGesturesItem: null
+
+    function createGesturesItem() {
+        if (onDesktop && gesturesOnDesktop && wallpaperItem) {
+            desktopGesturesItem = desktopComponent.createObject(wallpaperItem, {});
+            return;
+        }
+
+        desktopGesturesItem = desktopComponent.createObject(root, {});
+    }
+
+    function cleanGesturesItem() {
+        if (desktopGesturesItem) {
+            desktopGesturesItem.destroy();
+            desktopGesturesItem = null;
+        }
+    }
+
+    function reload() {
+        if (!wallpaperPluginName || !containmentPluginName)
+            return;
+        cleanGesturesItem();
+        // callLater so createGesturesItem runs after effects are destroyed
+        Qt.callLater(createGesturesItem);
+    }
+
+    onWallpaperPluginNameChanged: {
+        reload();
+    }
+    onContainmentPluginNameChanged: {
+        reload();
+    }
 
     Item {
         onWindowChanged: window => {
@@ -128,7 +220,7 @@ PlasmoidItem {
     Layout.minimumWidth: Plasmoid.containment.corona?.editMode ? Kirigami.Units.gridUnit * 2 : 1
     Layout.minimumHeight: Plasmoid.containment.corona?.editMode ? Kirigami.Units.gridUnit * 2 : 1
     Layout.preferredWidth: {
-        if (Plasmoid.containment.corona?.editMode) {
+        if (Plasmoid.containment?.corona?.editMode) {
             return root.horizontal ? root.height : root.width;
         }
         return horizontal ? (expanding ? optimalSize : Plasmoid.configuration.length) : 0;
@@ -170,12 +262,12 @@ PlasmoidItem {
         }
     }
 
-    property int notificationCount: 1
+    property int notificationCount: 0
 
     Timer {
         id: countReset
         interval: 1000
-        onTriggered: root.notificationCount = 1
+        onTriggered: root.notificationCount = 0
     }
 
     function notify(title, text) {
@@ -190,11 +282,13 @@ PlasmoidItem {
         } else {
             return;
         }
-        executable.exec(`ms=${Date.now()};` + cmd);
+        Utils.delay(100, () => executable.exec(cmd), root);
         countReset.restart();
     }
 
     function runAction(action, command, application) {
+        if (stopContinuousDrag(action) && root.dragInfo !== "")
+            return;
         printLog`RUNNING_ACTION: ${action}`;
         var component = action[0];
         var actionNme = action[1];
@@ -287,6 +381,28 @@ PlasmoidItem {
         icon.name: "distribute-horizontal-x"
         onTriggered: root.expanding = !root.expanding
     }
+    PlasmaCore.Action {
+        id: configureAction
+        objectName: "PSECustomMenuAction"
+        text: i18n("Configure %1", Plasmoid.metaData.name)
+        icon.name: 'configure'
+        onTriggered: Plasmoid.internalAction("configure").trigger()
+    }
+    PlasmaCore.Action {
+        id: separatorAction
+        objectName: "PSECustomMenuAction"
+        isSeparator: true
+    }
+    PlasmaCore.Action {
+        id: hideWidgetAction
+        text: Plasmoid.configuration.hideWidget ? i18n("Show widget") : i18n("Hide widget")
+        icon.name: "visibility-symbolic"
+        onTriggered: {
+            Plasmoid.configuration.hideWidget = !Plasmoid.configuration.hideWidget;
+            Plasmoid.configuration.writeConfig();
+        }
+        visible: root.onDesktop
+    }
     property string contextMenuActions: Plasmoid.configuration.contextMenuActions
 
     Component {
@@ -294,6 +410,7 @@ PlasmoidItem {
         PlasmaCore.Action {
             property string actionIcon
             property var callback
+            property bool canDestroy: true
             objectName: "PSECustomMenuAction"
             icon.name: actionIcon
             onTriggered: {
@@ -304,27 +421,32 @@ PlasmoidItem {
         }
     }
 
-    Component {
-        id: separatorComponent
-        PlasmaCore.Action {
-            objectName: "PSECustomMenuAction"
-            isSeparator: true
+    Plasmoid.contextualActions: [hideWidgetAction]
+    Plasmoid.backgroundHints: {
+        if (root.inEditMode || !root.hideWidget) {
+            return PlasmaCore.Types.DefaultBackground;
+        } else {
+            return PlasmaCore.Types.NoBackground;
         }
     }
 
-    onContextMenuActionsChanged: updateContextualActions()
-
-    function updateContextualActions() {
-        Plasmoid.contextualActions = Plasmoid.contextualActions.filter(item => {
+    function removeContextualActions(contextMenuItem) {
+        if (!contextMenuItem && "contextualActions" in contextMenuItem)
+            return;
+        contextMenuItem.contextualActions = contextMenuItem.contextualActions.filter(item => {
             if (item && item.objectName === "PSECustomMenuAction") {
-                item.destroy();
+                if ("canDestroy" in item)
+                    item.destroy();
                 return false;
             }
             return true;
         });
-        let actions = [];
-        console.log(contextMenuActions);
+    }
 
+    function addContextualActions(contextMenuItem) {
+        if (inEditMode || !contextMenuItem)
+            return;
+        let actions = [];
         try {
             const customActions = JSON.parse(contextMenuActions);
             for (let act of customActions) {
@@ -379,14 +501,34 @@ PlasmoidItem {
         } catch (e) {
             console.log("Error loading contextMenuActions:", e);
         }
-        if (actions.length > 0) {
-            actions.push(separatorComponent.createObject(root));
+        if (actions.length > 0 && !onDesktop) {
+            actions.push(separatorAction);
         }
-        actions.push(expandingAction);
-        Plasmoid.contextualActions = actions;
+        if (!onDesktop) {
+            actions.push(expandingAction);
+        }
+
+        if (onDesktop && gesturesOnDesktop) {
+            actions.push(configureAction);
+        }
+
+        contextMenuItem.contextualActions = [...contextMenuItem.contextualActions, ...actions];
     }
 
-    Plasmoid.contextualActions: [expandingAction]
+    function updateContextualActions(enable = true) {
+        removeContextualActions(Plasmoid);
+        removeContextualActions(containmentItem);
+        if (!enable) {
+            return;
+        }
+        if (onDesktop && gesturesOnDesktop) {
+            removeContextualActions(Plasmoid);
+            addContextualActions(containmentItem);
+        } else {
+            removeContextualActions(containmentItem);
+            addContextualActions(Plasmoid);
+        }
+    }
 
     property real optimalSize: {
         if (!panelLayout || !expanding)
@@ -421,18 +563,19 @@ PlasmoidItem {
         return Math.max(opt, 0);
     }
 
-    property string info: ""
     property string btn: ""
     property string dragInfo: ""
     Rectangle {
+        id: widgetBg
         anchors.fill: parent
         color: Kirigami.Theme.highlightColor
+        visible: !root.hideWidget || root.inEditMode
         opacity: {
             if (Plasmoid.containment.corona?.editMode) {
                 return 1;
-            } else if (pressed && showHoverBg && overPanel) {
+            } else if (root.pressed && root.showHoverBg && root.hovered) {
                 return 0.6;
-            } else if (showHoverBg && hoverHandler.hovered) {
+            } else if (root.showHoverBg && root.hovered) {
                 return 0.3;
             } else if (Plasmoid.configuration.alwaysHighlighted) {
                 return 0.15;
@@ -440,7 +583,7 @@ PlasmoidItem {
                 return 0;
             }
         }
-        radius: hoverBgRadius
+        radius: root.hoverBgRadius
 
         Behavior on opacity {
             NumberAnimation {
@@ -454,234 +597,40 @@ PlasmoidItem {
 
     RowLayout {
         anchors.centerIn: parent
+        visible: !root.hideWidget || root.inEditMode
         Kirigami.Icon {
-            width: horizontal ? parent.height : parent.width
-            height: width
+            Layout.preferredHeight: root.horizontal ? parent.height : parent.width
+            Layout.preferredWidth: Layout.preferredHeight
             visible: Plasmoid.userConfiguring
             source: "configure"
             smooth: true
-            NumberAnimation on rotation {
-                from: 0
-                to: 360
-                running: Plasmoid.userConfiguring
-                loops: Animation.Infinite
-                duration: 3000
-            }
         }
 
         PC3.Label {
-            text: info + " " + btn + " " + dragInfo
-            rotation: horizontal ? 0 : 270
-            visible: enableDebug && !(Plasmoid.containment.corona?.editMode || animator.running)
+            font: Kirigami.Theme.smallFont
+            text: {
+                let out = "";
+                if (root.enableDebug) {
+                    if (root.hovered) {
+                        out = "In ";
+                    } else {
+                        out = "Out ";
+                    }
+                    out += `(pr=${root.pressed} ho=${root.hovered} dr=${root.dragInfo}) ${Plasmoid.configuration.length}|${root.optimalSize.toFixed(2)}`;
+                }
+                return out;
+            }
+            rotation: root.horizontal ? 0 : 270
+            visible: root.enableDebug && !(Plasmoid.containment.corona?.editMode || animator.running)
         }
-    }
-
-    function getDragDirection(startPoint, endPoint) {
-        var dx = endPoint.x - startPoint.x;
-        var dy = endPoint.y - startPoint.y;
-        if (Math.abs(dx) > Math.abs(dy)) {
-            return dx > 0 ? 'right' : 'left';
-        } else {
-            return dy > 0 ? 'down' : 'up';
-        }
-    }
-
-    function getDistance(startPoint, endPoint) {
-        var dx = endPoint.x - startPoint.x;
-        var dy = endPoint.y - startPoint.y;
-        return Math.sqrt(dx * dx + dy * dy);
     }
 
     PlasmaCore.ToolTipArea {
         anchors.fill: parent
         mainItem: Tooltip {}
-        enabled: hoverHandler.hovered && !hideTooltip
-        visible: showTooltip
-    }
-
-    Rectangle {
-        id: dragArea
-        height: minDragDistance * 2
-        width: height
-        opacity: 0.5
-        color: (enableDebug && pressed && hoverHandler.hovered) ? "red" : "transparent"
-    }
-
-    HoverHandler {
-        id: hoverHandler
-        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-        onHoveredChanged: {
-            if (hovered) {
-                hideTooltip = false;
-                info = "In " + Plasmoid.configuration.length + "|" + optimalSize;
-            } else {
-                info = i18n('Out (pressed=') + pressed + ') ' + Plasmoid.configuration.length + "|" + optimalSize;
-            }
-        }
-    }
-
-    onWidthChanged: {
-        localStartPos = dragHandler.parent.mapFromGlobal(startPos.x, startPos.y);
-    }
-
-    onHeightChanged: {
-        localStartPos = dragHandler.parent.mapFromGlobal(startPos.x, startPos.y);
-    }
-
-    onLocalStartPosChanged: {
-        dragArea.x = localStartPos.x - (dragArea.width / 2);
-        dragArea.y = localStartPos.y - (dragArea.height / 2);
-    }
-
-    function runDragAction(direction) {
-        btn = '';
-        printLog`Drag end: ${endPos}`;
-        printLog`Drag direction ${direction}`;
-        switch (direction) {
-        case "up":
-            dragInfo = i18n('Drag up');
-            root.gestureDisplayName = dragInfo;
-            runAction(mouseDragUpAction, mouseDragUpCommand, mouseDragUpAppUrl);
-            break;
-        case "down":
-            dragInfo = i18n('Drag down');
-            root.gestureDisplayName = dragInfo;
-            runAction(mouseDragDownAction, mouseDragDownCommand, mouseDragDownAppUrl);
-            break;
-        case "left":
-            dragInfo = i18n('Drag left');
-            root.gestureDisplayName = dragInfo;
-            runAction(mouseDragLeftAction, mouseDragLeftCommand, mouseDragLeftAppUrl);
-            break;
-        case "right":
-            dragInfo = i18n('Drag right');
-            root.gestureDisplayName = dragInfo;
-            runAction(mouseDragRightAction, mouseDragRightCommand, mouseDragRightAppUrl);
-            break;
-        default:
-            dragInfo = '';
-        }
-    }
-
-    property Component pointHandlerComponent: PointHandler {
-        target: null
-        cursorShape: (active && dragging) ? Qt.ClosedHandCursor : Qt.ArrowCursor
-        onActiveChanged: {
-            if (active) {
-                dragging = true;
-                startPos = this.parent.mapToGlobal(point.pressPosition.x, point.pressPosition.y);
-                localStartPos = this.parent.mapFromGlobal(startPos.x, startPos.y);
-                printLog`Drag start: ${startPos}`;
-            } else {
-                if (isWayland)
-                    return;
-                printLog`onActiveChanged`;
-                if (dragging) {
-                    printLog`(active && dragging)`;
-                    endPos = dragHandler.parent.mapToGlobal(point.position.x, point.position.y);
-                    const distance = getDistance(startPos, endPos);
-                    if (!tapHandler.pressed && distance >= minDragDistance) {
-                        const dragDirection = getDragDirection(startPos, endPos);
-                        runDragAction(dragDirection);
-                    }
-                }
-            }
-        }
-
-        onPointChanged: {
-            if (active && dragging) {
-                endPos = this.parent.mapToGlobal(point.position.x, point.position.y);
-                const distance = getDistance(startPos, endPos);
-                root.overPanel = distance <= minDragDistance;
-                if ((!tapHandler.pressed || isContinuous) && distance >= minDragDistance) {
-                    const dragDirection = getDragDirection(startPos, endPos);
-                    // we can't do a drag out of the panel on X11,
-                    // fallback to onActiveChanged == false (mouse released) above
-                    if (!isWayland && ((horizontal && ["up", "down"].includes(dragDirection)) || (!horizontal && ["left", "right"].includes(dragDirection)))) {
-                        return;
-                    }
-                    runDragAction(dragDirection);
-                    startPos = endPos;
-                    if (!isContinuous)
-                        dragging = false;
-                }
-            }
-        }
-    }
-
-    Timer {
-        id: singleTapTimer
-        interval: doubleClickAllowed ? 300 : 3
-        onTriggered: {
-            btn = i18n('Single clicked');
-            if (mouseButton === Qt.MiddleButton) {
-                // printLog`Middle button pressed`;
-                root.gestureDisplayName = i18n('Middle button pressed');
-                runAction(middleClickAction, middleClickCommand, middleClickAppUrl);
-            } else {
-                // printLog`Left button pressed`;
-                root.gestureDisplayName = i18n('Left button pressed');
-                runAction(singleClickAction, singleClickCommand, singleClickAppUrl);
-            }
-        }
-    }
-
-    TapHandler {
-        id: tapHandler
-        acceptedButtons: Qt.LeftButton | Qt.MiddleButton
-        onTapped: (eventPoint, button) => {
-            dragInfo = '';
-            hideTooltip = true;
-            if (!singleTapTimer.running) {
-                mouseButton = button;
-                singleTapTimer.start();
-            }
-        }
-
-        onDoubleTapped: {
-            if (!doubleClickAllowed) {
-                return;
-            }
-            singleTapTimer.stop();
-            // printLog`Double tap detected!`;
-            btn = i18n('Double clicked');
-            root.gestureDisplayName = btn;
-            runAction(doubleClickAction, doubleClickCommand, doubleClickAppUrl);
-        }
-
-        onLongPressed: {
-            // printLog`Long press detected!`;
-            btn = "Long press";
-            root.gestureDisplayName = btn;
-            runAction(pressHoldAction, pressHoldCommand, pressHoldAppUrl);
-            target = null;
-            enabled = root;
-        }
-    }
-
-    WheelHandler {
-        property int wheelDelta: 0
-        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
-        onWheel: event => {
-            // TODO: Different sensitivity per device type
-            const delta = (event.inverted ? -1 : 1) * (event.angleDelta.y ? event.angleDelta.y : -event.angleDelta.x);
-            wheelDelta += delta;
-            while (wheelDelta >= scrollSensitivity) {
-                wheelDelta -= scrollSensitivity;
-                printLog`WHEEL UP`;
-                btn = i18n('Wheel up');
-                root.gestureDisplayName = btn;
-                runAction(mouseWheelUpAction, mouseWheelUpCommand, mouseWheelUpAppUrl);
-            }
-
-            while (wheelDelta <= -scrollSensitivity) {
-                wheelDelta += scrollSensitivity;
-                printLog`WHEEL DOWN`;
-                btn = i18n('Wheel down');
-                root.gestureDisplayName = btn;
-                runAction(mouseWheelDownAction, mouseWheelDownCommand, mouseWheelDownAppUrl);
-            }
-        }
+        visible: root.showTooltip && root.onDesktop
+        x: root.desktopGesturesItem.mouseX
+        y: root.desktopGesturesItem.mouseY
     }
 
     QuickLaunch {
@@ -693,9 +642,41 @@ PlasmoidItem {
         }
     }
 
+    onHoveredChanged: {
+        root.dragInfo = "";
+    }
+    onContextMenuActionsChanged: Qt.callLater(updateContextualActions)
+    onContainmentItemChanged: Qt.callLater(updateContextualActions)
+    onInEditModeChanged: {
+        if (!inEditMode) {
+            updateContextualActions();
+        }
+    }
+    onGesturesOnDesktopChanged: {
+        reload();
+        updateContextualActions();
+    }
+    onOnDesktopChanged: {
+        reload();
+        updateContextualActions();
+    }
+
     Component.onCompleted: {
-        dragHandler = pointHandlerComponent.createObject(root);
         Plasmoid.configuration.screenWidth = horizontal ? screenGeometry.width : screenGeometry.height;
+        createGesturesItem();
+    }
+
+    Connections {
+        target: Qt.application
+        function onAboutToQuit() {
+            root.cleanGesturesItem();
+            root.updateContextualActions(false);
+        }
+    }
+
+    Component.onDestruction: {
+        cleanGesturesItem();
+        updateContextualActions(false);
     }
 
     onHorizontalChanged: {
