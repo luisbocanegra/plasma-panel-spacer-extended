@@ -33,6 +33,8 @@ Item {
     property bool showTapFeedback: false
     property string idleIcon: ""
     property bool actionIconFeedback: false
+    property bool isConfiguring: false
+    readonly property string configuringIcon: isConfiguring ? "configure-symbolic" : ""
 
     property var localStartPos: Qt.point(0, 0)
     property var startPos: Qt.point(0, 0)
@@ -285,7 +287,7 @@ Item {
 
     Kirigami.Icon {
         id: gestureIcon
-        source: root.gestureIcon || root.idleIcon
+        source: root.gestureIcon || root.configuringIcon || root.idleIcon
         height: {
             if (root.onDesktop) {
                 return 64;
@@ -299,7 +301,7 @@ Item {
         anchors.centerIn: root.onDesktop ? null : parent ? parent : undefined
         x: root.onDesktop ? hoverHandler.point.position.x - width / 2 : undefined
         y: root.onDesktop ? hoverHandler.point.position.y - height / 2 : undefined
-        opacity: root.gestureIconVisible || root.idleIcon !== "" ? 1 : 0
+        opacity: (root.gestureIconVisible || root.configuringIcon || root.idleIcon) ? 1 : 0
         Behavior on opacity {
             NumberAnimation {
                 duration: Kirigami.Units.longDuration

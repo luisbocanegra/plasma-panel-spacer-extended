@@ -119,6 +119,7 @@ PlasmoidItem {
         tapColor: Kirigami.Theme.highlightColor
         onDesktop: root.onDesktop && root.gesturesOnDesktop
         idleIcon: Plasmoid.configuration.icon
+        isConfiguring: Plasmoid.userConfiguring
         onGesturePerformed: gesture => {
             root.gesture = gesture;
         }
