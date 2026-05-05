@@ -32,7 +32,7 @@ Spacer with Mouse gestures for the KDE Plasma Panel featuring Latte Dock/Gnome/U
   * [x] Mouse drag (four axis)
     * [x] Min drag distance
   * [x] Long press
-    * [ ] Hold duration
+    * [x] Hold duration
 * [x] Actions
   * [x] Run any keyboard shortcut (detects all available shortcuts in **System Settings** > **Shortcuts**)
   * [x] Run custom commands

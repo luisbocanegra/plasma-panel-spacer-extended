@@ -180,6 +180,18 @@
     <entry name="actionIconFeedback" type="Bool">
       <default>true</default>
     </entry>
+    <entry name="customDoubleClickDelayEnabled" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="customDoubleClickDelay" type="Int">
+      <default>300</default>
+    </entry>
+    <entry name="customLongPressDelayEnabled" type="Bool">
+      <default>false</default>
+    </entry>
+    <entry name="customLongPressDelay" type="Int">
+      <default>400</default>
+    </entry>
   </group>
 
 </kcfg>

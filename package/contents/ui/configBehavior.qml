@@ -12,6 +12,10 @@ KCM.SimpleKCM {
     property alias cfg_customDragDistanceEnabled: customDragDistanceEnabled.checked
     property alias cfg_customDragDistance: customDragDistance.value
     property alias cfg_gesturesOnDesktop: gesturesOnDesktop.checked
+    property alias cfg_customDoubleClickDelayEnabled: customDoubleClickDelayEnabled.checked
+    property alias cfg_customDoubleClickDelay: customDoubleClickDelay.value
+    property alias cfg_customLongPressDelayEnabled: customLongPressDelayEnabled.checked
+    property alias cfg_customLongPressDelay: customLongPressDelay.value
 
     ColumnLayout {
         Kirigami.FormLayout {
@@ -25,6 +29,34 @@ KCM.SimpleKCM {
                 }
                 Kirigami.ContextualHelpButton {
                     toolTipText: i18n("Show list of actions when hovering the spacer")
+                }
+            }
+
+            RowLayout {
+                Kirigami.FormData.label: i18n("Custom double-click interval (ms):")
+                CheckBox {
+                    id: customDoubleClickDelayEnabled
+                }
+                SpinBox {
+                    id: customDoubleClickDelay
+                    enabled: root.cfg_customDoubleClickDelayEnabled
+                    from: 100
+                    to: 1000
+                    stepSize: 100
+                }
+            }
+
+            RowLayout {
+                Kirigami.FormData.label: i18n("Custom long-click interval (ms):")
+                CheckBox {
+                    id: customLongPressDelayEnabled
+                }
+                SpinBox {
+                    id: customLongPressDelay
+                    enabled: root.cfg_customLongPressDelayEnabled
+                    from: 100
+                    to: 2000
+                    stepSize: 100
                 }
             }
 

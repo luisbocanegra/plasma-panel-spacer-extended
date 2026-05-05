@@ -1,4 +1,5 @@
 import QtQuick
+import QtQml
 import org.kde.kirigami as Kirigami
 
 Item {
@@ -23,7 +24,9 @@ Item {
     property int scrollSensitivity: 120
     property bool doubleClickEnabled: true
     property int lastButton: 0
-    property int doubleClickDelay: 300
+    property int tapCount: 0
+    property int doubleClickInterval: 200
+    property int longPressInterval: 800
     property bool isDragging: false
     property bool isContinuous: true
     property bool horizontal: false
@@ -173,28 +176,36 @@ Item {
         onHoveredChanged: root.hovered = hovered
     }
 
+    Timer {
+        id: singleTapTimer
+        interval: root.doubleClickEnabled ? root.doubleClickInterval : 0
+        onTriggered: {
+            if (root.tapCount === 1) {
+                if (root.lastButton === Qt.LeftButton) {
+                    root.leftClick();
+                } else if (root.lastButton === Qt.MiddleButton) {
+                    root.middleClick();
+                }
+            } else if (root.tapCount === 2) {
+                if (root.lastButton === Qt.LeftButton) {
+                    root.doubleClick();
+                }
+            }
+            root.tapCount = 0;
+        }
+    }
+
     TapHandler {
         id: tapHandler
         parent: root
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad | PointerDevice.TouchScreen | PointerDevice.Stylus
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
-        exclusiveSignals: {
-            if (root.doubleClickEnabled) {
-                return TapHandler.SingleTap | TapHandler.DoubleTap;
-            } else {
-                return TapHandler.NotExclusive;
-            }
-        }
-        onSingleTapped: (eventPoint, button) => {
-            if (button === Qt.LeftButton) {
-                root.leftClick();
-            } else if (button === Qt.MiddleButton) {
-                root.middleClick();
-            }
-        }
-        onDoubleTapped: (eventPoint, button) => {
-            if (button === Qt.LeftButton) {
-                root.doubleClick();
+        longPressThreshold: root.longPressInterval / 1000
+        onTapped: (eventPoint, button) => {
+            if (button === Qt.LeftButton || button === Qt.MiddleButton) {
+                root.lastButton = button;
+                root.tapCount++;
+                singleTapTimer.restart();
             }
         }
         onLongPressed: root.longPress()

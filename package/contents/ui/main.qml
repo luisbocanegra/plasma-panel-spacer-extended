@@ -120,6 +120,8 @@ PlasmoidItem {
         onDesktop: root.onDesktop && root.gesturesOnDesktop
         idleIcon: Plasmoid.configuration.icon
         isConfiguring: Plasmoid.userConfiguring
+        doubleClickInterval: Plasmoid.configuration.customDoubleClickDelayEnabled ? Plasmoid.configuration.customDoubleClickDelay : Qt.styleHints.mouseDoubleClickInterval
+        longPressInterval: Plasmoid.configuration.customLongPressDelayEnabled ? Plasmoid.configuration.customLongPressDelay : Qt.styleHints.mousePressAndHoldInterval
         onGesturePerformed: gesture => {
             root.gesture = gesture;
         }
