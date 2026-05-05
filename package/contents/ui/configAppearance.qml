@@ -17,6 +17,7 @@ KCM.SimpleKCM {
     property alias cfg_hideInFitContent: hideInFitContent.checked
     property alias cfg_icon: iconSelector.customIcon
     property alias cfg_actionIconFeedback: actionIconFeedback.checked
+    property int cfg_notificationType
 
     signal configurationChanged
 
@@ -24,24 +25,56 @@ KCM.SimpleKCM {
         id: generalPage
         Layout.alignment: Qt.AlignTop
 
-        CheckBox {
-            id: actionIconFeedback
-            Kirigami.FormData.label: i18n("Action icon feedback:")
-        }
-
-        IconSelector {
-            id: iconSelector
-            Kirigami.FormData.label: i18n("Idle icon:")
-        }
-
         Kirigami.Separator {
             Kirigami.FormData.isSection: true
-            Kirigami.FormData.label: "Highlight"
+            Kirigami.FormData.label: "Visual feedback"
+        }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Gesture icons:")
+            CheckBox {
+                id: actionIconFeedback
+            }
+            Label {
+                text: i18n("Idle icon:")
+            }
+            IconSelector {
+                id: iconSelector
+            }
+        }
+
+        RadioButton {
+            Kirigami.FormData.label: i18n("Action notification:")
+            text: i18n("Disable")
+            ButtonGroup.group: notificationBtnGroup
+            checked: root.cfg_notificationType === index
+            property int index: 0
+        }
+        RadioButton {
+            text: i18n("Notification")
+            ButtonGroup.group: notificationBtnGroup
+            checked: root.cfg_notificationType === index
+            property int index: 1
+        }
+        RadioButton {
+            text: i18n("On-screen display")
+            ButtonGroup.group: notificationBtnGroup
+            checked: root.cfg_notificationType === index
+            property int index: 2
+        }
+
+        ButtonGroup {
+            id: notificationBtnGroup
+            onCheckedButtonChanged: {
+                if (checkedButton) {
+                    root.cfg_notificationType = checkedButton.index;
+                }
+            }
         }
 
         CheckBox {
             id: alwaysHighlighted
-            Kirigami.FormData.label: i18n("Always:")
+            Kirigami.FormData.label: i18n("Highlight:")
             checked: cfg_alwaysHighlighted
 
             onCheckedChanged: {
@@ -51,7 +84,7 @@ KCM.SimpleKCM {
 
         CheckBox {
             id: showHoverBg
-            Kirigami.FormData.label: alwaysHighlighted.checked ? i18n("Increase on hover:") : i18n("On hover:")
+            text: alwaysHighlighted.checked ? i18n("Increase on hover") : i18n("On hover")
             checked: cfg_showHoverBg
 
             onCheckedChanged: {
@@ -61,7 +94,7 @@ KCM.SimpleKCM {
 
         CheckBox {
             id: bgFillPanel
-            Kirigami.FormData.label: i18n("Fill panel thickness:")
+            text: i18n("Fill panel thickness")
             checked: cfg_bgFillPanel
             enabled: showHoverBg.checked
             onCheckedChanged: {
@@ -69,16 +102,21 @@ KCM.SimpleKCM {
             }
         }
 
-        SpinBox {
-            id: hoverBgRadius
-            Kirigami.FormData.label: i18n("Radius:")
-            value: cfg_hoverBgRadius
-            from: 0
-            to: 99
-            stepSize: 1
-            enabled: showHoverBg.checked
-            onValueChanged: {
-                cfg_hoverBgRadius = value;
+        RowLayout {
+            Label {
+                text: i18n("Radius:")
+                enabled: showHoverBg.checked
+            }
+            SpinBox {
+                id: hoverBgRadius
+                value: cfg_hoverBgRadius
+                from: 0
+                to: 99
+                stepSize: 1
+                enabled: showHoverBg.checked
+                onValueChanged: {
+                    cfg_hoverBgRadius = value;
+                }
             }
         }
 
