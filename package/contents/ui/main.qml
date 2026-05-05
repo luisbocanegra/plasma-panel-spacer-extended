@@ -164,8 +164,6 @@ PlasmoidItem {
             mainItem: Tooltip {}
             active: root.hovered && !root.pressed && !root.dragging
             visible: root.showTooltip && !root.onDesktop
-            x: root.desktopGesturesItem.mouseX
-            y: root.desktopGesturesItem.mouseY
         }
     }
 
@@ -375,7 +373,10 @@ PlasmoidItem {
     readonly property PlasmaCore.Action expandingAction: PlasmaCore.Action {
         text: root.expanding ? i18n("Set fixed size") : i18n("Set flexible size")
         icon.name: "distribute-horizontal-x"
-        onTriggered: root.expanding = !root.expanding
+        onTriggered: {
+            Plasmoid.configuration.expanding = !Plasmoid.configuration.expanding;
+            Plasmoid.configuration.writeConfig();
+        }
     }
     PlasmaCore.Action {
         id: configureAction
@@ -615,8 +616,6 @@ PlasmoidItem {
         anchors.fill: parent
         mainItem: Tooltip {}
         visible: root.showTooltip && root.onDesktop
-        x: root.desktopGesturesItem.mouseX
-        y: root.desktopGesturesItem.mouseY
     }
 
     QuickLaunch {

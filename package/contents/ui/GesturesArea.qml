@@ -299,8 +299,8 @@ Item {
         }
         width: height
         anchors.centerIn: root.onDesktop ? null : parent ? parent : undefined
-        x: root.onDesktop ? hoverHandler.point.position.x - width / 2 : undefined
-        y: root.onDesktop ? hoverHandler.point.position.y - height / 2 : undefined
+        x: root.onDesktop ? hoverHandler.point.position.x - width / 2 : 0
+        y: root.onDesktop ? hoverHandler.point.position.y - height / 2 : 0
         opacity: (root.gestureIconVisible || root.configuringIcon || root.idleIcon) ? 1 : 0
         Behavior on opacity {
             NumberAnimation {
