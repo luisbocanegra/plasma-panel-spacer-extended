@@ -18,7 +18,7 @@ Item {
         }
 
         for (let action of actions) {
-            action.enabled = action.enabled ?? true;
+            action.isEnabled = action.isEnabled ?? true;
             model.append(action);
         }
         root.isLoading = false;
@@ -31,7 +31,7 @@ Item {
             "url": "",
             "icon": "",
             "name": "",
-            "enabled": true
+            "isEnabled": true
         });
         updated();
     }
@@ -44,7 +44,7 @@ Item {
             "url": "",
             "icon": "utilities-system-monitor",
             "name": "System Monitor",
-            "enabled": true
+            "isEnabled": true
         });
         updated();
     }
@@ -61,12 +61,6 @@ Item {
 
     function moveItem(oldIndex, newIndex) {
         model.move(oldIndex, newIndex, 1);
-        updated();
-    }
-
-    function toggleMenuItemEnabled(index) {
-        const enabled = model.get(index).enabled;
-        model.setProperty(index, "enabled", !enabled);
         updated();
     }
 }

@@ -33,7 +33,7 @@ KCM.ScrollViewKCM {
                 "url": item.url,
                 "icon": item.icon,
                 "name": item.name,
-                "enabled": item.enabled
+                "isEnabled": item.isEnabled ?? true
             });
         }
         cfg_contextMenuActions = JSON.stringify(actions);
@@ -91,6 +91,7 @@ KCM.ScrollViewKCM {
             required property string name
             required property var model
             required property int index
+            required property bool isEnabled
 
             implicitWidth: ListView.view.width
             implicitHeight: delegate.height
@@ -121,9 +122,9 @@ KCM.ScrollViewKCM {
 
                     CheckBox {
                         id: enabledCheckBox
-                        checked: itemDelegate.model.enabled
+                        checked: itemDelegate.isEnabled
                         onCheckedChanged: {
-                            contextMenuModel.toggleMenuItemEnabled(itemDelegate.index);
+                            contextMenuModel.updateItem(itemDelegate.index, "isEnabled", enabledCheckBox.checked);
                         }
                     }
 
