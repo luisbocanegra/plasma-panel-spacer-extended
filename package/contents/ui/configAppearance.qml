@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
+import "components/"
 
 KCM.SimpleKCM {
     id: root
@@ -14,12 +15,24 @@ KCM.SimpleKCM {
     property int cfg_screenWidth
     property alias cfg_expanding: expanding.checked
     property alias cfg_hideInFitContent: hideInFitContent.checked
+    property alias cfg_icon: iconSelector.customIcon
+    property alias cfg_actionIconFeedback: actionIconFeedback.checked
 
     signal configurationChanged
 
     Kirigami.FormLayout {
         id: generalPage
         Layout.alignment: Qt.AlignTop
+
+        CheckBox {
+            id: actionIconFeedback
+            Kirigami.FormData.label: i18n("Action icon feedback:")
+        }
+
+        IconSelector {
+            id: iconSelector
+            Kirigami.FormData.label: i18n("Idle icon:")
+        }
 
         Kirigami.Separator {
             Kirigami.FormData.isSection: true

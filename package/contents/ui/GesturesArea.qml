@@ -1,4 +1,5 @@
 import QtQuick
+import org.kde.kirigami as Kirigami
 
 Item {
     id: root
@@ -28,8 +29,10 @@ Item {
     property bool horizontal: false
     property bool isWayland: Qt.platform.pluginName.includes("wayland")
     property bool enableDebug: false
-    property color tapColor: "#A4C6F6"
+    property color tapColor: Kirigami.Theme.highlightColor
     property bool showTapFeedback: false
+    property string idleIcon: ""
+    property bool actionIconFeedback: false
 
     property var localStartPos: Qt.point(0, 0)
     property var startPos: Qt.point(0, 0)
@@ -50,6 +53,65 @@ Item {
     signal dragDown
     signal dragLeft
     signal dragRight
+
+    signal gesturePerformed(string gesture)
+
+    property string lastGesture: ""
+    property bool gestureIconVisible: false
+    property string gestureIcon: {
+        if (!actionIconFeedback)
+            return "";
+        switch (lastGesture) {
+        case "wheel-up":
+            return "go-up";
+        case "wheel-down":
+            return "go-down";
+        case "left-click":
+            return Qt.resolvedUrl(`./icons/click.svg`);
+        case "middle-click":
+            return Qt.resolvedUrl(`./icons/click.svg`);
+        case "double-click":
+            return Qt.resolvedUrl(`./icons/double-click.svg`);
+        case "long-press":
+            return Qt.resolvedUrl(`./icons/long-press.svg`);
+        case "drag-up":
+            return "arrow-up-double-symbolic";
+        case "drag-down":
+            return "arrow-down-double-symbolic";
+        case "drag-left":
+            return "arrow-left-double-symbolic";
+        case "drag-right":
+            return "arrow-right-double-symbolic";
+        default:
+            return "";
+        }
+    }
+
+    Timer {
+        id: resetIcon
+        interval: 500
+        onTriggered: {
+            root.gestureIconVisible = false;
+            root.lastGesture = "";
+        }
+    }
+
+    onGesturePerformed: gesture => {
+        root.lastGesture = gesture;
+        gestureIconVisible = true;
+        resetIcon.restart();
+    }
+
+    onWheelUp: gesturePerformed("wheel-up")
+    onWheelDown: gesturePerformed("wheel-down")
+    onLeftClick: gesturePerformed("left-click")
+    onMiddleClick: gesturePerformed("middle-click")
+    onLongPress: gesturePerformed("long-press")
+    onDoubleClick: gesturePerformed("double-click")
+    onDragUp: gesturePerformed("drag-up")
+    onDragDown: gesturePerformed("drag-down")
+    onDragLeft: gesturePerformed("drag-left")
+    onDragRight: gesturePerformed("drag-right")
 
     function getDistance(startPoint, endPoint) {
         var dx = endPoint.x - startPoint.x;
@@ -114,7 +176,13 @@ Item {
         parent: root
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad | PointerDevice.TouchScreen | PointerDevice.Stylus
         acceptedButtons: Qt.LeftButton | Qt.MiddleButton
-        exclusiveSignals: TapHandler.SingleTap | TapHandler.DoubleTap
+        exclusiveSignals: {
+            if (root.doubleClickEnabled) {
+                return TapHandler.SingleTap | TapHandler.DoubleTap;
+            } else {
+                return TapHandler.NotExclusive;
+            }
+        }
         onSingleTapped: (eventPoint, button) => {
             if (button === Qt.LeftButton) {
                 root.leftClick();
@@ -213,5 +281,30 @@ Item {
         color: (root.enableDebug && root.pressed && root.hovered) ? "red" : "transparent"
         x: root.localStartPos.x - width / 2
         y: root.localStartPos.y - height / 2
+    }
+
+    Kirigami.Icon {
+        id: gestureIcon
+        source: root.gestureIcon || root.idleIcon
+        height: {
+            if (root.onDesktop) {
+                return 64;
+            } else if (parent) {
+                return Math.min(parent.width, parent.height);
+            } else {
+                return 20;
+            }
+        }
+        width: height
+        anchors.centerIn: root.onDesktop ? null : parent ? parent : undefined
+        x: root.onDesktop ? hoverHandler.point.position.x - width / 2 : undefined
+        y: root.onDesktop ? hoverHandler.point.position.y - height / 2 : undefined
+        opacity: root.gestureIconVisible || root.idleIcon !== "" ? 1 : 0
+        Behavior on opacity {
+            NumberAnimation {
+                duration: Kirigami.Units.longDuration
+                easing.type: Easing.InOutQuad
+            }
+        }
     }
 }

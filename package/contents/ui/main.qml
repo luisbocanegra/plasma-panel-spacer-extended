@@ -118,47 +118,42 @@ PlasmoidItem {
         showTapFeedback: root.onDesktop
         tapColor: Kirigami.Theme.highlightColor
         onDesktop: root.onDesktop && root.gesturesOnDesktop
+        idleIcon: Plasmoid.configuration.icon
+        onGesturePerformed: gesture => {
+            root.gesture = gesture;
+        }
+        actionIconFeedback: Plasmoid.configuration.actionIconFeedback
         onLeftClick: {
-            root.btn = "Left Click";
             root.runAction(root.singleClickAction, root.singleClickCommand, root.singleClickAppUrl);
         }
         onMiddleClick: {
-            root.btn = "Middle Click";
             root.runAction(root.middleClickAction, root.middleClickCommand, root.middleClickAppUrl);
         }
         onLongPress: {
-            root.btn = "Long Press";
             root.runAction(root.pressHoldAction, root.pressHoldCommand, root.pressHoldAppUrl);
         }
         onDoubleClick: {
-            root.btn = "Double Click";
             root.runAction(root.doubleClickAction, root.doubleClickCommand, root.doubleClickAppUrl);
         }
         onWheelUp: {
-            root.btn = "Wheel Up";
             root.runAction(root.mouseWheelUpAction, root.mouseWheelUpCommand, root.mouseWheelUpAppUrl);
         }
         onWheelDown: {
-            root.btn = "Wheel Down";
             root.runAction(root.mouseWheelDownAction, root.mouseWheelDownCommand, root.mouseWheelDownAppUrl);
         }
         onDragUp: {
-            root.btn = "Drag Up";
             root.runAction(root.mouseDragUpAction, root.mouseDragUpCommand, root.mouseDragUpAppUrl);
             root.dragInfo = "up";
         }
         onDragDown: {
-            root.btn = "Drag Down";
             root.runAction(root.mouseDragDownAction, root.mouseDragDownCommand, root.mouseDragDownAppUrl);
             root.dragInfo = "down";
         }
         onDragLeft: {
-            root.btn = "Drag Left";
             root.runAction(root.mouseDragLeftAction, root.mouseDragLeftCommand, root.mouseDragLeftAppUrl);
             root.dragInfo = "left";
         }
         onDragRight: {
-            root.btn = "Drag Right";
             root.runAction(root.mouseDragRightAction, root.mouseDragRightCommand, root.mouseDragRightAppUrl);
             root.dragInfo = "right";
         }
@@ -565,7 +560,7 @@ PlasmoidItem {
         return Math.max(opt, 0);
     }
 
-    property string btn: ""
+    property string gesture: ""
     property string dragInfo: ""
     Rectangle {
         id: widgetBg
@@ -591,40 +586,28 @@ PlasmoidItem {
             NumberAnimation {
                 id: animator
                 duration: Kirigami.Units.longDuration
-                // easing.type is updated after animation starts
                 easing.type: Plasmoid.containment.corona?.editMode ? Easing.InCubic : Easing.OutCubic
             }
         }
     }
 
-    RowLayout {
+    PC3.Label {
         anchors.centerIn: parent
-        visible: !root.hideWidget || root.inEditMode
-        Kirigami.Icon {
-            Layout.preferredHeight: root.horizontal ? parent.height : parent.width
-            Layout.preferredWidth: Layout.preferredHeight
-            visible: Plasmoid.userConfiguring
-            source: "configure"
-            smooth: true
-        }
-
-        PC3.Label {
-            font: Kirigami.Theme.smallFont
-            text: {
-                let out = "";
-                if (root.enableDebug) {
-                    if (root.hovered) {
-                        out = "In ";
-                    } else {
-                        out = "Out ";
-                    }
-                    out += `(pr=${root.pressed} ho=${root.hovered} dr=${root.dragInfo}) ${Plasmoid.configuration.length}|${root.optimalSize.toFixed(2)}`;
+        visible: !root.hideWidget && !root.inEditMode && root.enableDebug
+        font: Kirigami.Theme.smallFont
+        text: {
+            let out = "";
+            if (root.enableDebug) {
+                if (root.hovered) {
+                    out = "In ";
+                } else {
+                    out = "Out ";
                 }
-                return out;
+                out += `(pr=${root.pressed} ho=${root.hovered} gesture=${root.gesture}) ${Plasmoid.configuration.length}|${root.optimalSize.toFixed(2)}`;
             }
-            rotation: root.horizontal ? 0 : 270
-            visible: root.enableDebug && !(Plasmoid.containment.corona?.editMode || animator.running)
+            return out;
         }
+        rotation: root.horizontal ? 0 : 270
     }
 
     PlasmaCore.ToolTipArea {
