@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.16.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.15.0...v1.16.0) (2026-05-06)
+
+
+### Features
+
+* actions feedback icon ([655917f](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/655917f6f7f799b025f6de56fd4cfaf837f38095))
+* add option to trigger gestures from the desktop ([e9d55c1](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/e9d55c1dba517799f1055b1d60c451bae0b4e031))
+* allow to disable context menu actions ([26ce768](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/26ce768c38a2973eee03272e7f9d62abc7d6243a))
+* custom double-click and long-click interval ([8532e0f](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/8532e0feb2230f5864c2554ca0086d6bc6b5e01d))
+* move some settings to appearance tab ([6a84cc1](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/6a84cc14e40662de9843c6dc859b6f551ab35190))
+
+
+### Bug Fixes
+
+* flexible size resets on restart ([eb6fac6](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/eb6fac643ab29aaf56f07de3574968e8b64841c2))
+
 ## [1.15.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.14.0...v1.15.0) (2026-04-01)
 
 
