@@ -1,5 +1,4 @@
 import QtQuick
-import QtQml
 import org.kde.kirigami as Kirigami
 
 Item {
@@ -32,8 +31,6 @@ Item {
     property bool horizontal: false
     property bool isWayland: Qt.platform.pluginName.includes("wayland")
     property bool enableDebug: false
-    property color tapColor: Kirigami.Theme.highlightColor
-    property bool showTapFeedback: false
     property string idleIcon: ""
     property bool actionIconFeedback: false
     property bool isConfiguring: false
@@ -151,6 +148,12 @@ Item {
         }
     }
 
+    function printLog(message) {
+        if (enableDebug) {
+            console.log('luisbocanegra.panelspacer.extended: ' + message);
+        }
+    }
+
     WheelHandler {
         property int wheelDelta: 0
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
@@ -222,18 +225,18 @@ Item {
                 root.isDragging = true;
                 root.startPos = parent.mapToGlobal(point.pressPosition.x, point.pressPosition.y);
                 root.localStartPos = parent.mapFromGlobal(root.startPos.x, root.startPos.y);
-                console.log(`Drag start: ${root.startPos}`);
+                root.printLog(`Drag start: ${root.startPos}`);
             } else {
                 if (root.isWayland) {
                     return;
                 }
 
                 if (root.isDragging) {
-                    console.log(`active && root.isDragging`);
                     root.endPos = dragHandler.parent.mapToGlobal(point.position.x, point.position.y);
                     const distance = root.getDistance(root.startPos, root.endPos);
                     if (!tapHandler.pressed && distance >= root.dragDistance) {
                         const dragDirection = root.getDragDirection(root.startPos, root.endPos);
+                        root.printLog(`Drag end: ${root.endPos}, distance: ${distance.toFixed(2)}, direction: ${dragDirection}`);
                         root.runDragAction(dragDirection);
                     }
                 }
@@ -247,12 +250,12 @@ Item {
 
                 if ((!tapHandler.pressed || root.isContinuous) && distance >= root.dragDistance) {
                     const dragDirection = root.getDragDirection(root.startPos, root.endPos);
-                    console.log(`Drag end: ${root.endPos}, distance: ${distance.toFixed(2)}, direction: ${dragDirection}`);
                     // we can't do a drag out of the panel on X11,
                     // fallback to onActiveChanged == false (mouse released) above
                     if (!root.isWayland && ((root.horizontal && ["up", "down"].includes(dragDirection)) || (!root.horizontal && ["left", "right"].includes(dragDirection)))) {
                         return;
                     }
+                    root.printLog(`Drag end: ${root.endPos}, distance: ${distance.toFixed(2)}, direction: ${dragDirection}`);
                     root.runDragAction(dragDirection);
                     root.startPos = root.endPos;
                     if (!root.isContinuous)
@@ -271,12 +274,12 @@ Item {
     Rectangle {
         height: root.pressed && root.hovered ? 80 : 20
         width: height
-        color: root.tapColor
+        color: Kirigami.Theme.highlightColor
         radius: height / 2
         x: hoverHandler.point.position.x - width / 2
         y: hoverHandler.point.position.y - height / 2
         opacity: root.pressed && root.hovered ? 0.4 : 0
-        visible: root.showTapFeedback
+        visible: root.onDesktop
 
         Behavior on height {
             NumberAnimation {

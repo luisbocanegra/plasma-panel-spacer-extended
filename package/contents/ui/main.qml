@@ -21,7 +21,6 @@ PlasmoidItem {
     property bool pressed: desktopGesturesItem?.pressed ?? false
     property bool dragging: desktopGesturesItem?.isDragging ?? false
     property bool hovered: desktopGesturesItem?.hovered ?? false
-    property bool doubleClickEnabled: doubleClickAction[0] !== "Disabled"
 
     property string toolsDir: Qt.resolvedUrl("./tools").toString().substring(7)
     property string scriptUtil: `${toolsDir}/run_kwin_script.sh`
@@ -113,10 +112,8 @@ PlasmoidItem {
         enableDebug: Plasmoid.configuration.enableDebug
         isContinuous: Plasmoid.configuration.isContinuous
         horizontal: root.horizontal
-        doubleClickEnabled: root.doubleClickEnabled
+        doubleClickEnabled: root.doubleClickAction[0] !== "Disabled"
         scrollSensitivity: Plasmoid.configuration.scrollSensitivity
-        showTapFeedback: root.onDesktop
-        tapColor: Kirigami.Theme.highlightColor
         onDesktop: root.onDesktop && root.gesturesOnDesktop
         idleIcon: Plasmoid.configuration.icon
         isConfiguring: Plasmoid.userConfiguring
@@ -124,6 +121,7 @@ PlasmoidItem {
         longPressInterval: Plasmoid.configuration.customLongPressDelayEnabled ? Plasmoid.configuration.customLongPressDelay : Qt.styleHints.mousePressAndHoldInterval
         onGesturePerformed: gesture => {
             root.gesture = gesture;
+            printLog(`gesture: ${gesture}`);
         }
         actionIconFeedback: Plasmoid.configuration.actionIconFeedback
         onLeftClick: {
@@ -285,7 +283,7 @@ PlasmoidItem {
     function runAction(action, command, application) {
         if (stopContinuousDrag(action) && root.dragInfo !== "")
             return;
-        printLog`RUNNING_ACTION: ${action}`;
+        printLog(`RUNNING_ACTION: ${action}`);
         var component = action[0];
         var actionNme = action[1];
         if (actionNme != "Disabled") {
@@ -298,7 +296,7 @@ PlasmoidItem {
                 for (let i = 0; i < commandLines.length; i++) {
                     commandFormatted += commandLines[i] + (commandLines[i].endsWith(";") ? " " : "; ");
                 }
-                printLog`RUNNING_CUSTOM_COMMAND: ${command}`;
+                printLog(`RUNNING_CUSTOM_COMMAND: ${command}`);
                 notify(gestureDisplayName, command);
                 executable.exec(commandFormatted);
                 return;
@@ -306,7 +304,7 @@ PlasmoidItem {
 
             if (component == "launch_application") {
                 if (application !== "") {
-                    printLog`LAUNCHING_APPLICATION_URL: ${application}`;
+                    printLog(`LAUNCHING_APPLICATION_URL: ${application}`);
                     notify(gestureDisplayName, `Opening ${application}`);
                     quickLaunch.openUrl(application);
                 }
@@ -329,7 +327,7 @@ PlasmoidItem {
                 tasksModel.activateLastWindow();
                 preCmd = kwinCommand;
             }
-            printLog`RUNNING_SHORTCUT: ${preCmd + ";" + shortcutCommand}`;
+            printLog(`RUNNING_SHORTCUT: ${preCmd + ";" + shortcutCommand}`);
             notify(gestureDisplayName, `${component} • ${actionNme}`);
             executable.exec(preCmd + ";" + shortcutCommand);
         }
@@ -339,13 +337,9 @@ PlasmoidItem {
         }
     }
 
-    function printLog(strings, ...values) {
+    function printLog(message) {
         if (enableDebug) {
-            let str = Plasmoid.pluginName + " S:" + root.screen + " ID:" + Plasmoid.id + " ";
-            strings.forEach((string, i) => {
-                str += string + (values[i] !== undefined ? values[i] : '');
-            });
-            console.log(str);
+            console.log(Plasmoid.pluginName + " S:" + root.screen + " ID:" + Plasmoid.id + " " + String(message));
         }
     }
 

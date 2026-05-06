@@ -51,13 +51,9 @@ Item {
         }
     }
 
-    function printLog(strings, ...values) {
+    function printLog(message) {
         if (enableDebug) {
-            let str = Plasmoid.pluginName + " S:" + root.screen + " ID:" + Plasmoid.id + " ";
-            strings.forEach((string, i) => {
-                str += string + (values[i] !== undefined ? values[i] : '');
-            });
-            console.log(str);
+            console.log(Plasmoid.pluginName + " S:" + Plasmoid.screen + " ID:" + Plasmoid.id + " " + String(message));
         }
     }
 
@@ -75,7 +71,7 @@ Item {
             activeProps.name = tasksModel.data(activeTask, abstractTasksModel.AppName);
             activeProps.id = tasksModel.data(activeTask, abstractTasksModel.WinIdList);
             activeProps.title = tasksModel.data(activeTask, abstractTasksModel.display);
-            printLog`Active task: Name: ${activeProps.name} Title: ${activeProps.title} Id: ${activeProps.id}`;
+            printLog(`Active task: Name: ${activeProps.name} Title: ${activeProps.title} Id: ${activeProps.id}`);
         }
     }
 
@@ -84,7 +80,7 @@ Item {
     }
 
     function activateLastWindow() {
-        printLog`Trying to activate last window...`;
+        printLog("Trying to activate last window...");
         if (activeTask) {
             if (activeTask !== tasksModel.activeTask) {
                 tasksModel.requestActivate(activeTask);
