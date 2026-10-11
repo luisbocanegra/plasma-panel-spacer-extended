@@ -75,6 +75,7 @@ KCM.SimpleKCM {
         CheckBox {
             id: alwaysHighlighted
             Kirigami.FormData.label: i18n("Highlight:")
+            text: i18n("Always")
             checked: cfg_alwaysHighlighted
 
             onCheckedChanged: {
