@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.1](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.16.0...v1.16.1) (2026-10-11)
+
+
+### Bug Fixes
+
+* typo in wheel up app/url config entry name ([5664e0a](https://github.com/luisbocanegra/plasma-panel-spacer-extended/commit/5664e0a01dcdb496d1b03fa6d4ac4f70f10aa93e)), closes [#101](https://github.com/luisbocanegra/plasma-panel-spacer-extended/issues/101)
+
 ## [1.16.0](https://github.com/luisbocanegra/plasma-panel-spacer-extended/compare/v1.15.0...v1.16.0) (2026-05-06)
 
 
