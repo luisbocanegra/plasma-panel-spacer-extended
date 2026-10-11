@@ -52,7 +52,7 @@
     <entry name="mouseWheelUpCommand" type="String">
       <default>date="$(date -u)"; notify-send "Wheel Up" "$date"</default>
     </entry>
-    <entry name="smouseWheelUpAppUrl" type="String">
+    <entry name="mouseWheelUpAppUrl" type="String">
       <default></default>
     </entry>
 
